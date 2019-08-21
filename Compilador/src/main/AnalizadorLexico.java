@@ -3,7 +3,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class AnalizadorLexico {
@@ -17,13 +16,12 @@ public class AnalizadorLexico {
 	private LinkedHashMap<String, String> palabrasReservadas;
 	private boolean stop = false;
 
-	public AnalizadorLexico(String archivoEntrada) {
-		try {
+	public AnalizadorLexico(String archivoEntrada) throws FileNotFoundException {
+		
 			lector = new BufferedReader(new FileReader(archivoEntrada));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+			
+		
 		try {
 			caracterEntero = lector.read();
 		} catch (IOException e) {
@@ -65,12 +63,12 @@ public class AnalizadorLexico {
 		return stop == false; // caracterEntero==1 es EOF, VER (caracterEntero != -1) |
 	}
 
-	public Token getToken() throws Exception {
+	public Token getToken() throws  IOException, ExcepcionCaracterInvalido, ExcepcionFormatoCaracter, ExcepcionAnd, ExcepcionOr, ExcepcionComentarioMultilinea {
 		estado = 0;
 		String lexema = "";
 		Token token = null;
-		//if (caracterEntero == -1)
-		//	stop = true;
+		if (caracterEntero == -1)
+			stop = true;
 		while (nextToken()) {
 			
 			//else {
@@ -109,85 +107,110 @@ public class AnalizadorLexico {
 					caracterEntero = lector.read();
 					estado = 3; // entero
 					break;
-				} else if (caracterActual == 39) { // '
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 4; // caracter
-					break;
-				} else if (caracterActual == '(') {
-					estado = 8;
-					break;
-				} else if (caracterActual == ')') {
-					estado = 9;
-					break;
-				} else if (caracterActual == '{') {
-					estado = 10;
-					break;
-				} else if (caracterActual == '}') {
-					estado = 11;
-					break;
-				} else if (caracterActual == ',') {
-					estado = 12;
-					break;
-				} else if (caracterActual == '.') {
-					estado = 13;
-					break;
-				} else if (caracterActual == ';') {
-					estado = 14;
-					break;
-				} else if (caracterActual == '>') {
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 15;
-					break;
-				} else if (caracterActual == '<') {
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 17;
-					break;
-				} else if (caracterActual == '!') {
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 19;
-					break;
-				} else if (caracterActual == '=') {
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 21;
-					break;
-				} else if (caracterActual == '&') {
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 23;
-					break;
-				} else if (caracterActual == '|') {
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 25;
-					break;
-				} else if (caracterActual == '+') {
-					estado = 27;
-					break;
-				} else if (caracterActual == '-') {
-					estado = 28;
-					break;
-				} else if (caracterActual == '*') {
-					estado = 29;
-					break;
-				} else if (caracterActual == '%') {
-					estado = 30;
-					break;
-				} else if (caracterActual == '/') {
-					lexema += caracterActual;
-					caracterEntero = lector.read();
-					estado = 31;
-					break;
-				} else if (caracterEntero == -1) {
+				} /*else if (caracterEntero == -1) {
 					stop = true;
 					//estado = -1;
 					break;
-				} else throw new ExcepcionCaracterInvalido("ERROR LEXICO: Linea "+numeroLinea+": caracter no válido.");
-				
+				}  */
+				else 
+					switch (caracterActual) {
+					case 39: { // '
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 4; // caracter
+						break;
+					} case '(': {
+						estado = 8;
+						break;
+					}
+					case ')': {
+						estado = 9;
+						break;
+					}
+					case '{': {
+						estado = 10;
+						break;
+					}
+					case '}': {
+						estado = 11;
+						break;
+					}
+					case ',': {
+						estado = 12;
+						break;
+					}
+					case '.': {
+						estado = 13;
+						break;
+					}
+					case ';': {
+						estado = 14;
+						break;
+					}
+					case '>': {
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 15;
+						break;
+					}
+					case '<': {
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 17;
+						break;
+					}
+					case '!': {
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 19;
+						break;
+					}
+					case '=': {
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 21;
+						break;
+					}
+					case '&': {
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 23;
+						break;
+					}
+					case '|': {
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 25;
+						break;
+					}
+					case '+': {
+						estado = 27;
+						break;
+					}
+					case '-': {
+						estado = 28;
+						break;
+					}
+					case '*': {
+						estado = 29;
+						break;
+					}
+					case '%': {
+						estado = 30;
+						break;
+					}
+					case '/': {
+						lexema += caracterActual;
+						caracterEntero = lector.read();
+						estado = 31;
+						break;
+					}
+					default: {
+					stop = true;
+					if (caracterEntero == -1)
+					throw new ExcepcionCaracterInvalido("ERROR LEXICO: Linea "+numeroLinea+": caracter no válido.");
+				}
+					}
 			}
 			case 1: {
 				//System.out.print(caracterActual);
@@ -198,17 +221,14 @@ public class AnalizadorLexico {
 				} else {
 					String tokenLexema = palabrasReservadas.get(lexema);
 					if (tokenLexema == null)
-						token = new Token("idMetVar", lexema, numeroLinea);
+						return new Token("idMetVar", lexema, numeroLinea);
 					else
-						token = new Token(tokenLexema, tokenLexema, numeroLinea);
-					estado = 0;
+						return new Token(tokenLexema, tokenLexema, numeroLinea);
+					//estado = 0;
 				}
 				break;
 			}
 			case 2: {
-				/*int a = 1;
-				int b = 2;
-				int s= a*b;*/
 				if (Character.isLowerCase(caracterActual) || Character.isUpperCase(caracterActual)
 						|| Character.isDigit(caracterActual) || caracterActual == '_') {
 					lexema += caracterActual;
@@ -216,10 +236,10 @@ public class AnalizadorLexico {
 				} else {
 					String tokenLexema = palabrasReservadas.get(lexema);
 					if (tokenLexema == null)
-						token = new Token("idClase", lexema, numeroLinea);
+						return new Token("idClase", lexema, numeroLinea);
 					else
-						token = new Token(tokenLexema, tokenLexema, numeroLinea);
-					estado = 0;
+						return new Token(tokenLexema, tokenLexema, numeroLinea);
+				//	estado = 0;
 				}
 				break;
 			}
@@ -228,8 +248,8 @@ public class AnalizadorLexico {
 					lexema += caracterActual;
 					caracterEntero = lector.read();
 				} else {
-					token = new Token("entero",lexema,numeroLinea);
-					estado = 0;
+					return new Token("entero",lexema,numeroLinea);
+					//estado = 0;
 				}
 					
 				break;
@@ -249,10 +269,10 @@ public class AnalizadorLexico {
 				break;
 			}
 			case 5: {
-				if (caracterEntero == -1)
-					//stop = true;
+				if (caracterEntero == -1) {
+					stop = true;
 					throw new ExcepcionFormatoCaracter("ERROR LEXICO: Linea "+numeroLinea+": formato caracter inválido.");
-				else {
+				} else {
 					lexema += caracterActual;
 					caracterEntero = lector.read();
 					estado = 6;
@@ -263,9 +283,11 @@ public class AnalizadorLexico {
 				if (caracterActual == 39) { // '
 					
 					estado = 7;
-				} else
+				} else {
+					
+				stop = true;
 					throw new ExcepcionFormatoCaracter("ERROR LEXICO: Linea "+numeroLinea+": formato caracter inválido.");
-				break;
+				} break;
 			}
 			case 7: {
 				if (caracterActual == 39) { // '
@@ -278,51 +300,51 @@ public class AnalizadorLexico {
 			case 8: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("parentesisApertura",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("parentesisApertura",lexema,numeroLinea);
+				//break;
 			}
 			case 9: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("parentesisCierre",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return token = new Token("parentesisCierre",lexema,numeroLinea);
+			//	break;
 			}
 			case 10: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("llaveApertura",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("llaveApertura",lexema,numeroLinea);
+				//break;
 			}
 			case 11: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("llaveCierre",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("llaveCierre",lexema,numeroLinea);
+			//	break;
 			}
 			case 12: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("coma",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("coma",lexema,numeroLinea);
+			//	break;
 			}
 			case 13: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("punto",lexema,numeroLinea);
-				break;
+			//	estado = 0;
+				return new Token("punto",lexema,numeroLinea);
+			//	break;
 			}
 			case 14: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("puntoComa",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("puntoComa",lexema,numeroLinea);
+			//	break;
 			}
 			case 15: {
 				if (caracterActual == '=') {
@@ -330,17 +352,17 @@ public class AnalizadorLexico {
 				} else {
 					//lexema += caracterActual;
 					caracterEntero = lector.read();
-					token = new Token("mayor",lexema,numeroLinea);
-					estado = 0;
+					return new Token("mayor",lexema,numeroLinea);
+					//estado = 0;
 				}
 				break;
 			}
 			case 16: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("mayorIgual",lexema,numeroLinea);
-				break;
+			//	estado = 0;
+				return new Token("mayorIgual",lexema,numeroLinea);
+				//break;
 			}
 			case 17: {
 				if (caracterActual == '=') {
@@ -348,17 +370,17 @@ public class AnalizadorLexico {
 				} else {
 					//lexema += caracterActual;
 					caracterEntero = lector.read();
-					token = new Token("menor",lexema,numeroLinea);
-					estado = 0;
+					return new Token("menor",lexema,numeroLinea);
+					//estado = 0;
 				}
 				break;
 			}
 			case 18: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("menorIgual",lexema,numeroLinea);
-				break;
+			//	estado = 0;
+				return new Token("menorIgual",lexema,numeroLinea);
+			//	break;
 			}
 			case 19: {
 				if (caracterActual == '=') {
@@ -366,17 +388,17 @@ public class AnalizadorLexico {
 				} else {
 					//lexema += caracterActual;
 					caracterEntero = lector.read();
-					token = new Token("negacion",lexema,numeroLinea);
-					estado = 0;
+					return new Token("negacion",lexema,numeroLinea);
+		//			estado = 0;
 				}
 				break;
 			}
 			case 20: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("distinto",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("distinto",lexema,numeroLinea);
+				//break;
 			}
 			case 21: {
 				if (caracterActual == '=') {
@@ -384,17 +406,17 @@ public class AnalizadorLexico {
 				} else {
 					//lexema += caracterActual;
 					caracterEntero = lector.read();
-					token = new Token("asignacion",lexema,numeroLinea);
-					estado = 0;
+					return new Token("asignacion",lexema,numeroLinea);
+					//estado = 0;
 				}
 				break;
 			}
 			case 22: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("comparacion",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("comparacion",lexema,numeroLinea);
+				//break;
 			}
 			case 23: {
 				if (caracterActual == '&') {
@@ -411,9 +433,9 @@ public class AnalizadorLexico {
 				if (caracterActual == '&') {
 					lexema += caracterActual;
 					caracterEntero = lector.read();
-					estado = 0;
-					token = new Token("and",lexema,numeroLinea);
-					break;
+					//estado = 0;
+					return new Token("and",lexema,numeroLinea);
+				//	break;
 				} else {
 					
 					throw new ExcepcionAnd("ERROR LEXICO: Línea "+numeroLinea+": error en token and.");
@@ -435,9 +457,9 @@ public class AnalizadorLexico {
 				if (caracterActual == '|') {
 					lexema += caracterActual;
 					caracterEntero = lector.read();
-					estado = 0;
-					token = new Token("or",lexema,numeroLinea);
-					break;
+					//estado = 0;
+					return new Token("or",lexema,numeroLinea);
+					//break;
 				} else {
 					
 					throw new ExcepcionOr("ERROR LEXICO: Línea "+numeroLinea+": error en token or.");
@@ -447,30 +469,30 @@ public class AnalizadorLexico {
 			case 27: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("suma",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("suma",lexema,numeroLinea);
+				//break;
 			}
 			case 28: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("resta",lexema,numeroLinea);
-				break;
+			//	estado = 0;
+				return new Token("resta",lexema,numeroLinea);
+			//	break;
 			}
 			case 29: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("producto",lexema,numeroLinea);
-				break;
+			//	estado = 0;
+				return new Token("producto",lexema,numeroLinea);
+		//		break;
 			}
 			case 30: {
 				lexema += caracterActual;
 				caracterEntero = lector.read();
-				estado = 0;
-				token = new Token("modulo",lexema,numeroLinea);
-				break;
+				//estado = 0;
+				return new Token("modulo",lexema,numeroLinea);
+				//break;
 			}
 			
 			case 31: {
@@ -499,6 +521,7 @@ public class AnalizadorLexico {
 						}
 					}
 					if (caracterEntero == -1) {
+						stop = true;
 						throw new ExcepcionComentarioMultilinea("ERROR LEXICO: Linea "+numeroLinea+": comentario multinea sin cerrar.");
 					}}
 					break;
@@ -520,9 +543,9 @@ public class AnalizadorLexico {
 					break;
 				} else {
 					caracterEntero = lector.read();
-					estado = 0;
-					token = new Token("cociente",lexema,numeroLinea);
-					break;
+				//	estado = 0;
+					return new Token("cociente",lexema,numeroLinea);
+				//	break;
 				}
 			
 			}/*

@@ -1,5 +1,6 @@
 package main;
 
+@SuppressWarnings("serial")
 public class ExcepcionFormatoCaracter extends Exception {
 	String error;
 	

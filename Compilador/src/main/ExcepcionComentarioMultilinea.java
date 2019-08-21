@@ -1,5 +1,6 @@
 package main;
 
+@SuppressWarnings("serial")
 public class ExcepcionComentarioMultilinea extends Exception {
 	String error;
 	

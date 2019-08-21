@@ -1,5 +1,6 @@
 package main;
 
+@SuppressWarnings("serial")
 public class ExcepcionOr extends Exception {
 	String error;
 	

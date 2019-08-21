@@ -1,10 +1,12 @@
 package test.java;
+
 import static org.junit.jupiter.api.Assertions.*;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
-import java.io.IOException;
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
-
 import main.AnalizadorLexico;
 import main.ExcepcionCaracterInvalido;
 import main.ExcepcionFormatoCaracter;
@@ -12,7 +14,19 @@ import main.Principal;
 import main.Token;
 
 class AnalizadorLexicoTest {
-
+	
+	private PrintStream consola;
+	
+	@Before
+	void antesTest( ) {
+		consola = System.out;
+	}
+	
+	@After
+	void despuesTest( ) {
+		System.setOut(consola);
+	}
+	
 	@Test
 	void testPalabraClaveBoolean() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestBoolean.txt");
@@ -239,25 +253,23 @@ class AnalizadorLexicoTest {
 	}
 	
 	@Test
-	void testIdMetVarInvalido()  {
-		//fail("implementar bien");
-	//	AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestIdMetVarInvalido.txt");
-		//assertThrows(ExcepcionCaracterInvalido.class, () -> analizadorLexico.getToken());
-		//System.out.println("Test main consola");
-	    String[] args = {"src/test/resources/TestIdMetVarInvalido.txt"};
-	    try {
-			Principal.main(args);
-		} catch (Exception e) {
-			System.out.println("Error");
-			//ACAAAA, SEPARAR
-		}
-	    Exception excepcion = assertThrows(ExcepcionCaracterInvalido.class, () ->  Principal.main(args));
-	    assertEquals("ERROR LEXICO: Linea 1: caracter no válido.", excepcion.toString());
+	void testExcepcionCaracterInvalidoDespuesDeTokenValido1() throws Exception  {
+		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCaracterInvalido.txt");
+		Token token = analizadorLexico.getToken();
+		assertEquals("idMetVar", token.getNombre());
+		assertEquals("numero", token.getLexema());
+		assertEquals(1, token.getNroLinea());
+		assertThrows(ExcepcionCaracterInvalido.class, () ->  analizadorLexico.getToken());
 	}
 	
 	@Test
-	void testIdClaseInvalido() throws Exception {
-		fail("no implementado");
+	void testExcepcionCaracterInvalidoDespuesDeTokenValido2() throws Exception  {
+		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCaracterInvalido2.txt");
+		Token token = analizadorLexico.getToken();
+		assertEquals("idClase", token.getNombre());
+		assertEquals("Persona", token.getLexema());
+		assertEquals(3, token.getNroLinea());
+		assertThrows(ExcepcionCaracterInvalido.class, () ->  analizadorLexico.getToken());
 	}
 	
 	@Test
@@ -501,30 +513,43 @@ class AnalizadorLexicoTest {
 	}
 	
 	@Test
-	public void testMainConsola() throws Exception {
+	void testFormatoCaracterInvalido1() throws FileNotFoundException  {
+		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestFormatoCaracterInvalido.txt");
+	    assertThrows(ExcepcionFormatoCaracter.class, () ->  analizadorLexico.getToken());
+	}
+	
+	@Test
+	void testFormatoCaracterInvalido2() throws FileNotFoundException  {
+	    AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestFormatoCaracterInvalido2.txt");
+	    assertThrows(ExcepcionFormatoCaracter.class, () ->  analizadorLexico.getToken());
+	}
+
+	@Test
+	void testArchivoEntradaInexistente()  {
+	    String[] args = {};
+	    Principal.main(args);
+	}
+	
+	@Test
+	public void testSalidaConsola() throws Exception {
 	    System.out.println("Test main consola");
 	    String[] args = {"src/test/resources/TestSuma.txt"};
 	    Principal.main(args);
-//	    System.setIn(original);
 	}
 	
 	@Test
-	void testFormatoCaracterInvalido1()  {
-		//fail("implementar bien");
-	//	AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestIdMetVarInvalido.txt");
-		//assertThrows(ExcepcionCaracterInvalido.class, () -> analizadorLexico.getToken());
-		//System.out.println("Test main consola");
-	    String[] args = {"src/test/resources/TestFormatoCaracterInvalido.txt"};
-	    Exception excepcion = assertThrows(ExcepcionFormatoCaracter.class, () ->  Principal.main(args));
-	    assertEquals("ERROR LEXICO: Linea 3: formato caracter inválido.", excepcion.toString());
+	void testSalidaArchivo()  {
+		String archivoSalida = "D:/out1.txt";
+	    String[] args = {"src/test/resources/TestSuma.txt",archivoSalida};
+	    System.out.println("salida "+archivoSalida);
+	    Principal.main(args);
 	}
 	
 	@Test
-	void testFormatoCaracterInvalido2()  {
-	    String[] args = {"src/test/resources/TestFormatoCaracterInvalido2.txt"};
-	    Exception excepcion = assertThrows(ExcepcionFormatoCaracter.class, () ->  Principal.main(args));
-	    assertEquals("ERROR LEXICO: Linea 1: formato caracter inválido.", excepcion.toString());
+	void testArchivoSalidaConErrorLexico()  {
+		String archivoSalida = "D:/out2.txt";
+	    String[] args = {"src/test/resources/TestFormatoCaracterInvalido.txt",archivoSalida};
+	    System.out.println("salida "+archivoSalida);
+	    Principal.main(args);
 	}
-	
-	/* TEST ARCHIVO DE ENTRADA INEXISTENTE */
 }

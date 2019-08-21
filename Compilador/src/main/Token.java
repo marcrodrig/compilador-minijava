@@ -37,7 +37,7 @@ public class Token {
 
 	@Override
 	public String toString() {
-		return "Token [nombre=" + nombre + ", lexema=" + lexema + ", nroLinea=" + nroLinea + "]";
+		return "Token [Nombre: " + nombre + "\t\t\tLexema: " + lexema + "\t\t\tNúmero de línea: " + nroLinea + "]";
 	}
 
 }

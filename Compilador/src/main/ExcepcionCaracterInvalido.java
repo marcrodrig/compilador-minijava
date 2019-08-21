@@ -1,5 +1,6 @@
 package main;
 
+@SuppressWarnings("serial")
 public class ExcepcionCaracterInvalido extends Exception {
 	String error;
 	
