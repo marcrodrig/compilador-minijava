@@ -1,0 +1,15 @@
+	class Humano extends SerVivo {
+		private String nombre;
+		private Entero edad;
+
+		//constructor
+		public Humano(String nombre, Entero edad) {
+			this.nombre = nombre;
+			this.edad=edad;
+		}
+
+		/*
+		getters y setters
+		*/
+
+}		

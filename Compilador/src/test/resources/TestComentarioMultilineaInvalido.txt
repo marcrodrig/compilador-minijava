@@ -1,0 +1,7 @@
+public class Clase
+{
+
+	/*
+	comentario multilinea sin cerrar
+
+}

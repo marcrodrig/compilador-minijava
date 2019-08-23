@@ -1,10 +1,10 @@
 package main;
 
 @SuppressWarnings("serial")
-public class ExcepcionOr extends Exception {
+public class ExcepcionFormatoComentarioMultilinea extends Exception {
 	String error;
 	
-	public ExcepcionOr(String mensaje) {
+	public ExcepcionFormatoComentarioMultilinea(String mensaje) {
 		error = mensaje;
 	}
 	

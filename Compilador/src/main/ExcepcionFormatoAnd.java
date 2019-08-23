@@ -1,10 +1,10 @@
 package main;
 
 @SuppressWarnings("serial")
-public class ExcepcionAnd extends Exception {
+public class ExcepcionFormatoAnd extends Exception {
 	String error;
 	
-	public ExcepcionAnd(String mensaje) {
+	public ExcepcionFormatoAnd(String mensaje) {
 		error = mensaje;
 	}
 	
