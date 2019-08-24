@@ -10,7 +10,8 @@ public class Principal {
 	public static void main(String[] args) {
 		PrintStream consola = System.out;
 		if (args.length > 2 || args.length == 0) {
-			System.out.println("Cantidad de parámetros inválida.\nModo de uso: <PROGRAM_NAME> <IN_FILE> [OUT_FILE]");
+			String nuevaLinea = System.lineSeparator();
+			System.out.println("Cantidad de parámetros inválida." + nuevaLinea + "Modo de uso: <PROGRAM_NAME> <IN_FILE> [OUT_FILE]");
 		} else if (args.length == 2) {
 			String archivoSalida = args[1];
 			String extensionArchivoSalida = getFileExtension(archivoSalida);
@@ -43,7 +44,7 @@ public class Principal {
 							if (token != null) // token == null -> EOF
 								System.out.println(token.toString());
 						} catch (IOException | ExcepcionCaracterInvalido | ExcepcionFormatoCaracter
-								| ExcepcionFormatoAnd | ExcepcionFormatoOr | ExcepcionFormatoComentarioMultilinea e) {
+								| ExcepcionFormatoAnd | ExcepcionFormatoOr | ExcepcionFormatoComentarioMultilinea | ExcepcionFormatoString e) {
 							System.out.println(e.toString());
 						}
 					}

@@ -13,6 +13,7 @@ import main.ExcepcionFormatoAnd;
 import main.ExcepcionFormatoCaracter;
 import main.ExcepcionFormatoComentarioMultilinea;
 import main.ExcepcionFormatoOr;
+import main.ExcepcionFormatoString;
 import main.Token;
 
 class AnalizadorLexicoExcepcionesTest {
@@ -28,7 +29,7 @@ class AnalizadorLexicoExcepcionesTest {
 			assertEquals(1, token.getNroColumna());
 			assertThrows(ExcepcionCaracterInvalido.class, () -> analizadorLexico.getToken());
 		} catch (IOException | ExcepcionFormatoCaracter | ExcepcionFormatoAnd | ExcepcionFormatoOr
-				| ExcepcionFormatoComentarioMultilinea e) {
+				| ExcepcionFormatoComentarioMultilinea | ExcepcionFormatoString e) {
 			fail("No debería lanzar esta excepción: " + e.getClass().getSimpleName());
 		}
 	}
@@ -44,7 +45,7 @@ class AnalizadorLexicoExcepcionesTest {
 			assertEquals(5, token.getNroColumna());
 			assertThrows(ExcepcionCaracterInvalido.class, () -> analizadorLexico.getToken());
 		} catch (IOException | ExcepcionFormatoCaracter | ExcepcionFormatoAnd | ExcepcionFormatoOr
-				| ExcepcionFormatoComentarioMultilinea e) {
+				| ExcepcionFormatoComentarioMultilinea | ExcepcionFormatoString e) {
 			fail("No debería lanzar esta excepción: " + e.getClass().getSimpleName());
 		}
 	}
@@ -118,9 +119,20 @@ class AnalizadorLexicoExcepcionesTest {
 			assertEquals(1, token.getNroColumna());
 			assertThrows(ExcepcionFormatoComentarioMultilinea.class, () -> analizadorLexico.getToken());
 		} catch (IOException | ExcepcionCaracterInvalido | ExcepcionFormatoCaracter | ExcepcionFormatoAnd
-				| ExcepcionFormatoOr e) {
+				| ExcepcionFormatoOr | ExcepcionFormatoString e) {
 			fail("No debería lanzar esta excepción: " + e.getClass().getSimpleName());
 		}
 	}
 
+	@Test
+	void testStringMultilineaInvalido() throws ExcepcionFormatoString {
+		try {
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico(
+					"src/test/resources/TestStringMultilineaInvalido.txt");
+			assertThrows(ExcepcionFormatoString.class, () -> analizadorLexico.getToken());
+		} catch (FileNotFoundException e) {
+			fail("No debería lanzar esta excepción: " + e.getClass().getSimpleName());
+		}
+	}
+	
 }
