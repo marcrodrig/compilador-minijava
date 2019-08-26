@@ -6,17 +6,49 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 
+/**
+ * Clase Analizador Léxico, encargada de realizar el análisis léxico y proveer tokens reconocidos con la información necesaria
+ * @author Rodríguez, Marcelo
+ *
+ */
 public class AnalizadorLexico {
-
+/**
+ * Lector del archivo de entrada
+ */
 	private BufferedReader lector;
+	/**
+	 * Número de estado en el que se encuentra el análisis para obtener el próximo token
+	 */
 	private int estado;
+	/**
+	 * Valor entero del  último caracter leído
+	 */
 	private int caracterEntero;
+	/**
+	 * Número de línea en que se encuentra el analizador
+	 */
 	private int numeroLinea;
+	/**
+	 * Número de columna en que se encuentra el analizador
+	 */
 	private int numeroColumna;
+	/**
+	 * Catacter que se analiza
+	 */
 	private char caracterActual;
+	/**
+	 * Mapeo con las palabras reservadas
+	 */
 	private LinkedHashMap<String, String> palabrasReservadas;
+	/**
+	 * Indica si el análisis se debe detener
+	 */
 	private boolean stop = false;
 
+	/**
+	 * @param archivoEntrada El parámetro archivoEntrada define la ruta del archivo de texto que se analizará
+	 * @throws FileNotFoundException si no encuentra el archivo de entrada
+	 */
 	public AnalizadorLexico(String archivoEntrada) throws FileNotFoundException {
 		lector = new BufferedReader(new FileReader(archivoEntrada));
 		try {
@@ -28,7 +60,10 @@ public class AnalizadorLexico {
 		numeroColumna = 1;
 		palabrasReservadas = generarTablaPalabrasReservadas();
 	}
-
+/**
+ * Método que inicializa la tabla de palabras reservadas
+ * @return El mapeo con clave y valor igual al String de la palabra reservada
+ */
 	private LinkedHashMap<String, String> generarTablaPalabrasReservadas() {
 		LinkedHashMap<String, String> tabla = new LinkedHashMap<String, String>();
 		tabla.put("boolean", "boolean");
@@ -56,22 +91,38 @@ public class AnalizadorLexico {
 		return tabla;
 	}
 
+	/**
+	 * Método que verifica si se puede solicitar un token
+	 * @return true si se puede solicitar un token, false en caso contrario
+	 */
 	public boolean nextToken() {
 		return stop == false; // caracterEntero == 1-> EOF
 	}
   
-	public Token getToken() throws  IOException, ExcepcionCaracterInvalido, ExcepcionFormatoCaracter, ExcepcionFormatoAnd, ExcepcionFormatoOr, ExcepcionFormatoComentarioMultilinea, ExcepcionFormatoString {
+	/**
+	 * Método que retorna el próximo token, teniendo en cuenta el archivo de entrada
+	 * @return el siguiente token correspondiente al archivo de entrada
+	 * @throws ExcepcionCaracterInvalido si en el análisis se encuentra un caracter inválido
+	 * @throws ExcepcionFormatoCaracter si en el token caracter no se respeta su fomato
+	 * @throws ExcepcionFormatoAnd si no se respeta el formato and: &&
+	 * @throws ExcepcionFormatoOr si no se respeta el formato or : ||
+	 * @throws ExcepcionFormatoComentarioMultilinea si no se cierra correctamente un comentario multilinea
+	 * @throws ExcepcionFormatoString si no se respeta el formato de un String 
+	 */
+	public Token getToken() throws ExcepcionCaracterInvalido, ExcepcionFormatoCaracter, ExcepcionFormatoAnd, ExcepcionFormatoOr, ExcepcionFormatoComentarioMultilinea, ExcepcionFormatoString {
+		Token token = null;
 		estado = 0;
 		String lexema = "";
-		Token token = null;
 		if (caracterEntero == -1)
 			stop = true;
+		try {
 		while (nextToken()) {
 			caracterActual = (char) caracterEntero;
 			switch (estado) {
 			case 0: {
 				if (caracterActual == ' ' || caracterActual == '\t' || caracterActual == '\r') {
-					caracterEntero = lector.read();
+						caracterEntero = lector.read();
+					
 				} else
 				if (caracterActual == '\n') {
 					caracterEntero = lector.read();
@@ -260,9 +311,7 @@ public class AnalizadorLexico {
 					caracterEntero = lector.read();
 					numeroColumna++;
 					estado = 6;
-					break;
-					} else
-						stop = true;
+					}
 				break;
 			}
 			case 5: {
@@ -282,22 +331,14 @@ public class AnalizadorLexico {
 					numeroColumna++;
 					estado = 7;
 				} else {
-					
-				stop = true;
+					stop = true;
 					throw new ExcepcionFormatoCaracter("ERROR LEXICO: Linea "+numeroLinea+": formato caracter inválido.");
-				} break;
+				} 
 			}
 			case 7: {
-				if (caracterActual == 39) { // '
 					lexema += caracterActual;
 					caracterEntero = lector.read();
 					return new Token("caracter",lexema,numeroLinea, numeroColumna - lexema.length());
-				} else {
-					stop = true;
-					
-					throw new ExcepcionFormatoCaracter("ERROR LEXICO: Linea "+numeroLinea+": formato caracter inválido.");
-				}
-				//break;
 			}
 			case 8: {
 				lexema += caracterActual;
@@ -338,10 +379,8 @@ public class AnalizadorLexico {
 				if (caracterActual == '=') {
 					numeroColumna++;
 					estado = 16;
-				} else {
+				} else
 					return new Token("mayor",lexema,numeroLinea, numeroColumna - lexema.length());
-				}
-				break;
 			}
 			case 16: {
 				lexema += caracterActual;
@@ -352,10 +391,8 @@ public class AnalizadorLexico {
 				if (caracterActual == '=') {
 					numeroColumna++;
 					estado = 18;
-				} else {
+				} else
 					return new Token("menor",lexema,numeroLinea, numeroColumna - lexema.length());
-				}
-				break;
 			}
 			case 18: {
 				lexema += caracterActual;
@@ -382,7 +419,6 @@ public class AnalizadorLexico {
 					numeroColumna++;
 					estado = 22;
 				} else {
-					//caracterEntero = lector.read();
 					return new Token("asignacion",lexema,numeroLinea,numeroColumna - lexema.length());
 				}
 				break;
@@ -394,52 +430,32 @@ public class AnalizadorLexico {
 			}
 			case 23: {
 				if (caracterActual == '&') {
-					//caracterEntero = lector.read();
 					numeroColumna++;
 					estado = 24;
 				} else {
 					stop = true;
-					throw new ExcepcionFormatoAnd("ERROR LEXICO: Línea "+numeroLinea+": error en palabra reservada &&.");
-					
+					throw new ExcepcionFormatoAnd("ERROR LEXICO: Línea "+numeroLinea+": error en formato &&");
 				}
-				break;
 			}
 			case 24: {
-				if (caracterActual == '&') {
 					lexema += caracterActual;
 					caracterEntero = lector.read();
 					return new Token("and",lexema,numeroLinea, numeroColumna - lexema.length());
-				//	break;
-				}
-				/* else {
-					stop = true;
-					throw new ExcepcionFormatoAnd("ERROR LEXICO: Línea "+numeroLinea+": error en token and.");
-					
-				}*/
 			}
 			case 25: {
 				if (caracterActual == '|') {
 					numeroColumna++;
-					//caracterEntero = lector.read();
 					estado = 26;
 				} else {
 					stop = true;
-					throw new ExcepcionFormatoOr("ERROR LEXICO: Línea "+numeroLinea+": error en token or.");
-					
+					throw new ExcepcionFormatoOr("ERROR LEXICO: Línea "+numeroLinea+": error en formato ||");	
 				}
 				break;
 			}
 			case 26: {
-				if (caracterActual == '|') {
 					lexema += caracterActual;
 					caracterEntero = lector.read();
 					return new Token("or",lexema,numeroLinea,numeroColumna - lexema.length());
-				} 
-				/*else {
-					stop = true;
-					throw new ExcepcionFormatoOr("ERROR LEXICO: Línea "+numeroLinea+": error en token or.");
-					
-				}*/
 			}
 			case 27: {
 				lexema += caracterActual;
@@ -478,7 +494,10 @@ public class AnalizadorLexico {
 						caracterEntero = lector.read();
 						numeroColumna++;
 						caracterActual = (char) caracterEntero;
-						if (caracterActual == '\n') {
+						if (caracterActual == '\t') {
+							numeroColumna += 3; // ya había sumado 1
+						}
+						else if (caracterActual == '\n') {
 							numeroLinea++;
 							numeroColumna = 1;
 						}
@@ -529,24 +548,24 @@ public class AnalizadorLexico {
 					caracterActual = (char) caracterEntero;
 					numeroColumna++;
 				}
-				switch (caracterActual) {
-				case '"': {
-					estado = 35;
-					break;
-				} 
-				case '\\': {
-					caracterEntero = lector.read();
-					caracterActual = (char) caracterEntero;
-					numeroColumna++;
-					estado = 33;
-					break;
-				}
-				default: 
-				 {
-					throw new ExcepcionFormatoString("ERROR LEXICO: Linea "+numeroLinea+": error en formato de String, String sin cerrar o con un salto de línea.");
-				}
-				
-			}
+					switch (caracterActual) {
+					case '"': {
+						estado = 35;
+						break;
+					}
+					case '\\': {
+						caracterEntero = lector.read();
+						caracterActual = (char) caracterEntero;
+						numeroColumna++;
+						estado = 33;
+						break;
+					}
+					default: {
+						throw new ExcepcionFormatoString("ERROR LEXICO: Linea " + numeroLinea
+								+ ": error en formato de String, String sin cerrar o con un salto de línea.");
+					}
+
+					}
 				 break;
 				}
 			case 33: {
@@ -559,6 +578,7 @@ public class AnalizadorLexico {
 					estado = 34;
 					break;
 			} else {
+				lexema += '\\';
 				lexema += caracterActual;
 				caracterEntero = lector.read();
 				caracterActual = (char) caracterEntero;
@@ -569,10 +589,6 @@ public class AnalizadorLexico {
 				}
 			case 34: {
 				if(caracterActual == '"') {
-					lexema += '\n';
-					caracterEntero = lector.read();
-					caracterActual = (char) caracterEntero;
-					numeroColumna++;
 					estado = 35;
 					break;
 			} else {
@@ -593,7 +609,11 @@ public class AnalizadorLexico {
 			}
 			}
 		}
+		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return token;
 	}
-	
 }

@@ -1,15 +1,14 @@
 package test.java;
+
 import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
-
+import org.junit.Test;
 import main.AnalizadorLexico;
 import main.Token;
 
-class AnalizadorLexicoPalabrasReservadasTest {
+public class AnalizadorLexicoPalabrasReservadasTest {
 
 	@Test
-	void testPalabraClaveBoolean() throws Exception {
+	public void testPalabraClaveBoolean() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestBoolean.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("boolean", token.getNombre());
@@ -19,7 +18,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 
 	@Test
-	void testPalabraClaveChar() throws Exception {
+	public void testPalabraClaveChar() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestChar.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("char", token.getNombre());
@@ -29,7 +28,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveClass() throws Exception {
+	public void testPalabraClaveClass() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestClass.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("class", token.getNombre());
@@ -39,7 +38,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveDynamic() throws Exception {
+	public void testPalabraClaveDynamic() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestDynamic.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("dynamic", token.getNombre());
@@ -49,7 +48,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveElse() throws Exception {
+	public void testPalabraClaveElse() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestElse.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("else", token.getNombre());
@@ -59,7 +58,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveExtends() throws Exception {
+	public void testPalabraClaveExtends() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestExtends.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("extends", token.getNombre());
@@ -69,7 +68,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveFalse() throws Exception {
+	public void testPalabraClaveFalse() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestFalse.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("false", token.getNombre());
@@ -79,7 +78,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveFinal() throws Exception {
+	public void testPalabraClaveFinal() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestFinal.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("final", token.getNombre());
@@ -89,7 +88,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveIf() throws Exception {
+	public void testPalabraClaveIf() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestIf.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("if", token.getNombre());
@@ -99,7 +98,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveInt() throws Exception {
+	public void testPalabraClaveInt() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestInt.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("int", token.getNombre());
@@ -109,7 +108,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveNew() throws Exception {
+	public void testPalabraClaveNew() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestNew.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("new", token.getNombre());
@@ -119,7 +118,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveNull() throws Exception {
+	public void testPalabraClaveNull() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestNull.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("null", token.getNombre());
@@ -129,7 +128,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClavePrivate() throws Exception {
+	public void testPalabraClavePrivate() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestPrivate.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("private", token.getNombre());
@@ -139,7 +138,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveProtected() throws Exception {
+	public void testPalabraClaveProtected() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestProtected.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("protected", token.getNombre());
@@ -149,7 +148,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClavePublic() throws Exception {
+	public void testPalabraClavePublic() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestPublic.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("public", token.getNombre());
@@ -159,7 +158,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveReturn() throws Exception {
+	public void testPalabraClaveReturn() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestReturn.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("return", token.getNombre());
@@ -169,7 +168,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveStatic() throws Exception {
+	public void testPalabraClaveStatic() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestStatic.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("static", token.getNombre());
@@ -179,7 +178,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveString() throws Exception {
+	public void testPalabraClaveString() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestString.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("String", token.getNombre());
@@ -189,7 +188,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveThis() throws Exception {
+	public void testPalabraClaveThis() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestThis.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("this", token.getNombre());
@@ -199,7 +198,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveTrue() throws Exception {
+	public void testPalabraClaveTrue() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestTrue.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("true", token.getNombre());
@@ -209,7 +208,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveVoid() throws Exception {
+	public void testPalabraClaveVoid() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestVoid.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("void", token.getNombre());
@@ -219,7 +218,7 @@ class AnalizadorLexicoPalabrasReservadasTest {
 	}
 	
 	@Test
-	void testPalabraClaveWhile() throws Exception {
+	public void testPalabraClaveWhile() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestWhile.txt");
 		Token token = analizadorLexico.getToken();
 		assertEquals("while", token.getNombre());
