@@ -1,7 +1,9 @@
 package main;
 
 /**
- * Clase Token. Un token registra su nombre, lexema y números de línea/columna donde se leyó de un archivo de entrada
+ * Clase Token. Un token registra su nombre, lexema y números de línea/columna
+ * donde se leyó de un archivo de entrada
+ * 
  * @author Rodríguez, Marcelo
  *
  */
@@ -25,9 +27,9 @@ public class Token {
 
 	/**
 	 * 
-	 * @param nombre El nombre del token a crear
-	 * @param lexema El lexema del token a crear
-	 * @param numeroLinea El número de línea donde se encuentra el token a crear
+	 * @param nombre        El nombre del token a crear
+	 * @param lexema        El lexema del token a crear
+	 * @param numeroLinea   El número de línea donde se encuentra el token a crear
 	 * @param numeroColumna El número de columna donde comienza el token a crear
 	 */
 	public Token(String nombre, String lexema, int numeroLinea, int numeroColumna) {
@@ -57,7 +59,7 @@ public class Token {
 	public int getNroLinea() {
 		return numeroLinea;
 	}
-	
+
 	/**
 	 * @return El número de columna del token
 	 */
@@ -70,7 +72,7 @@ public class Token {
 	 */
 	@Override
 	public String toString() {
-		return "Token ["+numeroLinea+":"+numeroColumna+"] [Nombre: " + nombre + "\t\t\tLexema: " + lexema +"]" ;
+		return "Token [" + numeroLinea + ":" + numeroColumna + "] [Nombre: " + nombre + "\t\t\tLexema: " + lexema + "]";
 	}
 
 }

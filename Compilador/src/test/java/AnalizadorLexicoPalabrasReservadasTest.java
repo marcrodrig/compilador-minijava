@@ -1,12 +1,17 @@
 package test.java;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.Rule;
 import org.junit.Test;
 import main.AnalizadorLexico;
 import main.Token;
 
 public class AnalizadorLexicoPalabrasReservadasTest {
 
+	@Rule
+    public TestCasePrinterRule pr = new TestCasePrinterRule(System.out);
+	
 	@Test
 	public void testPalabraClaveBoolean() throws Exception {
 		AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestBoolean.txt");

@@ -8,7 +8,7 @@ package main;
 @SuppressWarnings("serial")
 public class ExcepcionFormatoAnd extends Exception {
 	/**
-	 * El mensaje de error
+	 * El mensaje de error de ExcepcionFormatoAnd
 	 */
 	String error;
 	

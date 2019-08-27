@@ -1,12 +1,17 @@
 package test.java;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.Rule;
 import org.junit.Test;
 import main.AnalizadorLexico;
 import main.Token;
 
 public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 
+	@Rule
+    public TestCasePrinterRule pr = new TestCasePrinterRule(System.out);
+	
 	@Test
 	public void testIdMetVar() {
 		try {

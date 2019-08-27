@@ -42,7 +42,8 @@ public class Principal {
 							salida = new PrintStream(new File(archivoSalida)); // Creo el archivo de salida
 							System.setOut(salida);
 						} catch (FileNotFoundException e) {
-							System.out.println("ERROR: Error en la creación del archivo de salida.");
+							System.out.println("Error en la creación del archivo de salida.");
+							continuar = false;
 						}
 					} else {
 						continuar = false;

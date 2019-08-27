@@ -3,6 +3,8 @@ package test.java;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import org.junit.Rule;
 import org.junit.Test;
 import main.AnalizadorLexico;
 import main.ExcepcionCaracterInvalido;
@@ -14,6 +16,9 @@ import main.ExcepcionFormatoString;
 import main.Token;
 
 public class AnalizadorLexicoExcepcionesTest {
+	
+	@Rule
+    public TestCasePrinterRule pr = new TestCasePrinterRule(System.out);
 
 	@Test
 	public void testExcepcionCaracterInvalidoDespuesDeTokenValido1() throws ExcepcionCaracterInvalido {
