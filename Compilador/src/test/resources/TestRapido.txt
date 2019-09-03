@@ -1,1 +1,4 @@
-!false
+class Prueba {
+	public Integer a,b;
+	Prueba() { ; }
+}

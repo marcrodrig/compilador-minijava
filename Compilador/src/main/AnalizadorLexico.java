@@ -128,8 +128,10 @@ public class AnalizadorLexico {
 		Token token = null;
 		estado = 0;
 		String lexema = "";
-		if (caracterEntero == -1)
+		if (caracterEntero == -1) {
 			stop = true;
+			return new Token("EOF", "$", numeroLinea, numeroColumna);
+		}
 		try {
 			while (nextToken()) {
 				caracterActual = (char) caracterEntero;
@@ -156,7 +158,7 @@ public class AnalizadorLexico {
 							estado = 3; // entero
 						} else if (caracterEntero == -1) {
 							stop = true;
-							break;
+							return new Token("EOF", "$", numeroLinea, numeroColumna);
 						} else {
 							switch (caracterActual) {
 								case 39: { // comilla simple

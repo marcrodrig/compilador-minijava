@@ -7,24 +7,12 @@ package main;
  *
  */
 @SuppressWarnings("serial")
-public class ExcepcionFormatoCaracter extends Exception {
-	/**
-	 * El mensaje de error de ExcepcionFormatoCaracter
-	 */
-	String error;
-
+public class ExcepcionFormatoCaracter extends ExcepcionLexico {
 	/**
 	 * @param mensaje El mensaje de error
 	 */
 	public ExcepcionFormatoCaracter(String mensaje) {
-		error = mensaje;
+		super(mensaje);
 	}
 
-	/**
-	 * Retorna el mensaje de error
-	 */
-	@Override
-	public String toString() {
-		return error;
-	}
 }

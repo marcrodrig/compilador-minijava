@@ -7,24 +7,12 @@ package main;
  *
  */
 @SuppressWarnings("serial")
-public class ExcepcionFormatoComentarioMultilinea extends Exception {
-	/**
-	 * El mensaje de error de ExcepcionFormatoComentarioMultilinea
-	 */
-	String error;
-
+public class ExcepcionFormatoComentarioMultilinea extends ExcepcionLexico {
 	/**
 	 * @param mensaje El mensaje de error
 	 */
 	public ExcepcionFormatoComentarioMultilinea(String mensaje) {
-		error = mensaje;
+		super(mensaje);
 	}
 
-	/**
-	 * Retorna el mensaje de error
-	 */
-	@Override
-	public String toString() {
-		return error;
-	}
 }
