@@ -1,12 +1,5 @@
 class Clase {
-
-private int a;
-	dynamic void metodo1() {
-		while (expresion == true) {
-			while (expresion2 == true) {
-			
-			}
-		}
-	}
-
+static void# met1() {
+	a.b.c.d = '\e';
+}
 }

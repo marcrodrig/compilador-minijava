@@ -487,28 +487,56 @@ public class AnalizadorSintactico {
 
 	private void ladoIzquierdo() throws ExcepcionLexico, ExcepcionSintactico {
 		match("idMetVar");
-		idsEncadenados();
+		encadenadoAsignacion();
 	}
 
-	private void idsEncadenados() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("punto")) {
+	private void encadenadoAsignacion() throws ExcepcionLexico, ExcepcionSintactico {
 		idEncadenado();
-		otroIdsEncadenados();
-		} else if (tokenActual.getNombre().equals("asignacion")) {   }
-		else throw new ExcepcionSintactico("Error sintáctico idsEncadenados " + tokenActual.getNroLinea());
+		otroEncadenadoAsignacion();
 	}
 
-	private void otroIdsEncadenados() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("punto")) {
+	private void otroEncadenadoAsignacion() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "punto":
+		case "parentesisApertura":
+			idEncadenado();
+			otroEncadenadoAsignacion();
+			break;
+		case "asignacion":
+			break;
+			default:
+				throw new ExcepcionSintactico("Error sintáctico otroEncadenadoAsignacion " + tokenActual.getNroLinea());
+		}
+	/*	if (tokenActual.getNombre().equals("punto")) {
 			idEncadenado();
 			otroIdsEncadenados();
 		} else if (tokenActual.getNombre().equals("asignacion")) {   }
-		else throw new ExcepcionSintactico("Error sintáctico otroIdsEncadenados " + tokenActual.getNroLinea());
+		else throw new ExcepcionSintactico("Error sintáctico otroIdsEncadenados " + tokenActual.getNroLinea());*/
 	}
 
 	private void idEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
-		match("punto");
-		match("idMetVar");
+		switch (tokenActual.getNombre()) {
+		case "punto":
+			match("punto");
+			match("idMetVar");
+			rIdEncadenado();
+			break;
+		case "parentesisApertura":
+			argsActuales();
+			break;
+		}
+	}
+	
+	private void rIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "parentesisApertura":
+			argsActuales();
+			break;
+		case "asignacion":
+			break;
+			/*default:
+				throw new ExcepcionSintactico("Error sintáctico rIdEncadenado " + tokenActual.getNroLinea());*/
+		}
 	}
 	
 	private void expresion() throws ExcepcionLexico, ExcepcionSintactico {
@@ -579,7 +607,7 @@ public class AnalizadorSintactico {
 		case "null":
 		case "true":
 		case "false":
-		case "numero":
+		case "entero":
 		case "caracter":
 		case "cadena":
 		case "parentesisApertura":
