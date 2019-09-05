@@ -1,4 +1,12 @@
-class Prueba {
-	public Integer a,b;
-	Prueba() { ; }
+class Clase {
+
+private int a;
+	dynamic void metodo1() {
+		while (expresion == true) {
+			while (expresion2 == true) {
+			
+			}
+		}
+	}
+
 }

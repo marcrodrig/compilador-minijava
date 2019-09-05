@@ -16,7 +16,7 @@ public class AnalizadorSintactico {
 		if (nombre.equals(tokenActual.getNombre()))
 			tokenActual = analizadorLexico.getToken();
 		else
-			throw new ExcepcionSintactico("Error sintáctico match " + tokenActual.getNroLinea());
+			throw new ExcepcionSintactico("Error sintáctico match . Esperaba " + nombre + " " + tokenActual.getNroLinea());
 	}
 
 	public void inicial() throws ExcepcionLexico, ExcepcionSintactico {
@@ -97,9 +97,69 @@ public class AnalizadorSintactico {
 			case "idClase":
 				ctor();
 				break;
+			case "static":
+			case "dynamic":
+				metodo();
+				break;
+			default:
+				break;
 		}
 	}
 	
+	private void metodo() throws ExcepcionLexico, ExcepcionSintactico {
+		formaMetodo();
+		fnl();
+		tipoMetodo();
+		match("idMetVar");
+		argsFormales();
+		bloque();
+	}
+
+	private void formaMetodo() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "static":
+			match("static");
+			break;
+		case "dynamic":
+			match("dynamic");
+			break;
+		default:
+			throw new ExcepcionSintactico("Error sintáctico: se esperaba la forma de método (static o dynamic) " + tokenActual.getNroLinea());
+		}
+	}
+	
+	private void fnl() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "final":
+			match("final");
+			break;
+		case "void":
+		case "idClase":
+		case "boolean":
+		case "char":
+		case "int":
+		case "String":
+			break;
+		default:
+			throw new ExcepcionSintactico("Error sintáctico: se esperaba tipo de método " + tokenActual.getNroLinea());
+		}
+	}
+	
+	private void tipoMetodo() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "void":
+			match("void");
+			break;
+		case "idClase":
+		case "boolean":
+		case "char":
+		case "int":
+		case "String":
+			tipo();
+			break;
+		}
+	}
+
 	private void atributo() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
 			case "public":
@@ -339,24 +399,501 @@ public class AnalizadorSintactico {
 				match("puntoComa");
 				break;
 			case "parentesisApertura":
+				sentenciaSimple();
+				match("puntoComa");
+				break;
 			case "boolean":
 			case "char":
 			case "int":
 			case "String":
 			case "idClase":
+				tipo();
+				listaDecVars();
+				// ACA PODRIA IR INLINE
+				match("puntoComa");
+				break;
 			case "if":
+				match("if");
+				match("parentesisApertura");
+				expresion();
+				match("parentesisCierre");
+				sentencia();
+				rSentenciaIf();
+				break;
 			case "while":
+				match("while");
+				match("parentesisApertura");
+				expresion();
+				match("parentesisCierre");
+				sentencia();
+				break;
 			case "llaveApertura":
+				bloque();
+				break;
 			case "return":
+				match("return");
+				retorno();
+				match("puntoComa");
+				break;
 			default:
 				throw new ExcepcionSintactico("Error sintáctico sentencia " + tokenActual.getNroLinea());
 		}
 	}
 
-	private void asignacion() {
+	private void retorno() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("puntoComa"))
+		{ }
+		else { // CHEQUEAR
+			expresion();
+		}
+	}
+
+	private void rSentenciaIf() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("else")) {
+			match("else");
+			sentencia();
+		} else { }
+	}
+
+	private void listaDecVars() throws ExcepcionLexico, ExcepcionSintactico {
+		match("idMetVar");
+		rListaDecVars();
+	}
+
+	private void rListaDecVars() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "coma":
+			match("coma");
+			listaDecVars();
+			break;
+		case "puntoComa": // siguientes
+			break;
+		default:
+			throw new ExcepcionSintactico("Error sintáctico rListaDecVars " + tokenActual.getNroLinea());
+		}
+	}
+
+	private void sentenciaSimple() throws ExcepcionLexico, ExcepcionSintactico {
+		match("parentesisApertura");
+		expresion();
+		match("parentesisCierre");
+	}
+
+	private void asignacion() throws ExcepcionLexico, ExcepcionSintactico {
 		ladoIzquierdo();
 		match("asignacion");
 		expresion();
 	}
+
+	private void ladoIzquierdo() throws ExcepcionLexico, ExcepcionSintactico {
+		match("idMetVar");
+		idsEncadenados();
+	}
+
+	private void idsEncadenados() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("punto")) {
+		idEncadenado();
+		otroIdsEncadenados();
+		} else if (tokenActual.getNombre().equals("asignacion")) {   }
+		else throw new ExcepcionSintactico("Error sintáctico idsEncadenados " + tokenActual.getNroLinea());
+	}
+
+	private void otroIdsEncadenados() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("punto")) {
+			idEncadenado();
+			otroIdsEncadenados();
+		} else if (tokenActual.getNombre().equals("asignacion")) {   }
+		else throw new ExcepcionSintactico("Error sintáctico otroIdsEncadenados " + tokenActual.getNroLinea());
+	}
+
+	private void idEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
+		match("punto");
+		match("idMetVar");
+	}
 	
+	private void expresion() throws ExcepcionLexico, ExcepcionSintactico {
+		expOr();
+	}
+
+	private void expOr() throws ExcepcionLexico, ExcepcionSintactico {
+		expAnd();
+		or();
+	}
+
+	private void or() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("or")) {
+			match("or");
+			expAnd();
+			or();
+		} else { }
+	}
+
+	private void expAnd() throws ExcepcionLexico, ExcepcionSintactico {
+		expIg();
+		and();
+	}
+
+	private void and() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("and")) {
+			match("and");
+			expIg();
+			and();
+		} else { }
+	}
+	
+	private void expIg() throws ExcepcionLexico, ExcepcionSintactico {
+		expComp();
+		ig();
+	}
+
+	private void ig() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "comparacion":
+		case "distinto":
+			opIg();
+			expComp();
+			ig();
+			break;
+			// ??
+		}
+	}
+
+	private void opIg() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "comparacion":
+			match("comparacion");
+			break;
+		case "distinto":
+			match("distinto");
+			break;
+		default:
+			throw new ExcepcionSintactico("Error sintáctico opIg " + tokenActual.getNroLinea());
+		}
+	}
+	
+	private void expComp() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "suma":
+		case "resta":
+		case "negacion":
+		case "null":
+		case "true":
+		case "false":
+		case "numero":
+		case "caracter":
+		case "cadena":
+		case "parentesisApertura":
+		case "this":
+		case "idMetVar":
+		case "idClase":
+		case "new":
+			expAd();
+			RExpComp();
+			break;
+		default:
+			throw new ExcepcionSintactico("Error sintáctico expComp " + tokenActual.getNroLinea());
+		}
+	}
+
+	private void RExpComp() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "menor":
+		case "menorIgual":
+		case "mayor":
+		case "mayorIgual":
+			opComp();
+			expAd();
+			break;
+		default:
+				break; // ?
+			}
+	}
+
+	private void opComp() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "menor":
+			match("menor");
+			break;
+		case "menorIgual":
+			match("menorIgual");
+			break;
+		case "mayor":
+			match("mayor");
+			break;
+		case "mayorIgual":
+			match("mayorIgual");
+			break;
+		default:
+			break; // ?
+	}
+	}
+
+	private void expAd() throws ExcepcionLexico, ExcepcionSintactico {
+		expMul();
+		ad();	
+	}
+
+	private void ad() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+	case "suma":
+	case "resta":
+		opAd();
+		expMul();
+		ad();
+		break;
+		default:
+			break; // ?
+		}
+	}
+
+	private void opAd() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "suma":
+			match("suma");
+			break;
+		case "resta":
+			match("resta");
+			break;
+			default:
+				break; //?
+		
+	}
+	}
+	private void expMul() throws ExcepcionLexico, ExcepcionSintactico {
+		expUn();
+		mul();
+	}
+
+	private void mul() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "producto":
+		case "cociente":
+		case "modulo":
+			opMul();
+			expUn();
+			mul();
+			break;
+			default: { break; } ///?
+				//throw new ExcepcionSintactico("Error sintáctico mul " + tokenActual.getNroLinea());
+			//	break; //?
+		
+	}
+	}
+
+	private void opMul() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+			case "producto":
+				match("producto");
+				break;
+			case "cociente":
+				match("cociente");
+				break;
+			case "modulo":
+				match("modulo");
+				break;
+			default: 
+			throw new ExcepcionSintactico("Error sintáctico opMul " + tokenActual.getNroLinea());
+		}
+	}
+
+	private void expUn() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+	case "suma":
+	case "resta":
+	case "negacion":
+		opUn();
+		expUn();
+		break;
+	case "null":
+	case "true":
+	case "false":
+	case "entero":
+	case "caracter":
+	case "cadena":
+	case "parentesisApertura":
+	case "this":
+	case "idMetVar": /* chequear */
+	case "idClase":
+	case "new":
+		operando();
+		break;
+	default:
+		throw new ExcepcionSintactico("Error sintáctico expUn " + tokenActual.getNroLinea());
+	}
+	}
+
+	private void opUn() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "suma":
+			match("suma");
+			break;
+		case "resta":
+			match("resta");
+			break;
+		case "negacion":
+			match("negacion");
+			break;
+		default:
+			throw new ExcepcionSintactico("Error sintáctico opUn " + tokenActual.getNroLinea());
+		}
+	}
+	
+	private void operando() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+	case "null":
+	case "true":
+	case "false":
+	case "entero":
+	case "caracter":
+	case "cadena":
+		literal();
+		break;
+	case "parentesisApertura":
+	case "this":
+	case "idMetVar": /* chequear */
+	case "idClase":
+	case "new":
+		primario();
+		encadenadoOp();
+		break;
+	}
+	}
+
+	private void encadenadoOp() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("punto")) {
+			encadenado();
+		} else { }
+	}
+
+	private void encadenado() throws ExcepcionLexico, ExcepcionSintactico {
+		llamadoIdEncadenado();
+		rEncadenado();
+	}
+
+	private void llamadoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
+		match("punto");
+		match("idMetVar");
+		rLlamadoIdEncadenado();
+	}
+
+	private void rLlamadoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("parentesisApertura")) {
+			argsActuales();
+		} else { }
+	}
+	
+	private void rEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("punto")) {
+			encadenado();
+		} else { } // ver siguientes??
+	}
+
+	private void literal() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+			case "null":
+				match("null");
+				break;
+			case "true":
+				match("true");
+				break;
+			case "false":
+				match("false");
+				break;
+			case "entero":
+				match("entero");
+				break;
+			case "caracter":
+				match("caracter");
+				break;
+			case "cadena":
+				match("cadena");
+				break;
+			default:
+				throw new ExcepcionSintactico("Error sintáctico literal " + tokenActual.getNroLinea());
+			}
+		}
+	
+	private void primario() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+	case "parentesisApertura":
+		match("parentesisApertura");
+		expresion();
+		match("parentesisCierre");
+		break;
+	case "this":
+		accesoThis();
+		break;
+	case "idMetVar":
+		match("idMetVar");
+		rMetVar();
+		break;
+	case "idClase":
+		llamadaEstatica();
+		break;
+	case "new":
+		llamadaConstructor();
+		break;
+	default:
+		throw new ExcepcionSintactico("Error sintáctico primario " + tokenActual.getNroLinea());
+	}
+	}
+
+	private void llamadaEstatica() throws ExcepcionLexico, ExcepcionSintactico {
+		match("idClase");
+		match("punto");
+		match("idMetVar");
+		argsActuales();
+	}
+	
+	private void llamadaConstructor() throws ExcepcionLexico, ExcepcionSintactico {
+		match("new");
+		match("idClase");
+		argsActuales();
+	}
+
+	private void accesoThis() throws ExcepcionLexico, ExcepcionSintactico {
+		match("this");
+	}
+	
+	private void rMetVar() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("parentesisApertura")) {
+			argsActuales();
+		} else { }
+	}
+
+	private void argsActuales() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("parentesisApertura")) {
+			match("parentesisApertura");
+			listaExpresiones();
+			match("parentesisCierre");
+		} else {
+			throw new ExcepcionSintactico("Error sintáctico argsActuales " + tokenActual.getNroLinea());
+		}
+	}
+
+	private void listaExpresiones() throws ExcepcionLexico, ExcepcionSintactico {
+		if (tokenActual.getNombre().equals("parentesisCierre"))
+		{ } else {
+			listaExps();
+		}
+	}
+
+	private void listaExps() throws ExcepcionLexico, ExcepcionSintactico {
+		expresion();
+		rListaExps();
+	}
+
+	private void rListaExps() throws ExcepcionLexico, ExcepcionSintactico {
+		switch (tokenActual.getNombre()) {
+		case "coma":
+			match("coma");
+			listaExps();
+			break;
+		 case "parentesisCierre":
+			break;
+		default:
+			throw new ExcepcionSintactico("Error sintáctico rListaExps " + tokenActual.getNroLinea());
+
+	}
+	}
 }
