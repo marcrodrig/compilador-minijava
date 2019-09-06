@@ -1,5 +1,5 @@
 class Clase {
-static void# met1() {
-	a.b.c.d = '\e';
+static void met1() {
+	A b,c,d = new A();
 }
 }
