@@ -1,1 +1,0 @@
-Error en la creación del archivo de salida.

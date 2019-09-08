@@ -1,1 +1,0 @@
-Token [1:1] [Nombre: suma			Lexema: +]

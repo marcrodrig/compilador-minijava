@@ -1,2 +1,0 @@
-Token [1:1] [Nombre: idMetVar			Lexema: numero]
-ERROR LEXICO: Linea 1: caracter no válido.

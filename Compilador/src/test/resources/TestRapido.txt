@@ -1,5 +1,11 @@
-class Clase {
-static void met1() {
-	A b,c,d = new A();
+class Clase  {
+	dynamic void met() {
+		!v.m1().x==10;
+	}
 }
-}
+/*
+A.m1();
+A.m1()+10;
+v.m1().x=10;
+v.x.m1().m3().x = 10;
+v.m1().w>x*/

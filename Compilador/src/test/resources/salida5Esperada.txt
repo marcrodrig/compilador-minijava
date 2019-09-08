@@ -1,1 +1,2 @@
-Token [1:1] [Nombre: suma			Lexema: +]
+Token [1:1] [Nombre: +			Lexema: +]
+Token [1:2] [Nombre: EOF			Lexema: $]

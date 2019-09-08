@@ -309,7 +309,7 @@ public class AnalizadorLexico {
 							caracterEntero = lector.read();
 							numeroColumna++;
 						} else {
-							return new Token("entero", lexema, numeroLinea, numeroColumna - lexema.length());
+							return new Token("intLiteral", lexema, numeroLinea, numeroColumna - lexema.length());
 						}
 						break;
 					}
@@ -353,94 +353,94 @@ public class AnalizadorLexico {
 					case 7: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("caracter", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("charLiteral", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 8: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("parentesisApertura", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("(", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 9: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return token = new Token("parentesisCierre", lexema, numeroLinea, numeroColumna - lexema.length());
+						return token = new Token(")", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 10: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("llaveApertura", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("{", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 11: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("llaveCierre", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("}", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 12: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("coma", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token(",", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 13: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("punto", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token(".", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 14: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("puntoComa", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token(";", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 15: {
 						if (caracterActual == '=') {
 							numeroColumna++;
 							estado = 16;
 						} else
-							return new Token("mayor", lexema, numeroLinea, numeroColumna - lexema.length());
+							return new Token(">", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 16: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("mayorIgual", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token(">=", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 17: {
 						if (caracterActual == '=') {
 							numeroColumna++;
 							estado = 18;
 						} else
-							return new Token("menor", lexema, numeroLinea, numeroColumna - lexema.length());
+							return new Token("<", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 18: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("menorIgual", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("<=", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 19: {
 						if (caracterActual == '=') {
 							numeroColumna++;
 							estado = 20;
 						} else {
-							return new Token("negacion", lexema, numeroLinea, numeroColumna - lexema.length());
+							return new Token("!", lexema, numeroLinea, numeroColumna - lexema.length());
 						}
 						break;
 					}
 					case 20: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("distinto", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("!=", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 21: {
 						if (caracterActual == '=') {
 							numeroColumna++;
 							estado = 22;
 						} else {
-							return new Token("asignacion", lexema, numeroLinea, numeroColumna - lexema.length());
+							return new Token("=", lexema, numeroLinea, numeroColumna - lexema.length());
 						}
 						break;
 					}
 					case 22: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("comparacion", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("==", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 23: {
 						if (caracterActual == '&') {
@@ -454,7 +454,7 @@ public class AnalizadorLexico {
 					case 24: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("and", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("&&", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 25: {
 						if (caracterActual == '|') {
@@ -469,27 +469,27 @@ public class AnalizadorLexico {
 					case 26: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("or", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("||", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 27: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("suma", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("+", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 28: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("resta", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("-", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 29: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("producto", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("*", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 30: {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
-						return new Token("modulo", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("%", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 					case 31: {
 						if (caracterActual == '*') { // multilínea
@@ -560,7 +560,7 @@ public class AnalizadorLexico {
 							estado = 0;
 							break;
 						} else {
-							return new Token("cociente", lexema, numeroLinea, numeroColumna - lexema.length());
+							return new Token("/", lexema, numeroLinea, numeroColumna - lexema.length());
 						}
 					}
 					case 32: {
@@ -624,7 +624,7 @@ public class AnalizadorLexico {
 						lexema += caracterActual;
 						caracterEntero = lector.read();
 						numeroColumna++;
-						return new Token("cadena", lexema, numeroLinea, numeroColumna - lexema.length());
+						return new Token("stringLiteral", lexema, numeroLinea, numeroColumna - lexema.length());
 					}
 				}
 			}

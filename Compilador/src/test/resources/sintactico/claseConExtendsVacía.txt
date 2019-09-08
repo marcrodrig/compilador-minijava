@@ -1,0 +1,1 @@
+class Clase1 extends Clase2 { }

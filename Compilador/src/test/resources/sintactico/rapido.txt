@@ -1,0 +1,9 @@
+class Uno {
+
+	dynamic void metodo() {
+		(+ new Clase());
+	(-+!null);
+	(+a.b.c.d);
+	}
+
+}

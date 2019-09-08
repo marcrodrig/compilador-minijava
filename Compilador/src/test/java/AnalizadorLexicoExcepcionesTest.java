@@ -119,7 +119,7 @@ public class AnalizadorLexicoExcepcionesTest {
 			assertEquals(1, token.getNroLinea());
 			assertEquals(14, token.getNroColumna());
 			token = analizadorLexico.getToken();
-			assertEquals("llaveApertura", token.getNombre());
+			assertEquals("{", token.getNombre());
 			assertEquals("{", token.getLexema());
 			assertEquals(2, token.getNroLinea());
 			assertEquals(1, token.getNroColumna());

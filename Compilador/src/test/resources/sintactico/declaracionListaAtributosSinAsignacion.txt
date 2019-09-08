@@ -1,0 +1,7 @@
+class Clase {
+	public int a,b,c ;
+	protected char d,e,f;
+	private A g,m;
+	public boolean h,o;
+	public String i;
+}
