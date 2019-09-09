@@ -1,0 +1,34 @@
+class Clase {
+	static void clase2(int a) {
+	//parentizada
+	(A.b().c && a);
+	(A.b().c * a);
+	(A.b().c / a);
+	(A.b().c % a.b());
+	(A.b().c - D.a().b());
+	(A.b().c || D.a().b() && false);
+	(A.b().c == D.a().b());
+	(A.b().c + D.a().b() && new Clas());
+	(A.b().c + D.a().b() && false);
+	(A.b().c <= D.a().b() && false);
+	(A.b().c >= D.a().b() && false);
+	(A.b().c < D.a().b() && false);
+	(A.b().c > D.a().b() && false);
+	(A.b().c != D.a().b() && false);
+	//desparentizada
+	A.b().c && a;
+	A.b().c * a;
+	A.b().c / a;
+	A.b().c % a.b();
+	A.b().c - D.a().b();
+	A.b().c || D.a().b() && false;
+	A.b().c == D.a().b();
+	A.b().c + D.a().b() && new Clas();
+	A.b().c + D.a().b() && false;
+	A.b().c <= D.a().b() && false;
+	A.b().c >= D.a().b() && false;
+	A.b().c < D.a().b() && false;
+	A.b().c > D.a().b() && false;
+	A.b().c != D.a().b() && false;
+	}
+}

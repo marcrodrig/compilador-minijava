@@ -98,7 +98,6 @@ class SintacticoTest {
 		}
 	}
 
-	@Test
 	void testExcepcionEsperadaClaseSumaDespuesDeIdClase() {
 		String[] args = {"src/test/resources/sintactico/claseSumaDespuesDeIdClase.txt"};
 		AnalizadorSintactico analizadorSintactico;
@@ -184,4 +183,27 @@ class SintacticoTest {
 		}
 	}
 	
+	@Test
+	void testSentenciasSimpleParentizadasDesparentizadasIdClaseAlPrincipio() {
+		String[] args = {"src/test/resources/sintactico/sentenciasSimpleParentizadasDesparentizadasIdClaseAlPrincipio.txt"};
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.inicial();
+		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico e) {
+			fail("No debería suceder esto");
+		}
+	}
+	
+	@Test
+	void testSentenciasSimpleParentizadasDesparentizadasIdMetVarAlPrincipio() {
+		String[] args = {"src/test/resources/sintactico/sentenciasSimpleParentizadasDesparentizadasIdMetVarAlPrincipio.txt"};
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.inicial();
+		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico e) {
+			fail("No debería suceder esto");
+		}
+	}
 }

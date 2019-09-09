@@ -1,0 +1,5 @@
+class Clase {
+	static void met() {
+		if (true) *
+	}
+}

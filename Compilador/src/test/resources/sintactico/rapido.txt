@@ -1,9 +1,5 @@
-class Uno {
-
-	dynamic void metodo() {
-		(+ new Clase());
-	(-+!null);
-	(+a.b.c.d);
+class Clase {
+	static void clase2(int a) {
+	(a == 3);
 	}
-
 }
