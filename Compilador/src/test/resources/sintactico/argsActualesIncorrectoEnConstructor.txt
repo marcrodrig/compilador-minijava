@@ -1,0 +1,1 @@
+Clase a = new Clase int;

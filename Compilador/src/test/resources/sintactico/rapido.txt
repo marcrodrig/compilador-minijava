@@ -1,5 +1,6 @@
 class Clase {
 	static void clase2(int a) {
-	(a == 3);
+return a*b
+int a
 	}
 }
