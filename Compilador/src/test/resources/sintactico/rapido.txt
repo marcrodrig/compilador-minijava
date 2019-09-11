@@ -1,6 +1,6 @@
 class Clase {
-	static void clase2(int a) {
-return a*b
-int a
+	dynamic void met1(A a, int b) {
+boolean a,b,c =a
+else b;
 	}
 }

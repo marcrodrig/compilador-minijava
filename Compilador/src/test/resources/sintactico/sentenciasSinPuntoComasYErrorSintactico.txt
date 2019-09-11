@@ -1,0 +1,19 @@
+class Clase {
+	static void clase2(int a) {
+		int a
+		a = 5
+		a.b().c
+		c.d() = (4+3)
+		a
+		!a.b(this,'t',x)
+		A.b()>=10
+		A.d()
+		new Clase()
+		(a.b())
+		if(true) {
+			y = a+b
+		}
+		*
+		return a*b
+	}
+}

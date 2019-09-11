@@ -314,7 +314,11 @@ public class AnalizadorLexico {
 						break;
 					}
 					case 4: {
-						if (caracterActual == 92) { // caracter \
+						if (caracterActual == 39) { // caracter '
+							stop = true;
+							throw new ExcepcionFormatoCaracter(
+									"ERROR LEXICO: Linea " + numeroLinea + ": formato caracter inválido.");
+						} else if (caracterActual == 92) { // caracter \
 							lexema += caracterActual;
 							caracterEntero = lector.read();
 							numeroColumna++;

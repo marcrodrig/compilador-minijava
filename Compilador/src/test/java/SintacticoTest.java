@@ -19,7 +19,7 @@ class SintacticoTest {
 		Principal.main(args);
 	
 	}
-	
+	/*
 	@Test
 	void testExcepcionEsperadaSinClassAlPrincipio() {
 		String[] args = {"src/test/resources/sintactico/sinClassAlPrincipio.txt"};
@@ -205,5 +205,5 @@ class SintacticoTest {
 		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico e) {
 			fail("No debería suceder esto");
 		}
-	}
+	}*/
 }

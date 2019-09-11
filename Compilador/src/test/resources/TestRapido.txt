@@ -1,5 +1,6 @@
 class Clase  {
 	dynamic void met() {
+		a = ''';
 		!v.m1().x==10;
 	}
 }
