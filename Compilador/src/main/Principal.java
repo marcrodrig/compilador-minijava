@@ -30,11 +30,11 @@ public class Principal {
 				AnalizadorSintactico analizadorSintactico;
 				try {
 					analizadorSintactico = new AnalizadorSintactico(args[0]);
-					boolean puntoComaFaltantes = analizadorSintactico.inicial();
+					boolean puntoComaFaltantes = analizadorSintactico.start();
 					if (puntoComaFaltantes)
-						System.out.println("Se completó el análisis sintáctico");
+						System.out.println("Se completó el análisis sintáctico.");
 					else
-						System.out.println("El análisis sintáctico fue exitoso");
+						System.out.println("El análisis sintáctico fue exitoso, no se encontraron errores.");
 				} catch (FileNotFoundException e1) {
 					System.out.println("El archivo de entrada no existe");
 				} catch (Exception e) {

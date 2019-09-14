@@ -1,0 +1,2 @@
+class Clase {
+	static int met(int a) {

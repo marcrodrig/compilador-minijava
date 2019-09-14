@@ -1,0 +1,38 @@
+class Clase {
+static void met() {
+		return +a.b();
+		return -a.b();
+		return !a.b();
+		return null;
+		return true;
+		return false;
+		return 3;
+		return 'c';
+		return '\c';
+		return "Hola Mundo!";
+		return this;
+		return new Clase2();
+		return (1+1);
+		return a.b();
+		return A.b();
+		return ;
+		return +a.b() //19
+		return -a.b()
+		return !a.b()
+		return null
+		return true
+		return false
+		return 3
+		return 'c'
+		return '\c'
+		return "Hola Mundo!"
+		return this
+		return new Clase2()
+		return (1+1)
+		return a.b()
+		return A.b()
+		return //34
+		return a
+		return //36
+	}
+}
