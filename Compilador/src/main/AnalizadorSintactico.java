@@ -34,16 +34,16 @@ public class AnalizadorSintactico {
 	}
 
 	private void otroInicial() throws  ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("class")) {
+		if (tokenActual.getNombre().equals("class")) {			// primeros
 			clase();
 			otroInicial();
-		} else if (tokenActual.getNombre().equals("EOF")) { }
-			else
+		} else if (tokenActual.getNombre().equals("EOF")) {		// siguientes
+		} else
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en la declaración de una clase.\nEsperado: class\nEncontrado: " + tokenActual.getNombre());
 	}
 	
 	private void clase() throws ExcepcionLexico, ExcepcionSintactico {
-		match("class");
+		match("class");		// primeros
 		match("idClase");
 		herencia();
 		match("{");
@@ -52,7 +52,7 @@ public class AnalizadorSintactico {
 	}
 
 	private void herencia() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("extends")) {
+		if (tokenActual.getNombre().equals("extends")) {	// primeros
 			match("extends");
 			try {
 			match("idClase");
@@ -60,23 +60,23 @@ public class AnalizadorSintactico {
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en la declaración de herencia de una clase.\nEsperado: idClase\nEncontrado: " + tokenActual.getNombre());
 			}
 		} else 
-			if (tokenActual.getNombre().equals("{")) { }
-			else
+			if (tokenActual.getNombre().equals("{")) {		// siguientes
+			} else
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en la declaración de una clase.\nEsperado: extends o {\nEncontrado: " + tokenActual.getNombre());
 	}
 	
 	private void miembros() throws ExcepcionSintactico, ExcepcionLexico {
 		switch (tokenActual.getNombre()) {
-			case "public":
-			case "protected":
-			case "private":
-			case "idClase":
-			case "static":
-			case "dynamic":
+			case "public":		// primeros
+			case "protected":	// primeros
+			case "private":		// primeros
+			case "idClase":		// primeros
+			case "static":		// primeros
+			case "dynamic":		// primeros
 				miembro();
 				miembros();
 				break;
-			case "}":
+			case "}":			// siguientes
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico. Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: " + tokenActual.getNombre());		}
@@ -84,19 +84,17 @@ public class AnalizadorSintactico {
 	
 	private void miembro() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "public":
-			case "protected":
-			case "private":
+			case "public":		// primeros
+			case "protected":	// primeros
+			case "private":		// primeros
 				atributo();
 				break;
-			case "idClase":
+			case "idClase":		// primeros
 				ctor();
 				break;
-			case "static":
-			case "dynamic":
+			case "static":		// primeros
+			case "dynamic":		// primeros
 				metodo();
-				break;
-			case "}":
 				break;
 		}
 	}
@@ -135,13 +133,13 @@ public class AnalizadorSintactico {
 	
 	private void visibilidad() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "public":
+			case "public":			// primeros
 				match("public");
 				break;
-			case "protected":
+			case "protected":		// primeros
 				match("protected");
 				break;
-			case "private":
+			case "private":			// primeros
 				match("private");
 				break;
 		}
@@ -149,13 +147,13 @@ public class AnalizadorSintactico {
 
 	private void tipo() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
+			case "boolean":			// primeros
+			case "char":			// primeros
+			case "int":				// primeros
+			case "String":			// primeros
 				tipoPrimitivo();
 				break;
-			case "idClase":
+			case "idClase":			// primeros
 				match("idClase");
 				break;
 			default:
@@ -165,41 +163,41 @@ public class AnalizadorSintactico {
 
 	private void tipoPrimitivo() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "boolean":
+			case "boolean":			// primeros
 				match("boolean");
 				break;
-			case "char":
+			case "char":			// primeros
 				match("char");
 				break;
-			case "int":
+			case "int":				// primeros
 				match("int");
 				break;
-			case "String":
+			case "String":			// primeros
 				match("String");
 				break;
 		}
 	}
 
 	private void listaDecAtrs() throws ExcepcionLexico, ExcepcionSintactico {
-		match("idMetVar");
+		match("idMetVar");	// primeros
 		rlistaDecAtrs();
 	}
 
 	private void rlistaDecAtrs() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case ",":
+			case ",":				// primeros
 				match(",");
 				listaDecAtrs();
 				break;
-			case ";": //sig
-			case "=": //sig
-			case "public":
-			case "protected":
-			case "private":
-			case "idClase":
-			case "static":
-			case "dynamic":
-			case "}":
+			case ";": 				// siguientes
+			case "=": 				// siguientes
+			case "public":			// modo pánico
+			case "protected":		// modo pánico
+			case "private":			// modo pánico
+			case "idClase":			// modo pánico
+			case "static":			// modo pánico
+			case "dynamic":			// modo pánico
+			case "}":				// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en la declaración/asignación de atributos.\nEsperado: ; o =\nEncontrado: " + tokenActual.getNombre());
@@ -208,39 +206,44 @@ public class AnalizadorSintactico {
 
 	private void decAsig() throws ExcepcionLexico, ExcepcionSintactico {	
 		switch (tokenActual.getNombre()) {
-			case "=":
+			case "=":				// primeros
 				match("=");
 				expresion();
 				break;
-			case ";":
-			case "idMetVar":
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
-			case "(":
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
-			case "idClase":
-			case "if":
-			case "while":
-			case "{":
-			case "return":
-			case "}":
-			case "else":
+			case ";":				// siguientes
+			case "idMetVar":		// modo pánico
+			case "+":				// modo pánico
+			case "-":				// modo pánico
+			case "!":				// modo pánico
+			case "null":			// modo pánico
+			case "true":			// modo pánico
+			case "false":			// modo pánico
+			case "intLiteral":		// modo pánico
+			case "charLiteral":		// modo pánico
+			case "stringLiteral":	// modo pánico
+			case "this":			// modo pánico
+			case "new":				// modo pánico
+			case "(":				// modo pánico
+			case "boolean":			// modo pánico
+			case "char":			// modo pánico
+			case "int":				// modo pánico
+			case "String":			// modo pánico
+			case "idClase":			// modo pánico
+			case "if":				// modo pánico
+			case "while":			// modo pánico
+			case "{":				// modo pánico
+			case "return":			// modo pánico
+			case "}":				// modo pánico
+			case "else":			// modo pánico
+			case "public":			// modo pánico
+			case "protected":		// modo pánico
+			case "private":			// modo pánico
+			case "static":			// modo pánico
+			case "dynamic":			// modo pánico
 				break;
 			default:
 					/** chequear si se da **/
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico. Se espera la declaración de una asignación.\nEsperado: = o ;\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico.\nEsperado: = o ;\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 	
@@ -255,10 +258,10 @@ public class AnalizadorSintactico {
 
 	private void formaMetodo() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "static":
+			case "static":			// primeros
 				match("static");
 				break;
-			case "dynamic":
+			case "dynamic":			// primeros
 				match("dynamic");
 				break;
 		}
@@ -266,31 +269,31 @@ public class AnalizadorSintactico {
 
 	private void fnl() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-		case "final":
-			match("final");
-			break;
-		case "void":
-		case "idClase":
-		case "boolean":
-		case "char":
-		case "int":
-		case "String":
-			break;
-		default:
-			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en método.\nEsperado: final o tipo de método\nEncontrado: " + tokenActual.getNombre());
+			case "final":			// primeros
+				match("final");
+				break;
+			case "void":			// siguientes
+			case "idClase":			// siguientes
+			case "boolean":			// siguientes
+			case "char":			// siguientes
+			case "int":				// siguientes
+			case "String":			// siguientes
+				break;
+			default:
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en método.\nEsperado: final o tipo de método\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
 	private void tipoMetodo() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "void":
+			case "void":		// primeros
 				match("void");
 				break;
-			case "idClase":
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
+			case "idClase":		// primeros
+			case "boolean":		// primeros
+			case "char":		// primeros
+			case "int":			// primeros
+			case "String":		// primeros
 				tipo();
 				break;
 			default:
@@ -299,7 +302,7 @@ public class AnalizadorSintactico {
 	}
 
 	private void argsFormales() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("(")) {
+		if (tokenActual.getNombre().equals("(")) {	// primeros
 			match("(");
 			argumentos();
 			match(")");
@@ -310,14 +313,14 @@ public class AnalizadorSintactico {
 
 	private void argumentos() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
-			case "idClase":
+			case "boolean":				// primeros
+			case "char":				// primeros
+			case "int":					// primeros
+			case "String":				// primeros
+			case "idClase":				// primeros
 				listaArgsFormales();
 				break;
-			case ")":
+			case ")":					// siguientes
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en argumentos formales.\nEsperado: ) o tipo\nEncontrado: " + tokenActual.getNombre());
@@ -336,11 +339,11 @@ public class AnalizadorSintactico {
 
 	private void rArgFormal() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case ",":
+			case ",":					// primeros
 				match(",");
 				listaArgsFormales();
 				break;
-			case ")":
+			case ")":					// siguientes
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en los argumentos formales.\nEsperado: ) o ,\nEncontrado: " + tokenActual.getNombre());
@@ -348,46 +351,46 @@ public class AnalizadorSintactico {
 	}
 
 	private void ctor() throws ExcepcionLexico, ExcepcionSintactico {
-		match("idClase");
+		match("idClase");	// primeros
 		argsFormales();
 		bloque();
 	}
 
 	private void bloque() throws ExcepcionLexico, ExcepcionSintactico {
-		match("{");
+		match("{");		// primeros
 		sentencias();
 		match("}");
 	}
 
 	private void sentencias() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case ";":
-			case "idMetVar":
-			case "(":
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
-			case "idClase":
-			case "if":
-			case "while":
-			case "{":
-			case "return":
-			case "new":
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
+			case ";":				// primeros
+			case "idMetVar":		// primeros
+			case "(":				// primeros
+			case "boolean":			// primeros
+			case "char":			// primeros
+			case "int":				// primeros
+			case "String":			// primeros
+			case "idClase":			// primeros
+			case "if":				// primeros
+			case "while":			// primeros
+			case "{":				// primeros
+			case "return":			// primeros
+			case "new":				// primeros
+			case "+":				// primeros
+			case "-":				// primeros
+			case "!":				// primeros
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
+			case "this":			// primeros
 				sentencia();
 				sentencias();
 				break;
-			case "}":
+			case "}":				// siguientes
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico. Se espera la declaración de una sentencia o }.\nEsperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\nEncontrado: " + tokenActual.getNombre());
@@ -397,44 +400,44 @@ public class AnalizadorSintactico {
 	private void sentencia() throws ExcepcionLexico, ExcepcionSintactico {
 		int panicoLinea = tokenActual.getNroLinea();
 		switch (tokenActual.getNombre()) {
-			case ";":
+			case ";":								// primeros
 				match(";");
 				break;
-			case "idMetVar":
+			case "idMetVar":						// primeros
 				ladoIzquierdo();
 				ladoDerechoIdMetVar();
 				modoPanicoBloque(panicoLinea);
 				break;
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
-			case "(":
+			case "+":								// primeros
+			case "-":								// primeros
+			case "!":								// primeros
+			case "null":							// primeros
+			case "true":							// primeros
+			case "false":							// primeros
+			case "intLiteral":						// primeros
+			case "charLiteral":						// primeros
+			case "stringLiteral":					// primeros
+			case "this":							// primeros
+			case "new":								// primeros
+			case "(":								// primeros
 				sentenciaSimple();
 				modoPanicoBloque(panicoLinea);
 				break;
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
+			case "boolean":							// primeros
+			case "char":							// primeros
+			case "int":								// primeros
+			case "String":							// primeros
 				tipoPrimitivo();
 				listaDecVars();
 				decAsig();
 				modoPanicoBloque(panicoLinea);
 				break;
-			case "idClase":
+			case "idClase":							// primeros
 				match("idClase");
 				ladoDerechoIdClase();
 				modoPanicoBloque(panicoLinea);
 				break;
-			case "if":
+			case "if":								// primeros
 				match("if");
 				match("(");
 				expresion();
@@ -444,17 +447,17 @@ public class AnalizadorSintactico {
 				ifPanico = false;
 				rSentenciaIf();
 				break;
-			case "while":
+			case "while":							// primeros
 				match("while");
 				match("(");
 				expresion();
 				match(")");
 				sentencia();
 				break;
-			case "{":
+			case "{":								// primeros
 				bloque();
 				break;
-			case "return":
+			case "return":							// primeros
 				match("return");
 				retorno();
 				modoPanicoBloque(panicoLinea);
@@ -515,55 +518,55 @@ public class AnalizadorSintactico {
 	}
 
 	private void ladoIzquierdo() throws ExcepcionLexico, ExcepcionSintactico {
-		match("idMetVar");
+		match("idMetVar");			// primeros
 		rLlamadaoIdEncadenado();
 		rEncadenado();
 	}
 	
 	private void ladoDerechoIdMetVar() throws ExcepcionLexico, ExcepcionSintactico {		
 		switch (tokenActual.getNombre()) {
-			case "=":
+			case "=":					// primeros
 				decAsig();
 				break;
-			case "&&":
-			case "||":
-			case "*":
-			case "/":
-			case "%":
-			case "+":
-			case "-":
-			case "==":
-			case "!=":
-			case ">":
-			case ">=":
-			case "<":
-			case "<=":
+			case "&&":					// primeros
+			case "||":					// primeros
+			case "*":					// primeros
+			case "/":					// primeros
+			case "%":					// primeros
+			case "+":					// primeros
+			case "-":					// primeros
+			case "==":					// primeros
+			case "!=":					// primeros
+			case ">":					// primeros
+			case ">=":					// primeros
+			case "<":					// primeros
+			case "<=":					// primeros
 				desparentizada();
 				break;
-			case ";":
-			case "idMetVar":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
-			case "(":
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
-			case "idClase":
-			case "if":
-			case "while":
-			case "{":
-			case "return":
-			case "}":
-			case "else":
-				break;
+			case ";":					// siguientes
+			case "idMetVar":			// modo pánico
+			case "!":					// modo pánico
+			case "null":				// modo pánico
+			case "true":				// modo pánico
+			case "false":				// modo pánico
+			case "intLiteral":			// modo pánico
+			case "charLiteral":			// modo pánico
+			case "stringLiteral":		// modo pánico
+			case "this":				// modo pánico
+			case "new":					// modo pánico
+			case "(":					// modo pánico
+			case "boolean":				// modo pánico
+			case "char":				// modo pánico
+			case "int":					// modo pánico
+			case "String":				// modo pánico
+			case "idClase":				// modo pánico
+			case "if":					// modo pánico
+			case "while":				// modo pánico
+			case "{":					// modo pánico
+			case "return":				// modo pánico
+			case "}":					// modo pánico
+			case "else":				// modo pánico
+				break;				
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en sentencia simple desparentizada.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
 		}
@@ -571,22 +574,24 @@ public class AnalizadorSintactico {
 	
 	private void sentenciaSimple() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "(":
+			case "(":				// primeros
 				match("(");
 				expresion();
 				match(")");
 				break;
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
+			case "+":				// primeros
+			case "-":				// primeros
+			case "!":				// primeros
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
+			case "this":			// primeros
+			case "new":				// primeros
+									// Queda afuera idMetVar (<Sentencia> ::= <LadoIzquierdo> <LadoDerechoIdMetVar> ;)
+									// Queda afuera idCLase  (<Sentencia> ::= idClase <LadoDerechoIdClase> ;)
 				expresion();
 				break;
 			default:
@@ -595,42 +600,42 @@ public class AnalizadorSintactico {
 	}
 	
 	private void listaDecVars() throws ExcepcionLexico, ExcepcionSintactico {
-		match("idMetVar");
+		match("idMetVar");	// primeros
 		rListaDecVars();
 	}
 
 	private void rListaDecVars() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case ",":
+			case ",":				// primeros
 				match(",");
 				listaDecVars();
 				break;
-			case ";":
-			case "=":
-			case "idMetVar":
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
-			case "(":
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
-			case "idClase":
-			case "if":
-			case "while":
-			case "{":
-			case "}":
-			case "return":
-			case "else":
+			case ";":				// siguientes
+			case "=":				// siguientes
+			case "idMetVar":		// modo pánico
+			case "+":				// modo pánico
+			case "-":				// modo pánico
+			case "!":				// modo pánico
+			case "null":			// modo pánico
+			case "true":			// modo pánico
+			case "false":			// modo pánico
+			case "intLiteral":		// modo pánico
+			case "charLiteral":		// modo pánico
+			case "stringLiteral":	// modo pánico
+			case "this":			// modo pánico
+			case "new":				// modo pánico
+			case "(":				// modo pánico
+			case "boolean":			// modo pánico
+			case "char":			// modo pánico
+			case "int":				// modo pánico
+			case "String":			// modo pánico
+			case "idClase":			// modo pánico
+			case "if":				// modo pánico
+			case "while":			// modo pánico
+			case "{":				// modo pánico
+			case "}":				// modo pánico
+			case "return":			// modo pánico
+			case "else":			// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en la declaración/asignación de variables.\nEsperado: ;, = o ,\nEncontrado: " + tokenActual.getNombre());
@@ -638,12 +643,12 @@ public class AnalizadorSintactico {
 	}
 	
 	private void ladoDerechoIdClase() throws ExcepcionLexico, ExcepcionSintactico {
-		switch (tokenActual.getNombre()) {
+		switch (tokenActual.getNombre()) {	// primeros
 			case "idMetVar":
 				listaDecVars();
 				decAsig();
 				break;
-			case ".":
+			case ".":						// primeros
 				match(".");
 				llamadaMetodo();
 				rEncadenado();
@@ -655,7 +660,7 @@ public class AnalizadorSintactico {
 	}
 
 	private void rSentenciaIf() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("else")) {
+		if (tokenActual.getNombre().equals("else")) {	// primeros
 			match("else");
 			sentencia();
 		} else { }
@@ -663,31 +668,31 @@ public class AnalizadorSintactico {
 	
 	private void retorno() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
-			case "(":
-			case "idMetVar":
-			case "idClase":
+			case "+":				// primeros
+			case "-":				// primeros
+			case "!":				// primeros
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
+			case "this":			// primeros
+			case "new":				// primeros
+			case "(":				// primeros
+			case "idMetVar":		// primeros
+			case "idClase":			// primeros
 				expresion();
 				break;
-			case ";":
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
-			case "if":
-			case "while":
-			case "{":
-			case "return":
+			case ";":				// siguientes
+			case "boolean":			// modo pánico
+			case "char":			// modo pánico
+			case "int":				// modo pánico
+			case "String":			// modo pánico
+			case "if":				// modo pánico
+			case "while":			// modo pánico
+			case "{":				// modo pánico
+			case "return":			// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en expresión de retorno.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, new, (, idMetVar, idClase o ;\nEncontrado: " + tokenActual.getNombre());
@@ -696,60 +701,60 @@ public class AnalizadorSintactico {
 	
 	private void desparentizada() throws ExcepcionLexico, ExcepcionSintactico {
 		switch(tokenActual.getNombre()) {
-			case "&&":
+			case "&&":					// primeros
 				and();
 				desparentizada();
 				break;
-			case "||":
+			case "||":					// primeros
 				or();
 				desparentizada();
 				break;
-			case "*":
-			case "/":
-			case "%":
+			case "*":					// primeros
+			case "/":					// primeros
+			case "%":					// primeros
 				mul();
 				desparentizada();
 				break;
-			case "+":
-			case "-":
+			case "+":					// primeros
+			case "-":					// primeros
 				ad();
 				desparentizada();
 				break;
-			case "==":
-			case "!=":
+			case "==":					// primeros
+			case "!=":					// primeros
 				ig();
 				desparentizada();
 				break;
-			case ">":
-			case ">=":
-			case "<":
-			case "<=":
+			case ">":					// primeros
+			case ">=":					// primeros
+			case "<":					// primeros
+			case "<=":					// primeros
 				rExpComp();
 				desparentizada();
 				break;
-			case ";":
-			case "idMetVar":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
-			case "(":
-			case "boolean":
-			case "char":
-			case "int":
-			case "String":
-			case "idClase":
-			case "if":
-			case "while":
-			case "{":
-			case "return":
-			case "}":
-			case "else":
+			case ";":					// siguientes
+			case "idMetVar":			// modo pánico
+			case "!":					// modo pánico
+			case "null":				// modo pánico
+			case "true":				// modo pánico
+			case "false":				// modo pánico
+			case "intLiteral":			// modo pánico
+			case "charLiteral":			// modo pánico
+			case "stringLiteral":		// modo pánico
+			case "this":				// modo pánico
+			case "new":					// modo pánico
+			case "(":					// modo pánico
+			case "boolean":				// modo pánico
+			case "char":				// modo pánico
+			case "int":					// modo pánico
+			case "String":				// modo pánico
+			case "idClase":				// modo pánico
+			case "if":					// modo pánico
+			case "while":				// modo pánico
+			case "{":					// modo pánico
+			case "return":				// modo pánico
+			case "}":					// modo pánico
+			case "else":				// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en sentencia simple desparentizada.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
@@ -758,20 +763,20 @@ public class AnalizadorSintactico {
 
 	private void expresion() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
-			case "new":
-			case "(":
-			case "idMetVar":
-			case "idClase":
+			case "+":				// primeros
+			case "-":				// primeros
+			case "!":				// primeros
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
+			case "this":			// primeros
+			case "new":				// primeros
+			case "(":				// primeros
+			case "idMetVar":		// primeros
+			case "idClase":			// primeros
 				expOr();
 				break;
 			default:
@@ -785,7 +790,7 @@ public class AnalizadorSintactico {
 	}
 
 	private void or() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("||")) {
+		if (tokenActual.getNombre().equals("||")) {	// primeros
 			match("||");
 			expAnd();
 			or();
@@ -798,7 +803,7 @@ public class AnalizadorSintactico {
 	}
 
 	private void and() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("&&")) {
+		if (tokenActual.getNombre().equals("&&")) {	// primeros
 			match("&&");
 			expIg();
 			and();
@@ -812,8 +817,8 @@ public class AnalizadorSintactico {
 
 	private void ig() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "==":
-			case "!=":
+			case "==":		// primeros
+			case "!=":		// primeros
 				opIg();
 				expComp();
 				ig();
@@ -823,36 +828,38 @@ public class AnalizadorSintactico {
 
 	private void expComp() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "(":
-			case "this":
-			case "idMetVar":
-			case "idClase":
-			case "new":
+			case "+":				// primeros
+			case "-":				// primeros
+			case "!":				// primeros
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
+			case "(":				// primeros
+			case "this":			// primeros
+			case "idMetVar":		// primeros
+			case "idClase":			// primeros
+			case "new":				// primeros
 				expAd();
 				rExpComp();
 				break;
+			// excepción?
 		}
 	}
 
 	private void rExpComp() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "<":
-			case "<=":
-			case ">":
-			case ">=":
+			case "<":		// primeros
+			case "<=":		// primeros
+			case ">":		// primeros
+			case ">=":		// primeros
 				opComp();
 				expAd();
 				break;
 		}
+		// excepción?
 	}
 
 	private void expAd() throws ExcepcionLexico, ExcepcionSintactico {
@@ -862,13 +869,14 @@ public class AnalizadorSintactico {
 
 	private void ad() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "+":
-			case "-":
+			case "+":		// primeros
+			case "-":		// primeros
 				opAd();
 				expMul();
 				ad();
 				break;
 			}
+		// excepción?
 	}
 
 	private void expMul() throws ExcepcionLexico, ExcepcionSintactico {
@@ -878,35 +886,36 @@ public class AnalizadorSintactico {
 
 	private void mul() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "*":
-			case "/":
-			case "%":
+			case "*":		// primeros
+			case "/":		// primeros
+			case "%":		// primeros
 				opMul();
 				expUn();
 				mul();
 				break;
 		}
+		// excepción
 	}
 	
 	private void expUn() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "+":
-			case "-":
-			case "!":
+			case "+":				// primeros
+			case "-":				// primeros
+			case "!":				// primeros
 				opUn();
 				expUn();
 				break;
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "(":
-			case "this":
-			case "idMetVar":
-			case "idClase":
-			case "new":
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
+			case "(":				// primeros
+			case "this":			// primeros
+			case "idMetVar":		// primeros
+			case "idClase":			// primeros
+			case "new":				// primeros
 				operando();
 				break;
 			default:
@@ -916,110 +925,116 @@ public class AnalizadorSintactico {
 
 	private void opIg() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "==":
+			case "==":			// primeros
 				match("==");
 				break;
-			case "!=":
+			case "!=":			// primeros
 				match("!=");
 				break;
 		}
+		// excepción?
 	}
 	
 	private void opComp() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "<":
+			case "<":			// primeros
 				match("<");
 				break;
-			case "<=":
+			case "<=":			// primeros
 				match("<=");
 				break;
-			case ">":
+			case ">":			// primeros
 				match(">");
 				break;
-			case ">=":
+			case ">=":			// primeros
 				match(">=");
 				break;
 		}
+		// excepción
 	}
 	
 	private void opAd() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "+":
+			case "+":			// primeros
 				match("+");
 				break;
-			case "-":
+			case "-":			// primeros
 				match("-");
 				break;
 		}
+		// excepción?
 	}
 
 	private void opUn() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "+":
+			case "+":			// primeros
 				match("+");
 				break;
-			case "-":
+			case "-":			// primeros
 				match("-");
 				break;
-			case "!":
+			case "!":			// primeros
 				match("!");
 				break;
 		}
+		// excepción?
 	}
 	
 	private void opMul() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "*":
+			case "*":			// primeros
 				match("*");
 				break;
-			case "/":
+			case "/":			// primeros
 				match("/");
 				break;
-			case "%":
+			case "%":			// primeros
 				match("%");
 				break;
 		}
+		// excepción?
 	}
 
 	private void operando() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
 				literal();
 				break;
-			case "(":
-			case "this":
-			case "idMetVar":
-			case "idClase":
-			case "new":
+			case "(":				// primeros
+			case "this":			// primeros
+			case "idMetVar":		// primeros
+			case "idClase":			// primeros
+			case "new":				// primeros
 				primario();
 				rEncadenado();
 				break;
 		}
+		// excepción?
 	}
 	
 	private void literal() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "null":
+			case "null":						// primeros
 				match("null");
 				break;
-			case "true":
+			case "true":						// primeros
 				match("true");
 				break;
-			case "false":
+			case "false":						// primeros
 				match("false");
 				break;
-			case "intLiteral":
+			case "intLiteral":					// primeros
 				match("intLiteral");
 				break;
-			case "charLiteral":
+			case "charLiteral":					// primeros
 				match("charLiteral");
 				break;
-			case "stringLiteral":
+			case "stringLiteral":				// primeros
 				match("stringLiteral");
 				break;
 		}
@@ -1027,45 +1042,45 @@ public class AnalizadorSintactico {
 
 	private void primario() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "(":
+			case "(":							// primeros
 				match("(");
 				expresion();
 				match(")");
 				break;
-			case "this":
+			case "this":						// primeros
 				accesoThis();
 				break;
-			case "idMetVar":
+			case "idMetVar":					// primeros
 				match("idMetVar");
 				rLlamadaoIdEncadenado();
 				break;
-			case "idClase":
+			case "idClase":						// primeros
 				llamadaEstatica();
 				break;
-			case "new":
+			case "new":							// primeros
 				llamadaConstructor();
 				break;
 		}
 	}
 	
 	private void accesoThis() throws ExcepcionLexico, ExcepcionSintactico {
-		match("this");
+		match("this");	// primeros
 	}
 	
 	private void llamadaEstatica() throws ExcepcionLexico, ExcepcionSintactico {
-		match("idClase");
+		match("idClase");	// primeros
 		match(".");
 		llamadaMetodo();
 	}
 
 	private void llamadaConstructor() throws ExcepcionLexico, ExcepcionSintactico {
-		match("new");
+		match("new");		// primeros
 		match("idClase");
 		argsActuales();
 	}
 
 	private void llamadaMetodo() throws ExcepcionLexico, ExcepcionSintactico {
-		match("idMetVar");
+		match("idMetVar");	// primeros
 		argsActuales();
 	}
 	
@@ -1075,25 +1090,25 @@ public class AnalizadorSintactico {
 	}
 
 	private void llamadaoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
-		match(".");
+		match(".");					// primeros
 		match("idMetVar");
 		rLlamadaoIdEncadenado();
 	}
 
 	private void rLlamadaoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("(")) {
+		if (tokenActual.getNombre().equals("(")) {	// primeros
 			argsActuales();
 		} else { }
 	}
 	
 	private void rEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals(".")) {
+		if (tokenActual.getNombre().equals(".")) {	// primeros
 			encadenado();
 		} else { }
 	}
 
 	private void argsActuales() throws ExcepcionLexico, ExcepcionSintactico {
-		if (tokenActual.getNombre().equals("(")) {
+		if (tokenActual.getNombre().equals("(")) {	// primeros
 			match("(");
 			listaExpresiones();
 			match(")");
@@ -1104,22 +1119,22 @@ public class AnalizadorSintactico {
 
 	private void listaExpresiones() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-			case "idMetVar":
-			case "(":
-			case "idClase":
-			case "new":
-			case "+":
-			case "-":
-			case "!":
-			case "null":
-			case "true":
-			case "false":
-			case "intLiteral":
-			case "charLiteral":
-			case "stringLiteral":
-			case "this":
+			case "idMetVar":		// primeros
+			case "(":				// primeros
+			case "idClase":			// primeros
+			case "new":				// primeros
+			case "+":				// primeros
+			case "-":				// primeros
+			case "!":				// primeros
+			case "null":			// primeros
+			case "true":			// primeros
+			case "false":			// primeros
+			case "intLiteral":		// primeros
+			case "charLiteral":		// primeros
+			case "stringLiteral":	// primeros
+			case "this":			// primeros
 				listaExps();
-			case ")":
+			case ")":				// siguientes
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en lista de expresiones.\nEsperado: (, idMetVar, idClase, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o )\nEncontrado: " + tokenActual.getNombre());
@@ -1133,14 +1148,14 @@ public class AnalizadorSintactico {
 
 	private void rListaExps() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
-		case ",":
-			match(",");
-			listaExps();
-			break;
-		case ")":
-			break;
-		default:
-			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en lista de expresiones.\nEsperado: (, idMetVar, idClase, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o )\nEncontrado: " + tokenActual.getNombre());
+			case ",":			// primeros
+				match(",");
+				listaExps();
+				break;
+			case ")":			// siguientes
+				break;
+			default:
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en lista de expresiones.\nEsperado: (, idMetVar, idClase, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o )\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 }

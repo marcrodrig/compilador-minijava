@@ -1,41 +1,8 @@
 class Clase {
-	dynamic void met1(A a, int b) {
-a().b.c
-else
-if (true)
-	A.b()  //4
-else
-	a  //6
-if (true)
-	a.b()  //8
-else
-	a  //10
-if (true)
-	boolean a,b,c  //12
-else
-	a  //14
-if (true)
-	boolean a,b,c = 3  //16
-else
-	a  //18
-if (true)
-	return a+b+c == 3  //20
-else
-	a  //22
-if (true)
-	A a,b,c = new Clase2() //24
-else
-	a  //26
-if (true)
-	-+3 >= 2  //28
-else
-	a  //30
-if (true)
-	while (true) 
-		a  //33
-else
-	a  //35
-a()
-else
+	private int numero //2
+	private String cadena
+	static void met(int a) {
+		4+*6; 
+		hola..chau();
 	}
 }

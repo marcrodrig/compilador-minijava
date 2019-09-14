@@ -1,5 +1,5 @@
 class Clase {
-	static void clase2(int a) {
+	static void met(int a) {
 		int a
 		a = 5
 		a.b().c
@@ -13,6 +13,8 @@ class Clase {
 		if(true) {
 			y = a+b
 		}
+		else
+			-4
 		return a*b
 	}
 }
