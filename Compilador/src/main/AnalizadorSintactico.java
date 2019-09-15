@@ -1,6 +1,7 @@
 package main;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class AnalizadorSintactico {
 
@@ -28,7 +29,7 @@ public class AnalizadorSintactico {
 		return modoPanico;
 	}
 	
-	public void inicial() throws ExcepcionLexico, ExcepcionSintactico {
+	private void inicial() throws ExcepcionLexico, ExcepcionSintactico {
 		clase();
 		otroInicial();
 	}
@@ -102,33 +103,52 @@ public class AnalizadorSintactico {
 	private void atributo() throws ExcepcionLexico, ExcepcionSintactico {
 		int panicoLinea = tokenActual.getNroLinea();
 		visibilidad();
-		tipo();
-		listaDecAtrs();
-		decAsig();
-		modoPanicoAtributo(panicoLinea);
-	}
-	
-	private void modoPanicoAtributo(int nroLinea) throws ExcepcionLexico, ExcepcionSintactico {
 		try {
+			tipo();
+			listaDecAtrs();
+			decAsig();
 			match(";");
 		} catch (ExcepcionSintactico e) {
+			modoPanicoAtributo(panicoLinea, panicoLinea);
+		}
+	}
+	
+	private void modoPanicoAtributo(int nroLineaComienzo, int nroLineaFin) throws ExcepcionLexico, ExcepcionSintactico {
+		modoPanico = true;
+		ArrayList<String> siguientesValidos = new ArrayList<String>();
+		siguientesValidos.add("public");
+		siguientesValidos.add("protected");
+		siguientesValidos.add("private");
+		siguientesValidos.add("idClase");
+		siguientesValidos.add("static");
+		siguientesValidos.add("dynamic");
+		siguientesValidos.add("}");
+		while (!siguientesValidos.contains(tokenActual.getNombre()) && !tokenActual.getNombre().equals("EOF")) {
+			nroLineaFin = tokenActual.getNroLinea();
+			tokenActual = analizadorLexico.getToken();
+		}
+		if (tokenActual.getNombre().equals("EOF")) {
+			System.out.println("[" + nroLineaComienzo + "]: declaración/asignación de atributos inválida");
+			throw new ExcepcionSintactico("No se puede recuperar de la última sentencia inválida");		
+		}
+		else {
+			if (nroLineaComienzo == nroLineaFin)
+				System.out.println("[" + nroLineaComienzo + "]: declaración/asignación de atributos inválida");
+			else
+				System.out.println("[" + nroLineaComienzo + "-" + nroLineaFin + "]: declaración/asignación de atributos inválida");
 			switch (tokenActual.getNombre()) {
-				case "}":
-					modoPanico = true;
-					System.out.println("[" + nroLinea + "]: declaración/asignación de atributos con ; faltante");
-					break;
-				case "public":
-				case "protected":
-				case "private":
-				case "idClase":
-				case "static":
-				case "dynamic":
-					modoPanico = true;
-					System.out.println("[" + nroLinea + "]: declaración/asignación de atributos con ; faltante");
-					miembro();
-					break;
+					case "}":
+						break;
+					case "public":
+					case "protected":
+					case "private":
+					case "idClase":
+					case "static":
+					case "dynamic":
+						miembro();
+						break;
+				}
 			}
-		}	
 	}
 	
 	private void visibilidad() throws ExcepcionLexico, ExcepcionSintactico {
@@ -191,13 +211,6 @@ public class AnalizadorSintactico {
 				break;
 			case ";": 				// siguientes
 			case "=": 				// siguientes
-			case "public":			// modo pánico
-			case "protected":		// modo pánico
-			case "private":			// modo pánico
-			case "idClase":			// modo pánico
-			case "static":			// modo pánico
-			case "dynamic":			// modo pánico
-			case "}":				// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en la declaración/asignación de atributos.\nEsperado: ; o =\nEncontrado: " + tokenActual.getNombre());
@@ -211,35 +224,6 @@ public class AnalizadorSintactico {
 				expresion();
 				break;
 			case ";":				// siguientes
-			case "idMetVar":		// modo pánico
-			case "+":				// modo pánico
-			case "-":				// modo pánico
-			case "!":				// modo pánico
-			case "null":			// modo pánico
-			case "true":			// modo pánico
-			case "false":			// modo pánico
-			case "intLiteral":		// modo pánico
-			case "charLiteral":		// modo pánico
-			case "stringLiteral":	// modo pánico
-			case "this":			// modo pánico
-			case "new":				// modo pánico
-			case "(":				// modo pánico
-			case "boolean":			// modo pánico
-			case "char":			// modo pánico
-			case "int":				// modo pánico
-			case "String":			// modo pánico
-			case "idClase":			// modo pánico
-			case "if":				// modo pánico
-			case "while":			// modo pánico
-			case "{":				// modo pánico
-			case "return":			// modo pánico
-			case "}":				// modo pánico
-			case "else":			// modo pánico
-			case "public":			// modo pánico
-			case "protected":		// modo pánico
-			case "private":			// modo pánico
-			case "static":			// modo pánico
-			case "dynamic":			// modo pánico
 				break;
 			default:
 					/** chequear si se da **/
@@ -404,9 +388,13 @@ public class AnalizadorSintactico {
 				match(";");
 				break;
 			case "idMetVar":						// primeros
-				ladoIzquierdo();
-				ladoDerechoIdMetVar();
-				modoPanicoBloque(panicoLinea);
+				try {
+					ladoIzquierdo();
+					ladoDerechoIdMetVar();
+					match(";");
+				} catch (ExcepcionSintactico e) {
+					modoPanicoBloque(panicoLinea);
+				}
 				break;
 			case "+":								// primeros
 			case "-":								// primeros
@@ -420,53 +408,142 @@ public class AnalizadorSintactico {
 			case "this":							// primeros
 			case "new":								// primeros
 			case "(":								// primeros
-				sentenciaSimple();
-				modoPanicoBloque(panicoLinea);
+				try {
+					sentenciaSimple();
+					match(";");
+				} catch (ExcepcionSintactico e) {
+					modoPanicoBloque(panicoLinea);
+				}
 				break;
 			case "boolean":							// primeros
 			case "char":							// primeros
 			case "int":								// primeros
 			case "String":							// primeros
 				tipoPrimitivo();
-				listaDecVars();
-				decAsig();
-				modoPanicoBloque(panicoLinea);
+				try {
+					listaDecVars();
+					decAsig();
+					match(";");
+				} catch (ExcepcionSintactico e) {
+					modoPanicoBloque(panicoLinea);
+				}
 				break;
 			case "idClase":							// primeros
 				match("idClase");
-				ladoDerechoIdClase();
-				modoPanicoBloque(panicoLinea);
+				try {
+					ladoDerechoIdClase();
+					match(";");
+				} catch (ExcepcionSintactico e) {
+					modoPanicoBloque(panicoLinea);
+				}
 				break;
 			case "if":								// primeros
 				match("if");
-				match("(");
-				expresion();
-				match(")");
-				ifPanico = true;
-				sentencia();
-				ifPanico = false;
-				rSentenciaIf();
+				try {
+					match("(");
+					expresion();
+					match(")");
+					ifPanico = true;
+					sentencia();
+					ifPanico = false;
+					rSentenciaIf();
+				} catch (ExcepcionSintactico e) {
+					modoPanicoBloque(panicoLinea);
+				}
 				break;
 			case "while":							// primeros
 				match("while");
-				match("(");
-				expresion();
-				match(")");
-				sentencia();
+				try {
+					match("(");
+					expresion();
+					match(")");
+					sentencia();
+				} catch (ExcepcionSintactico e) {
+					modoPanicoBloque(panicoLinea);
+				}
 				break;
 			case "{":								// primeros
 				bloque();
 				break;
 			case "return":							// primeros
 				match("return");
-				retorno();
-				modoPanicoBloque(panicoLinea);
+				try {
+					retorno();
+					match(";");
+				} catch (ExcepcionSintactico e) {
+					modoPanicoBloque(panicoLinea);
+				}
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico. Se espera la declaración de una sentencia o }.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o }\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 	
+	private void modoPanicoBloque(int nroLineaComienzo) throws ExcepcionLexico, ExcepcionSintactico {
+		int nroLineaFin = tokenActual.getNroLinea();
+		modoPanico = true;
+		ArrayList<String> siguientesValidos = new ArrayList<String>();
+		siguientesValidos.add("}");
+		siguientesValidos.add(";");
+		siguientesValidos.add("idMetVar");
+		siguientesValidos.add("+");
+		siguientesValidos.add("-");
+		siguientesValidos.add("!");
+		siguientesValidos.add("null");
+		siguientesValidos.add("true");
+		siguientesValidos.add("false");
+		siguientesValidos.add("intLiteral");
+		siguientesValidos.add("charLiteral");
+		siguientesValidos.add("stringLiteral");
+		siguientesValidos.add("this");
+		siguientesValidos.add("new");
+		siguientesValidos.add("(");
+		siguientesValidos.add("boolean");
+		siguientesValidos.add("char");
+		siguientesValidos.add("int");
+		siguientesValidos.add("String");
+		siguientesValidos.add("idClase");
+		siguientesValidos.add("if");
+		siguientesValidos.add("while");
+		siguientesValidos.add("{");
+		siguientesValidos.add("return");
+		siguientesValidos.add("else");
+		if (siguientesValidos.contains(tokenActual.getNombre())) {
+			if (nroLineaComienzo != tokenActual.getNroLinea())
+				nroLineaFin = (tokenActual.getNroLinea()-1);
+		} else {
+			while(!siguientesValidos.contains(tokenActual.getNombre()) && !tokenActual.getNombre().equals("EOF")) {				nroLineaFin = tokenActual.getNroLinea();
+				nroLineaFin = tokenActual.getNroLinea();
+				tokenActual = analizadorLexico.getToken();
+			}
+		}
+		if (tokenActual.getNombre().equals("EOF")) {
+			System.out.println("[" + nroLineaComienzo + "]: sentencia inválida");
+			throw new ExcepcionSintactico("No se puede recuperar de la última sentencia inválida");
+		} else {
+			if (nroLineaComienzo == nroLineaFin) {
+				if (!ifPanico)
+				System.out.println("[" + nroLineaComienzo + "]: sentencia inválida");
+			} else {
+				System.out.println("[" + nroLineaComienzo + "-" + nroLineaFin + "]: sentencia inválida");
+				switch (tokenActual.getNombre()) {
+					case "}":
+						break;
+					case "else":
+						if (ifPanico) {
+							rSentenciaIf();
+						} else {
+							throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico. Se espera la declaración de una sentencia o }.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o }\nEncontrado: " + tokenActual.getNombre());
+						}
+							break;
+					default:
+						sentencias();
+						break;
+				}
+			}
+		}
+	}
+/*
 	private void modoPanicoBloque(int nroLinea) throws ExcepcionLexico, ExcepcionSintactico {
 		try {
 			match(";");
@@ -515,8 +592,8 @@ public class AnalizadorSintactico {
 						break;
 			}	
 		}
-	}
-
+	}*/
+	
 	private void ladoIzquierdo() throws ExcepcionLexico, ExcepcionSintactico {
 		match("idMetVar");			// primeros
 		rLlamadaoIdEncadenado();
@@ -544,28 +621,6 @@ public class AnalizadorSintactico {
 				desparentizada();
 				break;
 			case ";":					// siguientes
-			case "idMetVar":			// modo pánico
-			case "!":					// modo pánico
-			case "null":				// modo pánico
-			case "true":				// modo pánico
-			case "false":				// modo pánico
-			case "intLiteral":			// modo pánico
-			case "charLiteral":			// modo pánico
-			case "stringLiteral":		// modo pánico
-			case "this":				// modo pánico
-			case "new":					// modo pánico
-			case "(":					// modo pánico
-			case "boolean":				// modo pánico
-			case "char":				// modo pánico
-			case "int":					// modo pánico
-			case "String":				// modo pánico
-			case "idClase":				// modo pánico
-			case "if":					// modo pánico
-			case "while":				// modo pánico
-			case "{":					// modo pánico
-			case "return":				// modo pánico
-			case "}":					// modo pánico
-			case "else":				// modo pánico
 				break;				
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en sentencia simple desparentizada.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
@@ -579,6 +634,9 @@ public class AnalizadorSintactico {
 				expresion();
 				match(")");
 				break;
+			/**
+			 * REVISAR ESTO
+			 */
 			case "+":				// primeros
 			case "-":				// primeros
 			case "!":				// primeros
@@ -612,30 +670,6 @@ public class AnalizadorSintactico {
 				break;
 			case ";":				// siguientes
 			case "=":				// siguientes
-			case "idMetVar":		// modo pánico
-			case "+":				// modo pánico
-			case "-":				// modo pánico
-			case "!":				// modo pánico
-			case "null":			// modo pánico
-			case "true":			// modo pánico
-			case "false":			// modo pánico
-			case "intLiteral":		// modo pánico
-			case "charLiteral":		// modo pánico
-			case "stringLiteral":	// modo pánico
-			case "this":			// modo pánico
-			case "new":				// modo pánico
-			case "(":				// modo pánico
-			case "boolean":			// modo pánico
-			case "char":			// modo pánico
-			case "int":				// modo pánico
-			case "String":			// modo pánico
-			case "idClase":			// modo pánico
-			case "if":				// modo pánico
-			case "while":			// modo pánico
-			case "{":				// modo pánico
-			case "}":				// modo pánico
-			case "return":			// modo pánico
-			case "else":			// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en la declaración/asignación de variables.\nEsperado: ;, = o ,\nEncontrado: " + tokenActual.getNombre());
@@ -685,14 +719,6 @@ public class AnalizadorSintactico {
 				expresion();
 				break;
 			case ";":				// siguientes
-			case "boolean":			// modo pánico
-			case "char":			// modo pánico
-			case "int":				// modo pánico
-			case "String":			// modo pánico
-			case "if":				// modo pánico
-			case "while":			// modo pánico
-			case "{":				// modo pánico
-			case "return":			// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en expresión de retorno.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, new, (, idMetVar, idClase o ;\nEncontrado: " + tokenActual.getNombre());
@@ -733,28 +759,6 @@ public class AnalizadorSintactico {
 				desparentizada();
 				break;
 			case ";":					// siguientes
-			case "idMetVar":			// modo pánico
-			case "!":					// modo pánico
-			case "null":				// modo pánico
-			case "true":				// modo pánico
-			case "false":				// modo pánico
-			case "intLiteral":			// modo pánico
-			case "charLiteral":			// modo pánico
-			case "stringLiteral":		// modo pánico
-			case "this":				// modo pánico
-			case "new":					// modo pánico
-			case "(":					// modo pánico
-			case "boolean":				// modo pánico
-			case "char":				// modo pánico
-			case "int":					// modo pánico
-			case "String":				// modo pánico
-			case "idClase":				// modo pánico
-			case "if":					// modo pánico
-			case "while":				// modo pánico
-			case "{":					// modo pánico
-			case "return":				// modo pánico
-			case "}":					// modo pánico
-			case "else":				// modo pánico
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() +"] Error sintáctico en sentencia simple desparentizada.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());

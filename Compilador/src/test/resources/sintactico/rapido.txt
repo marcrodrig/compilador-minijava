@@ -1,8 +1,3 @@
 class Clase {
-	private int numero //2
-	private String cadena
-	static void met(int a) {
-		4+*6; 
-		hola..chau();
-	}
-}
+	private
+}	
