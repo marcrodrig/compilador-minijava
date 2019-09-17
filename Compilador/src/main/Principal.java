@@ -30,8 +30,8 @@ public class Principal {
 				AnalizadorSintactico analizadorSintactico;
 				try {
 					analizadorSintactico = new AnalizadorSintactico(args[0]);
-					boolean puntoComaFaltantes = analizadorSintactico.start();
-					if (puntoComaFaltantes)
+					boolean modoPanico = analizadorSintactico.start();
+					if (modoPanico)
 						System.out.println("Se completó el análisis sintáctico.");
 					else
 						System.out.println("El análisis sintáctico fue exitoso, no se encontraron errores.");

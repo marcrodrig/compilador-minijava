@@ -15,7 +15,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testIdMetVar() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestIdMetVar.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestIdMetVar.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("idMetVar", token.getNombre());
 			assertEquals("id78_MKf_", token.getLexema());
@@ -29,7 +29,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testIdMetVarBlancos() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestIdMetVarBlancos.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestIdMetVarBlancos.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("idMetVar", token.getNombre());
 			assertEquals("id78_DespuesBlancos", token.getLexema());
@@ -43,7 +43,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testIdClase() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestIdClase.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestIdClase.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("idClase", token.getNombre());
 			assertEquals("Principal_1", token.getLexema());
@@ -57,7 +57,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testEntero() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestEntero.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestEntero.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("intLiteral", token.getNombre());
 			assertEquals("1984", token.getLexema());
@@ -71,7 +71,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testCaracterSinBarraInvertida() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCaracter.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCaracter.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("charLiteral", token.getNombre());
 			assertEquals("\'¿'", token.getLexema());
@@ -86,7 +86,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	public void testCaracterConBarraInvertida() {
 		try {
 			AnalizadorLexico analizadorLexico = new AnalizadorLexico(
-					"src/test/resources/TestCaracterBarraInvertida.txt");
+					"src/test/resources/lexico/TestCaracterBarraInvertida.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("charLiteral", token.getNombre());
 			assertEquals("\'\\@'", token.getLexema());
@@ -100,7 +100,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testParentesisApertura() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestParentesisApertura.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestParentesisApertura.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("(", token.getNombre());
 			assertEquals("(", token.getLexema());
@@ -114,7 +114,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testParentesisCierre() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestParentesisCierre.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestParentesisCierre.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals(")", token.getNombre());
 			assertEquals(")", token.getLexema());
@@ -128,7 +128,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testLlaveApertura() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestLlaveApertura.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestLlaveApertura.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("{", token.getNombre());
 			assertEquals("{", token.getLexema());
@@ -142,7 +142,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testLlaveCierre() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestLlaveCierre.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestLlaveCierre.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("}", token.getNombre());
 			assertEquals("}", token.getLexema());
@@ -156,7 +156,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testComa() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestComa.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestComa.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals(",", token.getNombre());
 			assertEquals(",", token.getLexema());
@@ -170,7 +170,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testPunto() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestPunto.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestPunto.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals(".", token.getNombre());
 			assertEquals(".", token.getLexema());
@@ -184,7 +184,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testPuntoComa() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestPuntoComa.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestPuntoComa.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals(";", token.getNombre());
 			assertEquals(";", token.getLexema());
@@ -198,7 +198,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testMayor() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestMayor.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestMayor.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals(">", token.getNombre());
 			assertEquals(">", token.getLexema());
@@ -212,7 +212,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testMayorIgual() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestMayorIgual.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestMayorIgual.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals(">=", token.getNombre());
 			assertEquals(">=", token.getLexema());
@@ -226,7 +226,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testMenor() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestMenor.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestMenor.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("<", token.getNombre());
 			assertEquals("<", token.getLexema());
@@ -240,7 +240,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testMenorIgual() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestMenorIgual.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestMenorIgual.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("<=", token.getNombre());
 			assertEquals("<=", token.getLexema());
@@ -254,7 +254,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testNegacion() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestNegacion.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestNegacion.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("!", token.getNombre());
 			assertEquals("!", token.getLexema());
@@ -268,7 +268,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testDistinto() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestDistinto.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestDistinto.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("!=", token.getNombre());
 			assertEquals("!=", token.getLexema());
@@ -282,7 +282,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testAsignacion() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestAsignacion.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestAsignacion.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("=", token.getNombre());
 			assertEquals("=", token.getLexema());
@@ -296,7 +296,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testComparacion() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestComparacion.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestComparacion.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("==", token.getNombre());
 			assertEquals("==", token.getLexema());
@@ -310,7 +310,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testAnd() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestAnd.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestAnd.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("&&", token.getNombre());
 			assertEquals("&&", token.getLexema());
@@ -324,7 +324,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testOr() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestOr.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestOr.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("||", token.getNombre());
 			assertEquals("||", token.getLexema());
@@ -338,7 +338,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testSuma() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestSuma.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestSuma.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("+", token.getNombre());
 			assertEquals("+", token.getLexema());
@@ -352,7 +352,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testResta() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestResta.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestResta.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("-", token.getNombre());
 			assertEquals("-", token.getLexema());
@@ -366,7 +366,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testProducto() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestProducto.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestProducto.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("*", token.getNombre());
 			assertEquals("*", token.getLexema());
@@ -380,7 +380,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testModulo() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestModulo.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestModulo.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("%", token.getNombre());
 			assertEquals("%", token.getLexema());
@@ -394,7 +394,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testCociente() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCociente.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCociente.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("/", token.getNombre());
 			assertEquals("/", token.getLexema());
@@ -408,7 +408,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testComentarioSimple() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestComentarioSimple.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestComentarioSimple.txt");
 			Token token = analizadorLexico.getToken();
 			assertNull(token);
 		} catch (Exception e) {
@@ -419,7 +419,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testComentarioMultilinea() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestComentarioMultilinea.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestComentarioMultilinea.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("EOF",token.getNombre());
 		} catch (Exception e) {
@@ -430,7 +430,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testCadenaMultilinea() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCadena.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCadena.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("stringLiteral", token.getNombre());
 			assertEquals("\"cadena \r\n multilinea?\"", token.getLexema());
@@ -444,7 +444,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testCadenaSimple() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCadena2.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCadena2.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("stringLiteral", token.getNombre());
 			assertEquals("\"cadena simple\"", token.getLexema());
@@ -458,7 +458,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testCadenaConBarraInvertidaYCaracterDistintoDeN() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCadena3.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCadena3.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("stringLiteral", token.getNombre());
 			assertEquals("\"\\t\"", token.getLexema());
@@ -472,7 +472,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testCadenaVaciaValida() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCadena4.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCadena4.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("stringLiteral", token.getNombre());
 			assertEquals("\"\"", token.getLexema());
@@ -486,7 +486,7 @@ public class AnalizadorLexicoTokensNoPalabrasReservadasTest {
 	@Test
 	public void testCadenaSoloBarraInvetidaN() {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCadena5.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCadena5.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("stringLiteral", token.getNombre());
 			assertEquals("\"\r\n\"", token.getLexema());

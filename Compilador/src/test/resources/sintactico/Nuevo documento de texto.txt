@@ -1,6 +1,0 @@
-if (true)
-	c
-if (true)
-	c
-else 
-	d

@@ -10,7 +10,7 @@ import org.junit.runners.Suite;
 	AnalizadorLexicoExcepcionesTest.class,
 	AnalizadorLexicoPalabrasReservadasTest.class,
 	AnalizadorLexicoTokensNoPalabrasReservadasTest.class,
-	PrincipalTest.class})
+	PrincipalEtapa1Test.class})
 public class TestSuite {
 
 }

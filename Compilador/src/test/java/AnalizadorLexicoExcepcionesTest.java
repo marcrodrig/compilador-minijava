@@ -23,7 +23,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	@Test
 	public void testExcepcionCaracterInvalidoDespuesDeTokenValido1() throws ExcepcionCaracterInvalido {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCaracterInvalido.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCaracterInvalido.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("idMetVar", token.getNombre());
 			assertEquals("numero", token.getLexema());
@@ -39,7 +39,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	@Test
 	public void testExcepcionCaracterInvalidoDespuesDeTokenValido2() throws ExcepcionCaracterInvalido {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestCaracterInvalido2.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestCaracterInvalido2.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("idClase", token.getNombre());
 			assertEquals("Persona", token.getLexema());
@@ -56,7 +56,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	public void testExcepcionFormatoCaracter1() throws ExcepcionFormatoCaracter {
 		try {
 			AnalizadorLexico analizadorLexico = new AnalizadorLexico(
-					"src/test/resources/TestFormatoCaracterInvalido.txt");
+					"src/test/resources/lexico/TestFormatoCaracterInvalido.txt");
 			Exception e = assertThrows(ExcepcionFormatoCaracter.class, () -> analizadorLexico.getToken());
 			assertEquals("ERROR LEXICO: Linea 1: formato caracter inválido.", e.toString());
 		} catch (FileNotFoundException e) {
@@ -68,7 +68,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	public void testExcepcionFormatoCaracter2() throws ExcepcionFormatoCaracter {
 		try {
 			AnalizadorLexico analizadorLexico = new AnalizadorLexico(
-					"src/test/resources/TestFormatoCaracterInvalido2.txt");
+					"src/test/resources/lexico/TestFormatoCaracterInvalido2.txt");
 			Exception e = assertThrows(ExcepcionFormatoCaracter.class, () -> analizadorLexico.getToken());
 			assertEquals("ERROR LEXICO: Linea 1: formato caracter inválido.", e.toString());
 		} catch (FileNotFoundException e) {
@@ -79,7 +79,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	@Test
 	public void testAndInvalido() throws ExcepcionFormatoAnd {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestAndInvalido.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestAndInvalido.txt");
 			Exception e = assertThrows(ExcepcionFormatoAnd.class, () -> analizadorLexico.getToken());
 			assertEquals("ERROR LEXICO: Línea 5: error en formato &&", e.toString());
 		} catch (FileNotFoundException e) {
@@ -90,7 +90,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	@Test
 	public void testOrInvalido() throws ExcepcionFormatoOr {
 		try {
-			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/TestOrInvalido.txt");
+			AnalizadorLexico analizadorLexico = new AnalizadorLexico("src/test/resources/lexico/TestOrInvalido.txt");
 			Exception e = assertThrows(ExcepcionFormatoOr.class, () -> analizadorLexico.getToken());
 			assertEquals("ERROR LEXICO: Línea 2: error en formato ||", e.toString());
 		} catch (FileNotFoundException e) {
@@ -102,7 +102,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	public void testComentarioMultilineaInvalido() throws ExcepcionFormatoComentarioMultilinea {
 		try {
 			AnalizadorLexico analizadorLexico = new AnalizadorLexico(
-					"src/test/resources/TestComentarioMultilineaInvalido.txt");
+					"src/test/resources/lexico/TestComentarioMultilineaInvalido.txt");
 			Token token = analizadorLexico.getToken();
 			assertEquals("public", token.getNombre());
 			assertEquals("public", token.getLexema());
@@ -124,7 +124,7 @@ public class AnalizadorLexicoExcepcionesTest {
 			assertEquals(2, token.getNroLinea());
 			assertEquals(1, token.getNroColumna());
 			Exception e = assertThrows(ExcepcionFormatoComentarioMultilinea.class, () -> analizadorLexico.getToken());
-			assertEquals("ERROR LEXICO: Linea 7: comentario multinea sin cerrar.", e.toString());
+			assertEquals("[7:2] ERROR LEXICO: comentario multinea sin cerrar.", e.toString());
 		} catch (IOException | ExcepcionCaracterInvalido | ExcepcionFormatoCaracter | ExcepcionFormatoAnd | ExcepcionFormatoOr | ExcepcionFormatoString e) {
 			fail("No debería lanzar esta excepción: " + e.getClass().getSimpleName());
 		}
@@ -134,7 +134,7 @@ public class AnalizadorLexicoExcepcionesTest {
 	public void testStringMultilineaInvalido() throws ExcepcionFormatoString {
 		try {
 			AnalizadorLexico analizadorLexico = new AnalizadorLexico(
-					"src/test/resources/TestStringMultilineaInvalido.txt");
+					"src/test/resources/lexico/TestStringMultilineaInvalido.txt");
 			Exception e = assertThrows(ExcepcionFormatoString.class, () -> analizadorLexico.getToken());
 			assertEquals("ERROR LEXICO: Linea 1: error en formato de String, String sin cerrar o con un salto de línea.", e.toString());
 		} catch (FileNotFoundException e) {

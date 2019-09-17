@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import main.PrincipalEtapa1;
 
-public class PrincipalTest {
+public class PrincipalEtapa1Test {
 	
 	@Rule
     public TestCasePrinterRule pr = new TestCasePrinterRule(System.out);
@@ -28,8 +28,8 @@ public class PrincipalTest {
 	@Test
 	public void testSinIngresarArchivoEntradaContenido() {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestSinIngresarArchivoEntradaContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida1Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestSinIngresarArchivoEntradaContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida1Esperada.txt";
 		PrintStream salida;
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
@@ -57,8 +57,8 @@ public class PrincipalTest {
 	@Test
 	public void testConArchivoEntradaInexistenteContenido()  {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestConArchivoEntradaInexistenteContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida2Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestConArchivoEntradaInexistenteContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida2Esperada.txt";
 		PrintStream salida;
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
@@ -86,8 +86,8 @@ public class PrincipalTest {
 	@Test
 	public void testArchivoEntradaSinExtensionContenido()  {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestArchivoEntradaSinExtensionContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida4Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestArchivoEntradaSinExtensionContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida4Esperada.txt";
 		PrintStream salida;
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
@@ -108,20 +108,20 @@ public class PrincipalTest {
 	
 	@Test
 	public void testSalidaConsola() {
-	    String[] args = {"src/test/resources/TestSuma.txt"};
+	    String[] args = {"src/test/resources/lexico/TestSuma.txt"};
 	    PrincipalEtapa1.main(args);
 	}
 	
 	@Test
 	public void testSalidaConsolaContenido() {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestSalidaConsolaContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida5Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestSalidaConsolaContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida5Esperada.txt";
 		PrintStream salida;
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
-		    String[] args = {"src/test/resources/TestSuma.txt"};
+		    String[] args = {"src/test/resources/lexico/TestSuma.txt"};
 		    PrincipalEtapa1.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
@@ -138,14 +138,14 @@ public class PrincipalTest {
 	@Test
 	public void testSalidaArchivoContenido()  {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestSalidaArchivo.txt";
-		String pathSalidaEsperada = "src/test/resources/salida6Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestSalidaArchivo.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida6Esperada.txt";
 		PrintStream salida;
 		System.out.println("Archivo de salida en: " + pathSalida);
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
-	    String[] args = {"src/test/resources/TestSuma.txt",pathSalida};
+	    String[] args = {"src/test/resources/lexico/TestSuma.txt",pathSalida};
 	    PrincipalEtapa1.main(args);
 	    System.setOut(consola);
 		}catch (FileNotFoundException e) {
@@ -162,22 +162,22 @@ public class PrincipalTest {
 	@Test
 	public void testArchivoSalidaSinExtension()  {
 		String archivoSalida = "C:/sinextension";
-	    String[] args = {"src/test/resources/TestSuma.txt",archivoSalida};
+	    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
 	    PrincipalEtapa1.main(args);
 	}	
 	
 	@Test
 	public void testArchivoSalidaSinExtensionContenido()  {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestArchivoSalidaSinExtensionContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida7Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestArchivoSalidaSinExtensionContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida7Esperada.txt";
 		PrintStream salida;
 		System.out.println("Archivo de salida en: " + pathSalida);
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 			String archivoSalida = "C:/sinextension";
-		    String[] args = {"src/test/resources/TestSuma.txt",archivoSalida};
+		    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
 		    PrincipalEtapa1.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
@@ -194,22 +194,22 @@ public class PrincipalTest {
 	@Test
 	public void testSalidaArchivoInvalido()  {
 		String archivoSalida = "C:/out:salida.txt";
-	    String[] args = {"src/test/resources/TestSuma.txt",archivoSalida};
+	    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
 	    PrincipalEtapa1.main(args);
 	}
 	
 	@Test
 	public void testSalidaArchivoInvalidoContenido()  {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestSalidaArchivoInvalidoContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida8Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestSalidaArchivoInvalidoContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida8Esperada.txt";
 		PrintStream salida;
 		System.out.println("Archivo de salida en: " + pathSalida);
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 			String archivoSalida = "C:/out:salida.txt";
-		    String[] args = {"src/test/resources/TestSuma.txt",archivoSalida};
+		    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
 		    PrincipalEtapa1.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
@@ -226,14 +226,14 @@ public class PrincipalTest {
 	@Test
 	public void testArchivoSalidaConErrorLexicoDespuesDeTokenValidoContenido()  {
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestArchivoSalidaConErrorLexicoDespuesDeTokenValidoContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida9Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestArchivoSalidaConErrorLexicoDespuesDeTokenValidoContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida9Esperada.txt";
 		PrintStream salida;
 		System.out.println("Archivo de salida en: " + pathSalida);
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
-			String[] args = {"src/test/resources/TestCaracterInvalido.txt",pathSalida};
+			String[] args = {"src/test/resources/lexico/TestCaracterInvalido.txt",pathSalida};
 		    PrincipalEtapa1.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
@@ -249,21 +249,21 @@ public class PrincipalTest {
 	
 	@Test
 	public void testClaseCompletaConsola()  {;
-		String[] args = {"src/test/resources/TestClaseCompleta.txt"};
+		String[] args = {"src/test/resources/lexico/TestClaseCompleta.txt"};
 	    PrincipalEtapa1.main(args);
 	}
 	
 	@Test
 	public void testClaseCompletaContenido()  {
-		System.out.println("Archivo de salida en: src/test/resources/salida3.txt");
+		System.out.println("Archivo de salida en: src/test/resources/lexico/salida3.txt");
 		PrintStream consola = System.out;
-		String pathSalida = "src/test/resources/SalidaTestClaseCompletaContenido.txt";
-		String pathSalidaEsperada = "src/test/resources/salida3Esperada.txt";
+		String pathSalida = "src/test/resources/lexico/SalidaTestClaseCompletaContenido.txt";
+		String pathSalidaEsperada = "src/test/resources/lexico/salida3Esperada.txt";
 		PrintStream salida;
 		try {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
-			String[] args = {"src/test/resources/TestClaseCompleta.txt"};
+			String[] args = {"src/test/resources/lexico/TestClaseCompleta.txt"};
 		    PrincipalEtapa1.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
@@ -301,7 +301,7 @@ public class PrincipalTest {
 	
 	@Test
 	public void testRapido() {
-		String[] args = {"src/test/resources/TestRapido.txt"};
+		String[] args = {"src/test/resources/lexico/TestRapido.txt"};
 		PrincipalEtapa1.main(args);
 	}
 	

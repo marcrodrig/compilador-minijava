@@ -1,0 +1,5 @@
+class Clase {
+	static void metodo() {
+		ab(a,b().c.d().e,*);
+	}
+}

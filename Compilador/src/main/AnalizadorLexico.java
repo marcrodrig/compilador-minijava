@@ -515,7 +515,7 @@ public class AnalizadorLexico {
 									if (caracterEntero == -1) {
 										stop = true;
 										throw new ExcepcionFormatoComentarioMultilinea(
-												"ERROR LEXICO: Linea " + numeroLinea + ": comentario multinea sin cerrar.");
+												"[" + numeroLinea + ":"+ numeroColumna + "] ERROR LEXICO: comentario multinea sin cerrar.");
 									}
 									// numeroColumna++;
 									caracterActual = (char) caracterEntero;
@@ -530,8 +530,8 @@ public class AnalizadorLexico {
 										caracterEntero = lector.read();
 										if (caracterEntero == -1) {
 											stop = true;
-											throw new ExcepcionFormatoComentarioMultilinea("ERROR LEXICO: Linea "
-													+ numeroLinea + ": comentario multinea sin cerrar.");
+											throw new ExcepcionFormatoComentarioMultilinea(
+													"[" + numeroLinea + ":"+ numeroColumna + "] ERROR LEXICO: comentario multinea sin cerrar.");
 										}
 										numeroColumna++;
 										caracterActual = (char) caracterEntero;
