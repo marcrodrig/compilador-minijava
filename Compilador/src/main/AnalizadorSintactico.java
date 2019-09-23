@@ -2,6 +2,8 @@ package main;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class AnalizadorSintactico {
 
@@ -9,12 +11,14 @@ public class AnalizadorSintactico {
 	private Token tokenActual;
 	private boolean modoPanico, ifPanico;
 	private int ultimaLineaAnalizada, ultimaColumnaAnalizada;
+	TablaSimbolos ts;
 	
 	public AnalizadorSintactico(String archivoEntrada) throws FileNotFoundException, ExcepcionLexico {
 		analizadorLexico = new AnalizadorLexico(archivoEntrada);
 		tokenActual = analizadorLexico.getToken();
 		modoPanico = false;
 		ifPanico = false;
+		ts = TablaSimbolos.getInstance();
 	}
 
 	private void match(String nombre) throws ExcepcionLexico, ExcepcionSintactico {
@@ -27,18 +31,18 @@ public class AnalizadorSintactico {
 			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico.\nEsperado: " + nombre + "\nEncontrado: " + tokenActual.getNombre());
 	}
 
-	public boolean start() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	public boolean start() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		inicial();
 		match("EOF");
 		return modoPanico;
 	}
 	
-	private void inicial() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void inicial() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		clase();
 		otroInicial();
 	}
 
-	private void otroInicial() throws  ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void otroInicial() throws  ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		if (tokenActual.getNombre().equals("class")) {			// primeros
 			clase();
 			otroInicial();
@@ -47,30 +51,41 @@ public class AnalizadorSintactico {
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de una clase.\nEsperado: class\nEncontrado: " + tokenActual.getNombre());
 	}
 	
-	private void clase() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void clase() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		match("class");		// primeros
+	//	String nombreClase = tokenActual.getLexema();
+		Token token = tokenActual;
 		match("idClase");
-		herencia();
+		String superclase = herencia();
+		Clase clase = new Clase(token, superclase);
+		ts.setClaseActual(clase);
 		match("{");
 		miembros();
+		if (ts.getClase(clase.getNombre()) == null)
+			ts.insertarClase(clase);
+		else
+			throw new ExcepcionSemantico("[" + clase.getToken().getNroLinea() + "] Error semántico: La clase " + clase.getNombre() + " ya está definida." );
 		match("}");
 	}
 
-	private void herencia() throws ExcepcionLexico, ExcepcionSintactico {
+	private String herencia() throws ExcepcionLexico, ExcepcionSintactico {
 		if (tokenActual.getNombre().equals("extends")) {	// primeros
 			match("extends");
 			try {
-			match("idClase");
+				String superclase = tokenActual.getLexema();
+				match("idClase");
+				return superclase;
 			} catch (ExcepcionSintactico e) {
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de herencia de una clase.\nEsperado: idClase\nEncontrado: " + tokenActual.getNombre());
 			}
 		} else 
 			if (tokenActual.getNombre().equals("{")) {		// siguientes
+				return "Object";
 			} else
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de una clase.\nEsperado: extends o {\nEncontrado: " + tokenActual.getNombre());
 	}
 	
-	private void miembros() throws ExcepcionSintactico, ExcepcionLexico, ExcepcionPanicMode {
+	private void miembros() throws ExcepcionSintactico, ExcepcionLexico, ExcepcionPanicMode, ExcepcionSemantico {
 		switch (tokenActual.getNombre()) {
 			case "public":		// primeros
 			case "protected":	// primeros
@@ -87,7 +102,7 @@ public class AnalizadorSintactico {
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico. Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: " + tokenActual.getNombre());		}
 	}
 	
-	private void miembro() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void miembro() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		switch (tokenActual.getNombre()) {
 			case "public":		// primeros
 			case "protected":	// primeros
@@ -104,7 +119,7 @@ public class AnalizadorSintactico {
 		}
 	}
 
-	private void atributo() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void atributo() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int panicoLinea = tokenActual.getNroLinea();
 		int panicoColumna = tokenActual.getNroColumna();
 		visibilidad();
@@ -118,7 +133,7 @@ public class AnalizadorSintactico {
 		}
 	}
 	
-	private void modoPanicoAtributo(int nroLineaComienzo, int nroColumnaComienzo) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void modoPanicoAtributo(int nroLineaComienzo, int nroColumnaComienzo) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int nroLineaFin = ultimaLineaAnalizada;
 		int nroColumnaFin = ultimaColumnaAnalizada;
 		modoPanico = true;
@@ -173,13 +188,14 @@ public class AnalizadorSintactico {
 		}
 	}
 
-	private void tipo() throws ExcepcionLexico, ExcepcionSintactico {
+	private Tipo tipo() throws ExcepcionLexico, ExcepcionSintactico {
+		Tipo tipo = null;
 		switch (tokenActual.getNombre()) {
 			case "boolean":			// primeros
 			case "char":			// primeros
 			case "int":				// primeros
 			case "String":			// primeros
-				tipoPrimitivo();
+				tipo = tipoPrimitivo();
 				break;
 			case "idClase":			// primeros
 				match("idClase");
@@ -187,23 +203,30 @@ public class AnalizadorSintactico {
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en tipo.\nEsperado: idClase, boolean, char, int o String\nEncontrado: " + tokenActual.getNombre());
 		}
+		return tipo;
 	}
 
-	private void tipoPrimitivo() throws ExcepcionLexico, ExcepcionSintactico {
+	private Tipo tipoPrimitivo() throws ExcepcionLexico, ExcepcionSintactico {
+		Tipo tipo = null;
 		switch (tokenActual.getNombre()) {
 			case "boolean":			// primeros
 				match("boolean");
+				tipo = new TipoBoolean();
 				break;
 			case "char":			// primeros
 				match("char");
+				tipo = new TipoChar();
 				break;
 			case "int":				// primeros
 				match("int");
+				tipo = new TipoInt();
 				break;
 			case "String":			// primeros
 				match("String");
+				tipo = new TipoString();
 				break;
 		}
+		return tipo;
 	}
 
 	private void listaDecAtrs() throws ExcepcionLexico, ExcepcionSintactico {
@@ -290,58 +313,83 @@ public class AnalizadorSintactico {
 		}
 	}
 
-	private void argsFormales() throws ExcepcionLexico, ExcepcionSintactico {
+	private List<Parametro> argsFormales() throws ExcepcionLexico, ExcepcionSintactico {
+		List<Parametro> argsFormales = null;
 		if (tokenActual.getNombre().equals("(")) {	// primeros
 			match("(");
-			argumentos();
+			argsFormales = argumentos();
 			match(")");
 		} else {
 			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de argumentos formales.\nEsperado: (\nEncontrado: " + tokenActual.getNombre());
 		}
+		return argsFormales;
 	}
 
-	private void argumentos() throws ExcepcionLexico, ExcepcionSintactico {
+	private List<Parametro> argumentos() throws ExcepcionLexico, ExcepcionSintactico {
+		List<Parametro> argsFormales = new ArrayList<Parametro>();
 		switch (tokenActual.getNombre()) {
 			case "boolean":				// primeros
 			case "char":				// primeros
 			case "int":					// primeros
 			case "String":				// primeros
 			case "idClase":				// primeros
-				listaArgsFormales();
+				listaArgsFormales(argsFormales);
 				break;
 			case ")":					// siguientes
+				//argsFormales = new ArrayList<Parametro>();
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en argumentos formales.\nEsperado: ) o tipo\nEncontrado: " + tokenActual.getNombre());
 			}
+		return argsFormales;
 	}
 
-	private void listaArgsFormales() throws ExcepcionLexico, ExcepcionSintactico {
-		argFormal();
-		rArgFormal();
+	private void listaArgsFormales(List<Parametro> argsFormales) throws ExcepcionLexico, ExcepcionSintactico {
+	//	List<Parametro> lista = 
+				argFormal(argsFormales);
+		//argsFormales = 
+				rArgFormal(argsFormales);
 	}
 
-	private void argFormal() throws ExcepcionLexico, ExcepcionSintactico {
-		tipo();
+	private void argFormal(List<Parametro> argsFormales) throws ExcepcionLexico, ExcepcionSintactico {
+		Tipo tipoParametro = tipo();
+		String nombreParametro = tokenActual.getLexema();
 		match("idMetVar");
+		Parametro param = new Parametro(nombreParametro, tipoParametro);
+		argsFormales.add(param);
+		//return argsFormales;
 	}
 
-	private void rArgFormal() throws ExcepcionLexico, ExcepcionSintactico {
+	private void rArgFormal(List<Parametro> argsFormales) throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
 			case ",":					// primeros
 				match(",");
-				listaArgsFormales();
+				listaArgsFormales(argsFormales);
 				break;
 			case ")":					// siguientes
+				//argsFormales = new ArrayList<Parametro>();
 				break;
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en los argumentos formales.\nEsperado: ) o ,\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
-	private void ctor() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void ctor() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
+		//String nombreConstructor = tokenActual.getLexema();
+		Token token = tokenActual; 
 		match("idClase");	// primeros
-		argsFormales();
+		if (!ts.getClaseActual().getNombre().equals(token.getLexema()))
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + "] Error semántico: El nombre del constructor es inválido, debe ser " + ts.getClaseActual().getNombre() + ".");
+		List<Parametro> listaArgsFormales = argsFormales();
+		HashMap<String, Parametro> parametros = new HashMap<String, Parametro>();
+		int posicion = 1;
+		for (Parametro param : listaArgsFormales) {
+			param.setPosicion(posicion);
+			parametros.put(param.getNombre(), param);
+			posicion++;
+		}
+		Constructor ctor = new Constructor(token, parametros);
+		ts.insertarConstructor(ctor);
 		bloque();
 	}
 

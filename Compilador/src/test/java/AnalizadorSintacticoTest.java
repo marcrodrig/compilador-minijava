@@ -3,6 +3,7 @@ package test.java;
 import main.AnalizadorSintactico;
 import main.ExcepcionLexico;
 import main.ExcepcionPanicMode;
+import main.ExcepcionSemantico;
 import main.ExcepcionSintactico;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -406,7 +407,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testUnaClaseVacía() {
+	void testUnaClaseVacía() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/unaClaseVacia.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -418,7 +419,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testVariasClasesVacias() {
+	void testVariasClasesVacias() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/variasClasesVacias.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -430,7 +431,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testNombreAtributoIncorrectoRecuperacionModoPanico() {
+	void testNombreAtributoIncorrectoRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/nombreAtributoIncorrectoRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -442,7 +443,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testDeclaracionListaAtributosSinAsignacion() {
+	void testDeclaracionListaAtributosSinAsignacion() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/declaracionListaAtributosSinAsignacion.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -454,7 +455,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testDeclaracionListaAtributosConAsignacion() {
+	void testDeclaracionListaAtributosConAsignacion() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/declaracionListaAtributosConAsignacion.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -466,7 +467,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testClaseConExtendsVaciaValido() {
+	void testClaseConExtendsVaciaValido() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/claseConExtendsVaciaValido.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -478,7 +479,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testClaseConDeclaracionAtributoSoloVisibilidad() {
+	void testClaseConDeclaracionAtributoSoloVisibilidad() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/claseConDeclaracionAtributoSoloVisibilidad.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -490,7 +491,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testClaseConDeclaracionAtributoSoloVisibilidadYTipo() {
+	void testClaseConDeclaracionAtributoSoloVisibilidadYTipo() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/claseConDeclaracionAtributoSoloVisibilidadYTipo.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -502,7 +503,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testClaseConDeclaracionAtributoConPuntoComaFaltanteRecuperacionModoPanico() {
+	void testClaseConDeclaracionAtributoConPuntoComaFaltanteRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/claseConDeclaracionAtributoConPuntoComaFaltanteRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
@@ -515,7 +516,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testClaseConAsignacionAtributoSinExpresion() {
+	void testClaseConAsignacionAtributoSinExpresion() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/claseConAsignacionAtributoSinExpresion.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -527,7 +528,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testClaseConAsignacionAtributoConPuntoComaFaltante() {
+	void testClaseConAsignacionAtributoConPuntoComaFaltante() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/claseConAsignacionAtributoConPuntoComaFaltante.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -539,7 +540,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testMetodoConListaExpresionesIncorrectoAlPrincipioRecuperacionModoPanico() {
+	void testMetodoConListaExpresionesIncorrectoAlPrincipioRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/metodoConListaExpresionesIncorrectoAlPrincipioRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
@@ -552,7 +553,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testMetodoConListaExpresionesIncorrectoAlFinalRecuperacionModoPanico() {
+	void testMetodoConListaExpresionesIncorrectoAlFinalRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/metodoConListaExpresionesIncorrectoAlFinalRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
@@ -565,7 +566,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testSentenciasSinPuntoComaRecuperacionModoPanico() {
+	void testSentenciasSinPuntoComaRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/sentenciasSinPuntoComaRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -577,7 +578,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testSentenciasSimpleParentizadasDesparentizadasIdMetVarAlPrincipio() {
+	void testSentenciasSimpleParentizadasDesparentizadasIdMetVarAlPrincipio() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/sentenciasSimpleParentizadasDesparentizadasIdMetVarAlPrincipio.txt" };
 		AnalizadorSintactico analizadorSintactico;
@@ -590,7 +591,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testSentenciasSimpleParentizadasDesparentizadasIdClaseAlPrincipio() {
+	void testSentenciasSimpleParentizadasDesparentizadasIdClaseAlPrincipio() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/sentenciasSimpleParentizadasDesparentizadasIdClaseAlPrincipio.txt" };
 		AnalizadorSintactico analizadorSintactico;
@@ -603,7 +604,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testSentenciaIncorrectaEnIfRecuperacionModoPanico() {
+	void testSentenciaIncorrectaEnIfRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/sintactico/sentenciaIncorrectaEnIfRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
@@ -615,7 +616,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testIfThenElseConPuntoComaFaltantesEnThenRecuperacionModoPanico() {
+	void testIfThenElseConPuntoComaFaltantesEnThenRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/ifThenElseConPuntoComaFaltantesEnThenRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
@@ -628,7 +629,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testReturnTodasValidasConYSinPuntoComaRecuperacionModoPanico() {
+	void testReturnTodasValidasConYSinPuntoComaRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/returnTodasValidasConYSinPuntoComaRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;
@@ -641,7 +642,7 @@ class AnalizadorSintacticoTest {
 	}
 
 	@Test
-	void testArgsActualesIncorrectoEnLlamadaConstructorRecuperacionModoPanico() {
+	void testArgsActualesIncorrectoEnLlamadaConstructorRecuperacionModoPanico() throws ExcepcionSemantico {
 		String[] args = {
 				"src/test/resources/sintactico/argsActualesIncorrectoEnLlamadaConstructorRecuperacionModoPanico.txt" };
 		AnalizadorSintactico analizadorSintactico;

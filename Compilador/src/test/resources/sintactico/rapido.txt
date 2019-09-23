@@ -1,3 +1,1 @@
-class Clase {
-	private Clase2 a = new Clase int;
-}
+class ClasePrueba {}

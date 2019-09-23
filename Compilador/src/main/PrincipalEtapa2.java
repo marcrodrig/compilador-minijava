@@ -8,18 +8,15 @@ import java.io.FileNotFoundException;
  * @author Rodríguez, Marcelo
  *
  */
-public class Principal {
+public class PrincipalEtapa2 {
 	/**
-	 * Método principal de la Etapa 3. En args se tendrán los parámetros de entrada
+	 * Método principal de la Etapa 2. En args se tendrán los parámetros de entrada
 	 * para la ejecución del Analizador Sintáctico. Se mostrará por consola la
 	 * salida del análisis sintáctico. El primer argumento si se ingresa lo llamamos
 	 * "IN_FILE" IN_FILE debe ser la ruta de un archivo de extensión .txt o .java.
 	 * 
 	 * @param args los parámetros de entrada de la ejecución del Proyecto
 	 */
-	
-	public static TablaSimbolos ts;
-	
 	public static void main(String[] args) {
 		if (args.length > 1 || args.length == 0) {
 			String nuevaLinea = System.lineSeparator();
@@ -32,14 +29,12 @@ public class Principal {
 			if (validarEntrada(extensionArchivoEntrada)) {
 				AnalizadorSintactico analizadorSintactico;
 				try {
-					ts = TablaSimbolos.getInstance();
 					analizadorSintactico = new AnalizadorSintactico(args[0]);
 					boolean modoPanico = analizadorSintactico.start();
 					if (modoPanico)
 						System.out.println("Se completó el análisis sintáctico.");
 					else
 						System.out.println("El análisis sintáctico fue exitoso, no se encontraron errores.");
-					ts.chequeoDeclaraciones();
 				} catch (FileNotFoundException e1) {
 					System.out.println("El archivo de entrada no existe");
 				} catch (Exception e) {

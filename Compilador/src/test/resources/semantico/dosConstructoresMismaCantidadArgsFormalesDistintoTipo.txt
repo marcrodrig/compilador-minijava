@@ -1,0 +1,4 @@
+class Prueba {
+	Prueba(int i) {}
+	Prueba(boolean b) {}
+}

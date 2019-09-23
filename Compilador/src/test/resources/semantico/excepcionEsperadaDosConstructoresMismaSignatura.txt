@@ -1,0 +1,4 @@
+class Prueba {
+	Prueba (int x) {}
+	Prueba (int y) {}
+}
