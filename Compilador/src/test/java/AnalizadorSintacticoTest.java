@@ -1,15 +1,15 @@
 package test.java;
 
-import main.AnalizadorSintactico;
-import main.ExcepcionLexico;
-import main.ExcepcionPanicMode;
-import main.ExcepcionSemantico;
-import main.ExcepcionSintactico;
+import semantico.ExcepcionSemantico;
+import sintactico.AnalizadorSintactico;
+import sintactico.ExcepcionPanicMode;
+import sintactico.ExcepcionSintactico;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.io.FileNotFoundException;
 import org.junit.jupiter.api.Test;
+import lexico.ExcepcionLexico;
 
 class AnalizadorSintacticoTest {
 

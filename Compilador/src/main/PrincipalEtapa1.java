@@ -4,6 +4,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+import lexico.AnalizadorLexico;
+import lexico.ExcepcionCaracterInvalido;
+import lexico.ExcepcionFormatoAnd;
+import lexico.ExcepcionFormatoCaracter;
+import lexico.ExcepcionFormatoComentarioMultilinea;
+import lexico.ExcepcionFormatoOr;
+import lexico.ExcepcionFormatoString;
+import lexico.Token;
+
 /**
  * Clase Principal.
  * Módulo principal de la Etapa 1.

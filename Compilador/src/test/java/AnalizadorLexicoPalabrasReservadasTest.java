@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.Rule;
 import org.junit.Test;
-import main.AnalizadorLexico;
-import main.Token;
+
+import lexico.AnalizadorLexico;
+import lexico.Token;
 
 public class AnalizadorLexicoPalabrasReservadasTest {
 

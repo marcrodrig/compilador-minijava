@@ -2,6 +2,10 @@ package main;
 
 import java.io.FileNotFoundException;
 
+import semantico.TablaSimbolos;
+import sintactico.AnalizadorSintactico;
+
+
 /**
  * Clase Principal. Módulo principal de la Etapa 2.
  * 
@@ -40,6 +44,7 @@ public class Principal {
 					else
 						System.out.println("El análisis sintáctico fue exitoso, no se encontraron errores.");
 					ts.chequeoDeclaraciones();
+					ts.consolidacion();
 				} catch (FileNotFoundException e1) {
 					System.out.println("El archivo de entrada no existe");
 				} catch (Exception e) {

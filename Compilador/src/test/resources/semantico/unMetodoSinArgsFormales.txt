@@ -1,0 +1,3 @@
+class Prueba {
+	static void met1() {}
+}

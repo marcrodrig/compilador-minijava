@@ -1,0 +1,3 @@
+class Prueba {
+	dynamic final Prueba met1(int x) {}
+}

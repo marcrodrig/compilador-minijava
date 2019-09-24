@@ -2,6 +2,8 @@ package main;
 
 import java.io.FileNotFoundException;
 
+import sintactico.AnalizadorSintactico;
+
 /**
  * Clase Principal. Módulo principal de la Etapa 2.
  * 

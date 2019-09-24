@@ -1,0 +1,4 @@
+class Prueba {
+	
+	static void met1(int i, boolean i) {}
+}

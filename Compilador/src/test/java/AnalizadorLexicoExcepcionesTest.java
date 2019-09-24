@@ -6,14 +6,15 @@ import java.io.IOException;
 
 import org.junit.Rule;
 import org.junit.Test;
-import main.AnalizadorLexico;
-import main.ExcepcionCaracterInvalido;
-import main.ExcepcionFormatoAnd;
-import main.ExcepcionFormatoCaracter;
-import main.ExcepcionFormatoComentarioMultilinea;
-import main.ExcepcionFormatoOr;
-import main.ExcepcionFormatoString;
-import main.Token;
+
+import lexico.AnalizadorLexico;
+import lexico.ExcepcionCaracterInvalido;
+import lexico.ExcepcionFormatoAnd;
+import lexico.ExcepcionFormatoCaracter;
+import lexico.ExcepcionFormatoComentarioMultilinea;
+import lexico.ExcepcionFormatoOr;
+import lexico.ExcepcionFormatoString;
+import lexico.Token;
 
 public class AnalizadorLexicoExcepcionesTest {
 	
