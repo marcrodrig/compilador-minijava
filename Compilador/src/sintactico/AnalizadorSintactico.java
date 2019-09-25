@@ -22,6 +22,7 @@ import semantico.TipoInt;
 import semantico.TipoRetorno;
 import semantico.TipoString;
 import semantico.TipoVoid;
+import semantico.VariableInstancia;
 
 public class AnalizadorSintactico {
 
@@ -82,7 +83,7 @@ public class AnalizadorSintactico {
 		if (ts.getClase(clase.getNombre()) == null)
 			ts.insertarClase(clase);
 		else
-			throw new ExcepcionSemantico("[" + clase.getToken().getNroLinea() + "] Error semántico: La clase " + clase.getNombre() + " ya está definida." );
+			throw new ExcepcionSemantico("[" + clase.getNroLinea() + "] Error semántico: La clase " + clase.getNombre() + " ya está definida." );
 		match("}");
 	}
 
@@ -140,10 +141,19 @@ public class AnalizadorSintactico {
 	private void atributo() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int panicoLinea = tokenActual.getNroLinea();
 		int panicoColumna = tokenActual.getNroColumna();
-		visibilidad();
+		String modificadorVisibilidad = visibilidad();
 		try {
-			tipo();
-			listaDecAtrs();
+			Tipo tipo = tipo();
+			List<Token> listaTokenVariablesInstancia = new ArrayList<Token>();
+			listaDecAtrs(listaTokenVariablesInstancia);
+			for (Token tokenAtributo : listaTokenVariablesInstancia) {
+				VariableInstancia varIns = new VariableInstancia(tokenAtributo,tipo,modificadorVisibilidad);
+				TablaSimbolos ts = TablaSimbolos.getInstance();
+				if (ts.getClaseActual().getAtributos().get(varIns.getNombre()) == null)
+					ts.insertarAtributo(varIns);
+				else
+					throw new ExcepcionSemantico("[" + tokenAtributo.getNroLinea() + ":" + tokenAtributo.getNroColumna() + "] Error semántico: Nombre de atributo \"" + tokenAtributo.getLexema() + "\" repetido.");
+			}
 			decAsig();
 			match(";");
 		} catch (ExcepcionSintactico e) {
@@ -192,17 +202,19 @@ public class AnalizadorSintactico {
 			}
 	}
 	
-	private void visibilidad() throws ExcepcionLexico, ExcepcionSintactico {
+	private String visibilidad() throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
 			case "public":			// primeros
 				match("public");
-				break;
+				return "public";
 			case "protected":		// primeros
 				match("protected");
-				break;
+				return "protected";
 			case "private":			// primeros
 				match("private");
-				break;
+				return "private";
+			default:
+				return null;
 		}
 	}
 
@@ -248,16 +260,19 @@ public class AnalizadorSintactico {
 		return tipo;
 	}
 
-	private void listaDecAtrs() throws ExcepcionLexico, ExcepcionSintactico {
+	private void listaDecAtrs(List<Token> listaTokenVariablesInstancia) throws ExcepcionLexico, ExcepcionSintactico {
+		//List<String> listaNombreVariables = new ArrayList<String>(); 
+		Token tokenVarIns = tokenActual;
 		match("idMetVar");	// primeros
-		rlistaDecAtrs();
+		listaTokenVariablesInstancia.add(tokenVarIns);
+		rlistaDecAtrs(listaTokenVariablesInstancia);
 	}
 
-	private void rlistaDecAtrs() throws ExcepcionLexico, ExcepcionSintactico {
+	private void rlistaDecAtrs(List<Token> listaTokenVariablesInstancia) throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
 			case ",":				// primeros
 				match(",");
-				listaDecAtrs();
+				listaDecAtrs(listaTokenVariablesInstancia);
 				break;
 			case ";": 				// siguientes
 			case "=": 				// siguientes
@@ -387,11 +402,10 @@ public class AnalizadorSintactico {
 
 	private void argFormal(List<Parametro> argsFormales) throws ExcepcionLexico, ExcepcionSintactico {
 		Tipo tipoParametro = tipo();
-		String nombreParametro = tokenActual.getLexema();
+		Token tokenParametro = tokenActual;
 		match("idMetVar");
-		Parametro param = new Parametro(nombreParametro, tipoParametro);
+		Parametro param = new Parametro(tokenParametro, tipoParametro);
 		argsFormales.add(param);
-		//return argsFormales;
 	}
 
 	private void rArgFormal(List<Parametro> argsFormales) throws ExcepcionLexico, ExcepcionSintactico {

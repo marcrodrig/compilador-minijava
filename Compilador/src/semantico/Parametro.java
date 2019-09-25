@@ -1,12 +1,14 @@
 package semantico;
 
+import lexico.Token;
+
 public class Parametro {
-	private String nombre;
+	private Token token;
 	private Tipo tipo;
 	private int posicion;
 	
-	public Parametro(String nombre, Tipo tipo) {
-		this.nombre = nombre;
+	public Parametro(Token token, Tipo tipo) {
+		this.token = token;
 		this.tipo = tipo;
 	}
 
@@ -23,6 +25,14 @@ public class Parametro {
 	}
 
 	public String getNombre() {
-		return nombre;
+		return token.getLexema();
+	}
+	
+	public void chequeoDeclaracionTipoClase() throws ExcepcionSemantico {
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		if (tipo instanceof TipoClase)
+		if (ts.getClase(tipo.getNombre()) == null) 
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + "] Error semántico: El tipo clase " + tipo.getNombre() + " del parámetro formal " + token.getLexema() + " no está definido.");	
+		
 	}
 }

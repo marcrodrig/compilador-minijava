@@ -6,7 +6,6 @@ import java.util.HashMap;
 import lexico.Token;
 
 public class Constructor {
-	//private String nombre;
 	private Token token;
 	private HashMap<String, Parametro> parametros;
 	
@@ -24,12 +23,16 @@ public class Constructor {
 	}
 	
 	// posicion va desde 1
-	public Parametro getParametro(int posicion) {
+	public Parametro getParametroPorPosicion(int posicion) {
 		ArrayList<Parametro> listaParametros = new ArrayList<Parametro>(parametros.values());
 		return listaParametros.get(posicion-1);
 	}
 
 	public Token getToken() {
 		return token;
+	}
+	
+	public int getCantidadParametros() {
+		return parametros.size();
 	}
 }

@@ -1,0 +1,14 @@
+class A {
+	public int v1, v2;
+}
+
+class B extends A{
+	public String v3;
+	private boolean v4;
+}
+
+class C extends B{
+	public int v5;
+	public int v6;
+	static void main() {}
+}

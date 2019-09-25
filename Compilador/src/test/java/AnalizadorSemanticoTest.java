@@ -16,6 +16,7 @@ import semantico.ExcepcionSemantico;
 import semantico.Metodo;
 import semantico.Parametro;
 import semantico.TablaSimbolos;
+import semantico.VariableInstancia;
 import sintactico.AnalizadorSintactico;
 import sintactico.ExcepcionPanicMode;
 import sintactico.ExcepcionSintactico;
@@ -27,7 +28,20 @@ class AnalizadorSemanticoTest {
 		Principal.ts.reset();
 	}
 	
-	@Test public void testUnaClaseVaciaChequeoClasesPredefinidas() { 
+	@Test
+	public void testRapido() { 
+		String[] args = {"src/test/resources/semantico/rapido.txt"};
+		Principal.main(args);
+	}
+	
+	/**
+	 * CHEQUEAR Error semántico: Método main sin definir.
+	 * No debe imprimirse ninguna vez
+	 * Agregar sin Main excepcion esperada, despues agregarselo a las otras validas
+	 */
+	
+	@Test 
+	public void testUnaClaseVaciaChequeoClasesPredefinidas() { 
 		String[] args = {"src/test/resources/semantico/unaClaseVaciaChequeoClasesPredefinidas.txt"};
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
@@ -142,20 +156,7 @@ class AnalizadorSemanticoTest {
 		assertEquals(1, p10.getPosicion());
 		assertEquals("String",p10.getTipo().getNombre());
 	}
-/*
-	@Test public void testRapido() { 
-		String[] args = {"src/test/resources/semantico/rapido.txt"};
-		Principal.main(args);
-		TablaSimbolos ts = TablaSimbolos.getInstance();
-		assertEquals(3,ts.getClases().size());
-		Clase object = ts.getClase("Object");
-		Clase system = ts.getClase("System");
-		Clase claseOtra = ts.getClase("ClaseOtra");
-		assertEquals(0,object.getMetodos().size());
-		assertEquals(0,claseOtra.getMetodos().size());
-		assertEquals(10,system.getMetodos().size());
-	}
-	*/
+	
 	@Test
 	void testExcepcionEsperadaDeclaracionClaseObject() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDeclaracionClaseObject.txt" };
@@ -451,7 +452,7 @@ class AnalizadorSemanticoTest {
 			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
 				ts.chequeoDeclaraciones();
 			});
-			assertEquals("[3] Error semántico: Método con misma signatura ya definido.", e.toString());
+			assertEquals("[3] Error semántico: Método con mismo nombre y cantidad de parámetros ya definido.", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e) {
 			fail("No debería suceder esto");
 		}
@@ -487,24 +488,197 @@ class AnalizadorSemanticoTest {
 		Clase c = ts.getClase("C");
 		assertEquals(2,a.cantidadMetodos());
 		assertEquals(3,b.cantidadMetodos());
-		assertEquals(4,c.cantidadMetodos());
+		assertEquals(5,c.cantidadMetodos());
 		Metodo m1A = a.getMetodosPorNombre("m1").get(0);
 		assertEquals("dynamic",m1A.getFormaMetodo());
 		assertEquals("void",m1A.getTipo().getNombre());
-		assertEquals(0,m1A.cantidadParametros());
+		assertEquals(0,m1A.getCantidadParametros());
 		Metodo m2A = a.getMetodosPorNombre("m2").get(0);
 		assertEquals("dynamic",m2A.getFormaMetodo());
 		assertEquals("void",m2A.getTipo().getNombre());
-		assertEquals(1,m2A.cantidadParametros());
+		assertEquals(1,m2A.getCantidadParametros());
 		Parametro p1 = m2A.getParametroPorNombre("p");
 		assertEquals(1,p1.getPosicion());
 		assertEquals("int",p1.getTipo().getNombre());
 		Metodo m1B = b.getMetodosPorNombre("m1").get(0);
 		assertEquals(m1A,m1B);
+		Metodo m2B = b.getMetodosPorNombre("m2").get(0);
+		assertEquals("dynamic",m2B.getFormaMetodo());
+		assertEquals("void",m2B.getTipo().getNombre());
+		assertEquals(1,m2B.getCantidadParametros());
+		Parametro p2 = m2B.getParametroPorNombre("x");
+		assertEquals(1,p2.getPosicion());
+		assertEquals("int",p2.getTipo().getNombre());
+		Metodo m3B = b.getMetodosPorNombre("m3").get(0);
+		assertEquals("dynamic",m3B.getFormaMetodo());
+		assertEquals("void",m3B.getTipo().getNombre());
+		assertEquals(0,m3B.getCantidadParametros());
 		Metodo m1C = c.getMetodosPorNombre("m1").get(0);
 		assertEquals(m1A,m1C);
-		/*
-		 * SEGUIR ACA
-		 */
+		Metodo m2C = c.getMetodosPorNombre("m2").get(0);
+		assertEquals(m2B,m2C);
+		Metodo m3C = c.getMetodosPorNombre("m3").get(0);
+		assertEquals("dynamic",m3C.getFormaMetodo());
+		assertEquals("void",m3C.getTipo().getNombre());
+		assertEquals(0,m3C.getCantidadParametros());
+		Metodo m4C = c.getMetodosPorNombre("m4").get(0);
+		assertEquals("dynamic",m4C.getFormaMetodo());
+		assertEquals("void",m4C.getTipo().getNombre());
+		assertEquals(0,m4C.getCantidadParametros());
+	}
+	
+	@Test
+	void testExcepcionEsperadaConsolidacionMetodosSobreescrituraFinal() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaConsolidacionMetodosSobreescrituraFinal.txt" };
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			TablaSimbolos ts = TablaSimbolos.getInstance();
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.start();
+			ts.chequeoDeclaraciones();
+			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
+				ts.consolidacion();
+			});
+			assertEquals("[10] Error semántico: El método m3 no se puede sobreescribir.", e.toString());
+		} catch (FileNotFoundException | ExcepcionLexico e) {
+			fail("No debería suceder esto");
+		}
+		Principal.main(args);
+	}
+	
+	@Test 
+	void testSobrecargaMetodosConUnoFinal() { 
+		String[] args = {"src/test/resources/semantico/sobrecargaMetodosConUnoFinal.txt"};
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(3,ts.getClases().size());
+		Clase a = ts.getClase("A");
+		assertEquals(2,a.cantidadMetodos());
+		Metodo m1 = a.getMetodosPorNombre("m1").get(0);
+		assertEquals("dynamic", m1.getFormaMetodo());
+		assertFalse(m1.isMetodoFinal());
+		assertEquals("void",m1.getTipo().getNombre());
+		assertEquals(0, m1.getParametros().size());
+		Metodo m2 = a.getMetodosPorNombre("m1").get(1);
+		assertEquals("dynamic", m2.getFormaMetodo());
+		assertTrue(m2.isMetodoFinal());
+		assertEquals("void",m2.getTipo().getNombre());
+		assertEquals(1, m2.getParametros().size());
+		Parametro p = m2.getParametroPorNombre("i");
+		assertEquals("int", p.getTipo().getNombre());
+	}
+	
+	@Test
+	void testExcepcionEsperadaNombreAtributoRepetido() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaNombreAtributoRepetido.txt" };
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
+				analizadorSintactico.start();
+			});
+			assertEquals("[3:23] Error semántico: Nombre de atributo \"a\" repetido.", e.toString());
+		} catch (FileNotFoundException | ExcepcionLexico e) {
+			fail("No debería suceder esto");
+		}
+		Principal.main(args);
+	}
+	
+	@Test
+	void testConsolidacionAtributos() { 
+		String[] args = {"src/test/resources/semantico/consolidacionAtributos.txt"};
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(5,ts.getClases().size());
+		Clase a = ts.getClase("A");
+		Clase b = ts.getClase("B");
+		Clase c = ts.getClase("C");
+		assertEquals(2,a.cantidadAtributos());
+		assertEquals(4,b.cantidadAtributos());
+		assertEquals(6,c.cantidadAtributos());
+		VariableInstancia v1A = a.getAtributoPorNombre("v1");
+		assertEquals("public",v1A.getVisibilidad());
+		assertEquals("int",v1A.getTipo().getNombre());
+		VariableInstancia v2A = a.getAtributoPorNombre("v2");
+		assertEquals("public",v2A.getVisibilidad());
+		assertEquals("int",v2A.getTipo().getNombre());
+		VariableInstancia v1B = b.getAtributoPorNombre("v1");
+		assertEquals(v1A,v1B);
+		VariableInstancia v2B = b.getAtributoPorNombre("v2");
+		assertEquals(v2A,v2B);
+		VariableInstancia v3B = b.getAtributoPorNombre("v3");
+		assertEquals("public",v3B.getVisibilidad());
+		assertEquals("String",v3B.getTipo().getNombre());
+		VariableInstancia v4B = b.getAtributoPorNombre("v4");
+		assertEquals("private",v4B.getVisibilidad());
+		assertEquals("boolean",v4B.getTipo().getNombre());
+		VariableInstancia v1C = c.getAtributoPorNombre("v1");
+		assertEquals(v1C,v1A);
+		VariableInstancia v2C = c.getAtributoPorNombre("v2");
+		assertEquals(v2C,v2A);
+		VariableInstancia v3C = c.getAtributoPorNombre("v3");
+		assertEquals(v3C,v3B);
+		VariableInstancia v4C = c.getAtributoPorNombre("v4");
+		assertEquals(v4C,v4B);
+		VariableInstancia v5C = c.getAtributoPorNombre("v5");
+		assertEquals("public",v5C.getVisibilidad());
+		assertEquals("int",v5C.getTipo().getNombre());
+		VariableInstancia v6C = c.getAtributoPorNombre("v6");
+		assertEquals("public",v6C.getVisibilidad());
+		assertEquals("int",v6C.getTipo().getNombre());
+	}
+	
+	@Test
+	void testExcepcionEsperadaAtribitoTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaAtribitoTipoClaseSinDeclarar.txt" };
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			TablaSimbolos ts = TablaSimbolos.getInstance();
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.start();
+			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
+				ts.chequeoDeclaraciones();
+			});
+			assertEquals("[2] Error semántico: El tipo clase \"B\" no está definido.", e.toString());
+		} catch (FileNotFoundException | ExcepcionLexico e) {
+			fail("No debería suceder esto");
+		}
+		Principal.main(args);
+	}
+	
+	@Test
+	void testExcepcionEsperadaMetodoArgFormalTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoArgFormalTipoClaseSinDeclarar.txt" };
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			TablaSimbolos ts = TablaSimbolos.getInstance();
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.start();
+			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
+				ts.chequeoDeclaraciones();
+			});
+			assertEquals("[2] Error semántico: El tipo clase A del parámetro formal x no está definido.", e.toString());
+		} catch (FileNotFoundException | ExcepcionLexico e) {
+			fail("No debería suceder esto");
+		}
+		Principal.main(args);
+	}
+	
+	@Test
+	void testExcepcionEsperadaConstructorArgFormalTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaConstructorArgFormalTipoClaseSinDeclarar.txt" };
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			TablaSimbolos ts = TablaSimbolos.getInstance();
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.start();
+			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
+				ts.chequeoDeclaraciones();
+			});
+			assertEquals("[2] Error semántico: El tipo clase B del parámetro formal x no está definido.", e.toString());
+		} catch (FileNotFoundException | ExcepcionLexico e) {
+			fail("No debería suceder esto");
+		}
+		Principal.main(args);
 	}
 }

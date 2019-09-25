@@ -1,0 +1,4 @@
+class A {
+	dynamic void m1(){}
+	dynamic final void m1(int i){}
+}

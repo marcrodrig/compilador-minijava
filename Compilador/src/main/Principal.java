@@ -7,7 +7,7 @@ import sintactico.AnalizadorSintactico;
 
 
 /**
- * Clase Principal. Módulo principal de la Etapa 2.
+ * Clase Principal. Módulo principal de la Etapa 3.
  * 
  * @author Rodríguez, Marcelo
  *
