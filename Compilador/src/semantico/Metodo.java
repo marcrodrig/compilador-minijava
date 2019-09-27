@@ -3,7 +3,6 @@ package semantico;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import lexico.Token;
 
 public class Metodo {
@@ -59,7 +58,7 @@ public class Metodo {
 		return parametros.size();
 	}
 	
-	public void chequeoMetodosSobrecargados(List<Metodo> listaMetodos) throws ExcepcionSemantico {
+	private void chequeoMetodosSobrecargados(List<Metodo> listaMetodos) throws ExcepcionSemantico {
 		for (Metodo metodo : listaMetodos) {
 			metodo.chequeoExistenciaTipoRetorno();
 			if (this != metodo && getCantidadParametros() == metodo.getCantidadParametros())
@@ -67,7 +66,7 @@ public class Metodo {
 		}
 	}
 
-	public void chequeoExistenciaTipoRetorno() throws ExcepcionSemantico {
+	private void chequeoExistenciaTipoRetorno() throws ExcepcionSemantico {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		if (tipo instanceof TipoClase)
 			if (ts.getClase(tipo.getNombre()) == null) 
@@ -93,6 +92,13 @@ public class Metodo {
 
 	public boolean isMetodoMain() {
 		return getNombre().equals("main") && getFormaMetodo().equals("static") && getCantidadParametros() == 0;
+	}
+
+	public boolean chequeoDeclaraciones(List<Metodo> listaMetodos) throws ExcepcionSemantico {
+		for (Parametro paramMetodo : parametros.values())
+			paramMetodo.chequeoDeclaraciones();	
+		chequeoMetodosSobrecargados(listaMetodos);
+		return isMetodoMain();
 	}
 	
 }

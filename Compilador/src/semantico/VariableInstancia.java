@@ -13,23 +13,28 @@ public class VariableInstancia {
 		this.visibilidad = visibilidad;
 	}
 
-	public Tipo getTipo() {
-		return tipo;
+	public String getNombre() {
+		return token.getLexema();
 	}
 
-	public void setTipo(Tipo tipo) {
-		this.tipo = tipo;
+	public int getNroLinea() {
+		return token.getNroLinea();
+	}
+	
+	public Tipo getTipo() {
+		return tipo;
 	}
 
 	public String getVisibilidad() {
 		return visibilidad;
 	}
-	
-	public String getNombre() {
-		return token.getLexema();
+
+	public void chequeoDeclaraciones() throws ExcepcionSemantico {
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		if (getTipo() instanceof TipoClase)
+			if (ts.getClase(getTipo().getNombre()) == null)
+				throw new ExcepcionSemantico("[" + getNroLinea() + "] Error semántico: El tipo clase \""
+						+ getTipo().getNombre() + "\" no está definido.");
 	}
 
-	public Token getToken() {
-		return token;
-	}
 }

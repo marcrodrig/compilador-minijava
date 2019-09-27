@@ -17,7 +17,7 @@ public class TablaSimbolos {
 	private synchronized static void createInstance() {
 		if (instanciaUnica == null) {
 			instanciaUnica = new TablaSimbolos();
-			instanciaUnica.inicializarClases();
+			instanciaUnica.inicializarClasesPredefinidas();
 		}
 	}
 	 
@@ -30,7 +30,7 @@ public class TablaSimbolos {
 		instanciaUnica = null;
 	}
 	
-	private HashMap<String, Clase> inicializarClases() {
+	private HashMap<String, Clase> inicializarClasesPredefinidas() {
 		Token tObject = new Token("idClase", "Object", 0, 0);
 		Clase object = new Clase(tObject,null);
 		object.setMetodosConsolidados();
@@ -109,7 +109,7 @@ public class TablaSimbolos {
 		return clases;
 	}
 
-	public HashMap<String, Clase> getClases() {
+	public HashMap<String,Clase> getClases() {
 		return clases;		
 	}
 	
@@ -146,7 +146,7 @@ public class TablaSimbolos {
 	}
 
 	public void insertarMetodo(Metodo met) {
-		claseActual.getMetodos().computeIfAbsent(met.getNombre(), k -> new ArrayList<>()).add(met);
+		claseActual.getTodosMetodos().computeIfAbsent(met.getNombre(), k -> new ArrayList<>()).add(met);
 	}
 	
 	public void chequeoDeclaraciones() throws ExcepcionSemantico {
@@ -157,7 +157,7 @@ public class TablaSimbolos {
 				main = tieneMain;
 		}
 		if (!main)
-			throw new ExcepcionSemantico("Error semántico: Método main sin definir.");	 
+			throw new ExcepcionSemantico("Error semántico: Método main sin definir."); 
 	}
 
 	public void consolidacion() throws ExcepcionSemantico {

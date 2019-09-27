@@ -1,3 +1,8 @@
+class C extends B{
+	dynamic void m3(){}
+	dynamic void m4(){}
+	static void main() {}
+}
 class A {
 	dynamic void m1(){}
 	dynamic void m2(int p){}
@@ -5,9 +10,4 @@ class A {
 class B extends A{
 	dynamic void m2(int x){}
 	dynamic void m3(){}
-}
-class C extends B{
-	dynamic void m3(){}
-	dynamic void m4(){}
-	static void main() {}
 }

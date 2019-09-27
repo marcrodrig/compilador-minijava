@@ -1,3 +1,4 @@
 class Prueba {
 	Prueba() {}
+	static void main() {}
 }

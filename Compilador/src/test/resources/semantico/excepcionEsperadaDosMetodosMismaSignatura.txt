@@ -1,4 +1,5 @@
 class Prueba {
 	static void met1 (int x) {}
 	static void met1 (int y) {}
+	static void main() {}
 }

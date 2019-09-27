@@ -46,8 +46,11 @@ public class AnalizadorSintactico {
 			ultimaColumnaAnalizada = tokenActual.getNroColumna() + tokenActual.getLexema().length();
 			tokenActual = analizadorLexico.getToken();			
 		}
-		else			
-			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico.\nEsperado: " + nombre + "\nEncontrado: " + tokenActual.getNombre());
+		else
+			if (nombre.equals(";"))
+				throw new ExcepcionSintactico("Error sintáctico: ; faltante.\nEsperado: " + nombre + "\nEncontrado: " + tokenActual.getNombre());
+			else
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico.\nEsperado: " + nombre + "\nEncontrado: " + tokenActual.getNombre());
 	}
 
 	public boolean start() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
@@ -67,12 +70,11 @@ public class AnalizadorSintactico {
 			otroInicial();
 		} else if (tokenActual.getNombre().equals("EOF")) {		// siguientes
 		} else
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de una clase.\nEsperado: class\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Declaración de una clase inválida.\nEsperado: class\nEncontrado: " + tokenActual.getNombre());
 	}
 	
 	private void clase() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		match("class");		// primeros
-	//	String nombreClase = tokenActual.getLexema();
 		Token token = tokenActual;
 		match("idClase");
 		String superclase = herencia();
@@ -95,13 +97,13 @@ public class AnalizadorSintactico {
 				match("idClase");
 				return superclase;
 			} catch (ExcepcionSintactico e) {
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de herencia de una clase.\nEsperado: idClase\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Declaración de herencia de una clase inválida.\nEsperado: idClase\nEncontrado: " + tokenActual.getNombre());
 			}
 		} else 
 			if (tokenActual.getNombre().equals("{")) {		// siguientes
 				return "Object";
 			} else
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de una clase.\nEsperado: extends o {\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Declaración de una clase inválida.\nEsperado: extends o {\nEncontrado: " + tokenActual.getNombre());
 	}
 	
 	private void miembros() throws ExcepcionSintactico, ExcepcionLexico, ExcepcionPanicMode, ExcepcionSemantico {
@@ -118,7 +120,7 @@ public class AnalizadorSintactico {
 			case "}":			// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico. Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: " + tokenActual.getNombre());		}
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: " + tokenActual.getNombre());		}
 	}
 	
 	private void miembro() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
@@ -157,11 +159,11 @@ public class AnalizadorSintactico {
 			decAsig();
 			match(";");
 		} catch (ExcepcionSintactico e) {
-			modoPanicoAtributo(panicoLinea, panicoColumna);
+			modoPanicoAtributo(panicoLinea, panicoColumna, e.toString());
 		}
 	}
 	
-	private void modoPanicoAtributo(int nroLineaComienzo, int nroColumnaComienzo) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
+	private void modoPanicoAtributo(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int nroLineaFin = ultimaLineaAnalizada;
 		int nroColumnaFin = ultimaColumnaAnalizada;
 		modoPanico = true;
@@ -182,11 +184,11 @@ public class AnalizadorSintactico {
 			}
 		}
 		if (tokenActual.getNombre().equals("EOF")) {
-			System.out.println("[" + nroLineaComienzo + "]: declaración/asignación de atributos sintácticamente inválida.");
+			System.out.println("[" + nroLineaComienzo + "]: declaración/asignación de atributos sintácticamente inválida.\nCausa:\n" + mensajeError);
 			throw new ExcepcionPanicMode("No se puede recuperar de la última sentencia inválida.");		
 		}
 		else {
-			System.out.println("[" + nroLineaComienzo + ":" + nroColumnaComienzo + " - " + nroLineaFin + ":" + nroColumnaFin + "]: declaración/asignación de atributos sintácticamente inválida.");
+			System.out.println("[" + nroLineaComienzo + ":" + nroColumnaComienzo + " - " + nroLineaFin + ":" + nroColumnaFin + "]: declaración/asignación de atributos sintácticamente inválida.\nCausa:\n" + mensajeError);
 			switch (tokenActual.getNombre()) {
 					case "}":
 						break;
@@ -232,7 +234,7 @@ public class AnalizadorSintactico {
 				match("idClase");
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en tipo.\nEsperado: idClase, boolean, char, int o String\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: tipo inválido.\nEsperado: idClase, boolean, char, int o String\nEncontrado: " + tokenActual.getNombre());
 		}
 		return tipo;
 	}
@@ -261,7 +263,6 @@ public class AnalizadorSintactico {
 	}
 
 	private void listaDecAtrs(List<Token> listaTokenVariablesInstancia) throws ExcepcionLexico, ExcepcionSintactico {
-		//List<String> listaNombreVariables = new ArrayList<String>(); 
 		Token tokenVarIns = tokenActual;
 		match("idMetVar");	// primeros
 		listaTokenVariablesInstancia.add(tokenVarIns);
@@ -278,7 +279,7 @@ public class AnalizadorSintactico {
 			case "=": 				// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración/asignación de atributos.\nEsperado: ; o =\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Declaración/asignación de atributos inválida.\nEsperado: ; o =\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -342,7 +343,7 @@ public class AnalizadorSintactico {
 			case "String":			// siguientes
 				return false;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en método.\nEsperado: final o tipo de método\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Declaración de método inválida.\nEsperado: final o tipo de método\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -358,7 +359,7 @@ public class AnalizadorSintactico {
 			case "String":		// primeros
 				return tipo();
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en tipo método.\nEsperado: idClase, boolean, char, int, String o void\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Declaración de tipo de método inválido.\nEsperado: idClase, boolean, char, int, String o void\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -369,7 +370,7 @@ public class AnalizadorSintactico {
 			argsFormales = argumentos();
 			match(")");
 		} else {
-			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de argumentos formales.\nEsperado: (\nEncontrado: " + tokenActual.getNombre());
+			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Argumentos formales inválidos.\nEsperado: (\nEncontrado: " + tokenActual.getNombre());
 		}
 		return argsFormales;
 	}
@@ -388,16 +389,14 @@ public class AnalizadorSintactico {
 				//argsFormales = new ArrayList<Parametro>();
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en argumentos formales.\nEsperado: ) o tipo\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Argumentos formales inválidos.\nEsperado: ) o tipo\nEncontrado: " + tokenActual.getNombre());
 			}
 		return argsFormales;
 	}
 
 	private void listaArgsFormales(List<Parametro> argsFormales) throws ExcepcionLexico, ExcepcionSintactico {
-	//	List<Parametro> lista = 
-				argFormal(argsFormales);
-		//argsFormales = 
-				rArgFormal(argsFormales);
+		argFormal(argsFormales);
+		rArgFormal(argsFormales);
 	}
 
 	private void argFormal(List<Parametro> argsFormales) throws ExcepcionLexico, ExcepcionSintactico {
@@ -418,12 +417,11 @@ public class AnalizadorSintactico {
 				//argsFormales = new ArrayList<Parametro>();
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en los argumentos formales.\nEsperado: ) o ,\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Argumentos formales inválidos.\nEsperado: ) o ,\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
 	private void ctor() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
-		//String nombreConstructor = tokenActual.getLexema();
 		Token token = tokenActual; 
 		match("idClase");	// primeros
 		if (!ts.getClaseActual().getNombre().equals(token.getLexema()))
@@ -481,7 +479,7 @@ public class AnalizadorSintactico {
 			case "}":				// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico. Se espera la declaración de una sentencia o }.\nEsperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Se espera la declaración de una sentencia o }.\nEsperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\nEncontrado: " + tokenActual.getNombre());
 		}		
 	}
 
@@ -498,7 +496,7 @@ public class AnalizadorSintactico {
 					ladoDerechoIdMetVar();
 					match(";");
 				} catch (ExcepcionSintactico e) {
-					modoPanicoBloque(panicoLinea, panicoColumna);
+					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 				break;
 			case "+":								// primeros
@@ -517,7 +515,7 @@ public class AnalizadorSintactico {
 					sentenciaSimple();
 					match(";");
 				} catch (ExcepcionSintactico e) {
-					modoPanicoBloque(panicoLinea, panicoColumna);
+					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 				break;
 			case "boolean":							// primeros
@@ -530,7 +528,7 @@ public class AnalizadorSintactico {
 					decAsig();
 					match(";");
 				} catch (ExcepcionSintactico e) {
-					modoPanicoBloque(panicoLinea, panicoColumna);
+					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 				break;
 			case "idClase":							// primeros
@@ -539,7 +537,7 @@ public class AnalizadorSintactico {
 					ladoDerechoIdClase();
 					match(";");
 				} catch (ExcepcionSintactico e) {
-					modoPanicoBloque(panicoLinea, panicoColumna);
+					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 				break;
 			case "if":								// primeros
@@ -549,14 +547,12 @@ public class AnalizadorSintactico {
 					expresion();
 					match(")");
 					ifPanico = true;
-					panicoLinea = tokenActual.getNroLinea();
-					panicoColumna = tokenActual.getNroColumna();
 					sentencia();
 					ifPanico = false;
-					rSentenciaIf();
 				} catch (ExcepcionSintactico e) {
-					modoPanicoBloque(panicoLinea, panicoColumna);
+					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
+				rSentenciaIf();
 				break;
 			case "while":							// primeros
 				match("while");
@@ -566,7 +562,7 @@ public class AnalizadorSintactico {
 					match(")");
 					sentencia();
 				} catch (ExcepcionSintactico e) {
-					modoPanicoBloque(panicoLinea, panicoColumna);
+					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 				break;
 			case "{":								// primeros
@@ -578,15 +574,15 @@ public class AnalizadorSintactico {
 					retorno();
 					match(";");
 				} catch (ExcepcionSintactico e) {
-					modoPanicoBloque(panicoLinea, panicoColumna);
+					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico. Se espera la declaración de una sentencia o }.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o }\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Se espera la declaración de una sentencia.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral o this.\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 	
-	private void modoPanicoBloque(int nroLineaComienzo, int nroColumnaComienzo) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void modoPanicoBloque(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
 		int nroLineaFin = ultimaLineaAnalizada;
 		int nroColumnaFin = ultimaColumnaAnalizada;
 		modoPanico = true;
@@ -625,10 +621,10 @@ public class AnalizadorSintactico {
 			}
 		}
 		if (tokenActual.getNombre().equals("EOF")) {
-			System.out.println("[" + nroLineaComienzo + "]: sentencia sintácticamente inválida");
+			System.out.println("[" + nroLineaComienzo + "]: sentencia sintácticamente inválida.\nCausa:\n" + mensajeError);
 			throw new ExcepcionPanicMode("No se puede recuperar de la última sentencia sintácticamente inválida.");
 		} else {
-			System.out.println("[" + nroLineaComienzo + ":" + nroColumnaComienzo + " - " + nroLineaFin + ":" + nroColumnaFin + "]: sentencia sintácticamente inválida.");
+			System.out.println("[" + nroLineaComienzo + ":" + nroColumnaComienzo + " - " + nroLineaFin + ":" + nroColumnaFin + "]: sentencia sintácticamente inválida.\nCausa:\n" + mensajeError);
 			switch (tokenActual.getNombre()) {
 				case "}":
 					break;
@@ -636,7 +632,7 @@ public class AnalizadorSintactico {
 					if (ifPanico)
 						rSentenciaIf();
 					else
-						throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico. Se espera la declaración de una sentencia o }.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o }\nEncontrado: " + tokenActual.getNombre());
+						throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Se espera la declaración de una sentencia o }.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o }\nEncontrado: " + tokenActual.getNombre());
 					break;
 				default:
 					sentencias();
@@ -674,7 +670,7 @@ public class AnalizadorSintactico {
 			case ";":					// siguientes
 				break;				
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en sentencia simple desparentizada.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Sentencia simple desparentizada inválida.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 	
@@ -684,6 +680,7 @@ public class AnalizadorSintactico {
 				match("(");
 				expresion();
 				match(")");
+				rDesparentizada();
 				break;
 			case "+":				// primeros
 			case "-":				// primeros
@@ -712,10 +709,15 @@ public class AnalizadorSintactico {
 				desparentizada();
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico sentencia simple");
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: sentencia simple inválida.");
 			}
 	}
 	
+	private void rDesparentizada() throws ExcepcionLexico, ExcepcionSintactico {
+		rEncadenado();
+		desparentizada();
+	}
+
 	private void listaDecVars() throws ExcepcionLexico, ExcepcionSintactico {
 		match("idMetVar");	// primeros
 		rListaDecVars();
@@ -731,7 +733,7 @@ public class AnalizadorSintactico {
 			case "=":				// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración/asignación de variables.\nEsperado: ;, = o ,\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Declaración/asignación de variables inválida.\nEsperado: ;, = o ,\nEncontrado: " + tokenActual.getNombre());
 			}
 	}
 	
@@ -748,14 +750,20 @@ public class AnalizadorSintactico {
 				desparentizada();
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en sentencia comenzada con idClase.\nEsperado: . o idMetVar\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Error en sentencia comenzada con idClase.\nEsperado: . o idMetVar\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
 	private void rSentenciaIf() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+		int panicoLinea = tokenActual.getNroLinea();
+		int panicoColumna = tokenActual.getNroColumna();
 		if (tokenActual.getNombre().equals("else")) {	// primeros
 			match("else");
-			sentencia();
+			try {	
+				sentencia();
+			} catch (ExcepcionSintactico e) {
+				modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
+			}
 		} else { }
 	}
 	
@@ -780,7 +788,7 @@ public class AnalizadorSintactico {
 			case ";":				// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en expresión de retorno.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, new, (, idMetVar, idClase o ;\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Error en expresión de retorno.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, new, (, idMetVar, idClase o ;\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 	
@@ -820,7 +828,7 @@ public class AnalizadorSintactico {
 			case ";":					// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en sentencia simple desparentizada.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Sentencia simple desparentizada inválida.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -843,7 +851,7 @@ public class AnalizadorSintactico {
 				expOr();
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en expresión.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, (, this, idMetVar, idClase o new\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Expresión inválida.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, (, this, idMetVar, idClase o new\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -861,8 +869,27 @@ public class AnalizadorSintactico {
 	}
 
 	private void expAnd() throws ExcepcionLexico, ExcepcionSintactico {
-		expIg();
-		and();
+		switch (tokenActual.getNombre()) {
+		case "+":				// primeros
+		case "-":				// primeros
+		case "!":				// primeros
+		case "null":			// primeros
+		case "true":			// primeros
+		case "false":			// primeros
+		case "intLiteral":		// primeros
+		case "charLiteral":		// primeros
+		case "stringLiteral":	// primeros
+		case "this":			// primeros
+		case "new":				// primeros
+		case "(":				// primeros
+		case "idMetVar":		// primeros
+		case "idClase":			// primeros
+			expIg();
+			and();
+			break;
+		default:
+			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Expresión inválida.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, (, this, idMetVar, idClase o new\nEncontrado: " + tokenActual.getNombre());
+	}
 	}
 
 	private void and() throws ExcepcionLexico, ExcepcionSintactico {
@@ -874,8 +901,28 @@ public class AnalizadorSintactico {
 	}
 
 	private void expIg() throws ExcepcionLexico, ExcepcionSintactico {
-		expComp();
-		ig();
+		switch (tokenActual.getNombre()) {
+		case "+":				// primeros
+		case "-":				// primeros
+		case "!":				// primeros
+		case "null":			// primeros
+		case "true":			// primeros
+		case "false":			// primeros
+		case "intLiteral":		// primeros
+		case "charLiteral":		// primeros
+		case "stringLiteral":	// primeros
+		case "this":			// primeros
+		case "new":				// primeros
+		case "(":				// primeros
+		case "idMetVar":		// primeros
+		case "idClase":			// primeros
+			expComp();
+			ig();
+			break;
+		default:
+			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Expresión inválida.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, (, this, idMetVar, idClase o new\nEncontrado: " + tokenActual.getNombre());
+	}
+		
 	}
 
 	private void ig() throws ExcepcionLexico, ExcepcionSintactico {
@@ -908,6 +955,8 @@ public class AnalizadorSintactico {
 				expAd();
 				rExpComp();
 				break;
+			default:
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Expresión inválida.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, (, this, idMetVar, idClase o new\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -981,7 +1030,7 @@ public class AnalizadorSintactico {
 				operando();
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en expresión unaria.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, (, this, idMetVar, idClase o new\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Expresión unaria inválida.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, (, this, idMetVar, idClase o new\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -1169,7 +1218,7 @@ public class AnalizadorSintactico {
 			listaExpresiones();
 			match(")");
 		} else {
-			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en la declaración de argumentos actuales.\nEsperado: (\nEncontrado: " + tokenActual.getNombre());
+			throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Declaración de argumentos actuales inválida.\nEsperado: (\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -1193,7 +1242,7 @@ public class AnalizadorSintactico {
 			case ")":				// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en lista de expresiones.\nEsperado: (, idMetVar, idClase, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o )\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Lista de expresiones inválida.\nEsperado: (, idMetVar, idClase, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o )\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -1211,7 +1260,7 @@ public class AnalizadorSintactico {
 			case ")":			// siguientes
 				break;
 			default:
-				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico en lista de expresiones.\nEsperado: (, idMetVar, idClase, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o )\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Lista de expresiones inválida.\nEsperado: (, idMetVar, idClase, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o )\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 }

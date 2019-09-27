@@ -28,7 +28,7 @@ public class Parametro {
 		return token.getLexema();
 	}
 	
-	public void chequeoDeclaracionTipoClase() throws ExcepcionSemantico {
+	public void chequeoDeclaraciones() throws ExcepcionSemantico {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		if (tipo instanceof TipoClase)
 		if (ts.getClase(tipo.getNombre()) == null) 

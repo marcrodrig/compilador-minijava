@@ -1,0 +1,12 @@
+class I {
+	static void i() {
+		if (x)
+			//a
+ 		//else
+	/*	if (x)
+			a
+		else
+			b
+		if (x)*/
+	}
+}

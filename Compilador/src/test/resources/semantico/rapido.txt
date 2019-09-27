@@ -1,3 +1,6 @@
-class ClaseOtra {
-	dynamic void met1 (A x) { }
+class E {
+	static int s1() {
+		if (x)
+}
+static void main() { }
 }

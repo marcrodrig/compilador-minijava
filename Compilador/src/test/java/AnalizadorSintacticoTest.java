@@ -68,7 +68,7 @@ class AnalizadorSintacticoTest {
 				analizadorSintactico.start();
 			});
 			assertEquals(
-					"[1:13] Error sintáctico en la declaración de una clase.\nEsperado: extends o {\nEncontrado: +",
+					"[1:13] Error sintáctico: Declaración de una clase inválida.\nEsperado: extends o {\nEncontrado: +",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -85,7 +85,7 @@ class AnalizadorSintacticoTest {
 				analizadorSintactico.start();
 			});
 			assertEquals(
-					"[1:15] Error sintáctico. Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: EOF",
+					"[1:15] Error sintáctico: Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: EOF",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -102,7 +102,7 @@ class AnalizadorSintacticoTest {
 				analizadorSintactico.start();
 			});
 			assertEquals(
-					"[1:22] Error sintáctico en la declaración de herencia de una clase.\nEsperado: idClase\nEncontrado: {",
+					"[1:22] Error sintáctico: Declaración de herencia de una clase inválida.\nEsperado: idClase\nEncontrado: {",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -118,7 +118,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en la declaración de una clase.\nEsperado: class\nEncontrado: idClase",
+			assertEquals("[3:1] Error sintáctico: Declaración de una clase inválida.\nEsperado: class\nEncontrado: idClase",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -134,7 +134,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en método.\n" + "Esperado: final o tipo de método\n" + "Encontrado: }",
+			assertEquals("[3:1] Error sintáctico: Declaración de método inválida.\n" + "Esperado: final o tipo de método\n" + "Encontrado: }",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -150,13 +150,13 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en tipo método.\n"
+			assertEquals("[3:1] Error sintáctico: Declaración de tipo de método inválido.\n"
 					+ "Esperado: idClase, boolean, char, int, String o void\n" + "Encontrado: }", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
 		}
 	}
-
+	
 	@Test
 	void testExcepcionEsperadaClaseConMetodoSoloFormaMetodoYTipo() {
 		String[] args = { "src/test/resources/sintactico/excepcionEsperadaClaseConMetodoSoloFormaMetodoYTipo.txt" };
@@ -182,7 +182,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en la declaración de argumentos formales.\n" + "Esperado: (\n"
+			assertEquals("[3:1] Error sintáctico: Argumentos formales inválidos.\n" + "Esperado: (\n"
 					+ "Encontrado: }", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -199,7 +199,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en argumentos formales.\n" + "Esperado: ) o tipo\n" + "Encontrado: }",
+			assertEquals("[3:1] Error sintáctico: Argumentos formales inválidos.\n" + "Esperado: ) o tipo\n" + "Encontrado: }",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -231,7 +231,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en los argumentos formales.\n" + "Esperado: ) o ,\n" + "Encontrado: }",
+			assertEquals("[3:1] Error sintáctico: Argumentos formales inválidos.\n" + "Esperado: ) o ,\n" + "Encontrado: }",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -262,7 +262,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[2:28] Error sintáctico. Se espera la declaración de una sentencia o }.\n"
+			assertEquals("[2:28] Error sintáctico: Se espera la declaración de una sentencia o }.\n"
 					+ "Esperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\n"
 					+ "Encontrado: EOF", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
@@ -280,7 +280,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:10] Error sintáctico. Se espera la declaración de una sentencia o }.\n"
+			assertEquals("[3:10] Error sintáctico: Se espera la declaración de una sentencia o }.\n"
 					+ "Esperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\n"
 					+ "Encontrado: EOF", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
@@ -297,7 +297,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en la declaración de argumentos formales.\n" + "Esperado: (\n"
+			assertEquals("[3:1] Error sintáctico: Argumentos formales inválidos.\n" + "Esperado: (\n"
 					+ "Encontrado: }", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -314,7 +314,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:1] Error sintáctico en argumentos formales.\n" + "Esperado: ) o tipo\n" + "Encontrado: }",
+			assertEquals("[3:1] Error sintáctico: Argumentos formales inválidos.\n" + "Esperado: ) o tipo\n" + "Encontrado: }",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -345,7 +345,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[2:19] Error sintáctico. Se espera la declaración de una sentencia o }.\n"
+			assertEquals("[2:19] Error sintáctico: Se espera la declaración de una sentencia o }.\n"
 					+ "Esperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\n"
 					+ "Encontrado: EOF", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
@@ -363,7 +363,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[3:10] Error sintáctico. Se espera la declaración de una sentencia o }.\n"
+			assertEquals("[3:10] Error sintáctico: Se espera la declaración de una sentencia o }.\n"
 					+ "Esperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\n"
 					+ "Encontrado: EOF", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
@@ -381,7 +381,7 @@ class AnalizadorSintacticoTest {
 			ExcepcionSintactico e = assertThrows(ExcepcionSintactico.class, () -> {
 				analizadorSintactico.start();
 			});
-			assertEquals("[16:9] Error sintáctico. Se espera la declaración de una sentencia o }.\n"
+			assertEquals("[16:9] Error sintáctico: Se espera la declaración de una sentencia o }.\n"
 					+ "Esperado: idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, } o ;\n"
 					+ "Encontrado: *", e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
@@ -399,7 +399,7 @@ class AnalizadorSintacticoTest {
 				analizadorSintactico.start();
 			});
 			assertEquals(
-					"[3:5] Error sintáctico. Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: +",
+					"[3:5] Error sintáctico: Se espera la declaración de un atributo, constructor, método o }.\nEsperado: public, protected, private, idClase, static, dynamic o }\nEncontrado: +",
 					e.toString());
 		} catch (FileNotFoundException | ExcepcionLexico e1) {
 			fail("No debería suceder esto");
@@ -653,6 +653,20 @@ class AnalizadorSintacticoTest {
 			fail("No debería suceder esto");
 		}
 	}
+
+	@Test
+	void testSentenciasIfVariasAlternativasRecuperacionModoPanico() throws ExcepcionSemantico {
+		String[] args = {
+				"src/test/resources/sintactico/sentenciasIfVariasAlternativasRecuperacionModoPanico.txt" };
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.start();
+		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico | ExcepcionPanicMode e) {
+			fail("No debería suceder esto");
+		}
+	}
+	
 	/*
 	 * @Test public void testRapido() { String[] args =
 	 * {"src/test/resources/sintactico/rapido.txt"}; Principal.main(args); }

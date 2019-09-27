@@ -1,3 +1,4 @@
 class Prueba {
 	Prueba(int i, boolean b, char c) {}
+	static void main() {}
 }

@@ -27,41 +27,54 @@ class AnalizadorSemanticoTest {
 	public void resetTS() {
 		Principal.ts.reset();
 	}
-	
+	/*
 	@Test
 	public void testRapido() { 
 		String[] args = {"src/test/resources/semantico/rapido.txt"};
 		Principal.main(args);
+	}*/
+	
+	@Test
+	void testExcepcionEsperadaMetodoMainAusente() throws ExcepcionSemantico {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoMainAusente.txt" };
+		AnalizadorSintactico analizadorSintactico;
+		try {
+			analizadorSintactico = new AnalizadorSintactico(args[0]);
+			analizadorSintactico.start();
+			TablaSimbolos ts = TablaSimbolos.getInstance();
+			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
+				ts.chequeoDeclaraciones();
+			});
+			assertEquals("Error semántico: Método main sin definir.", e.toString());
+		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico | ExcepcionPanicMode  e1) {
+			fail("No debería suceder esto");
+		}
+		Principal.main(args);
 	}
 	
-	/**
-	 * CHEQUEAR Error semántico: Método main sin definir.
-	 * No debe imprimirse ninguna vez
-	 * Agregar sin Main excepcion esperada, despues agregarselo a las otras validas
-	 */
 	
 	@Test 
-	public void testUnaClaseVaciaChequeoClasesPredefinidas() { 
-		String[] args = {"src/test/resources/semantico/unaClaseVaciaChequeoClasesPredefinidas.txt"};
+	public void testUnaClaseConMeotodoMainChequeoClasesPredefinidas() { 
+		String[] args = {"src/test/resources/semantico/unaClaseConMetodoMainChequeoClasesPredefinidas.txt"};
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		assertEquals(3,ts.getClases().size());
 		Clase object = ts.getClase("Object");
 		Clase system = ts.getClase("System");
-		Clase claseVacia = ts.getClase("ClaseVacia");
+		Clase claseVacia = ts.getClase("Clase");
 		assertEquals(0,object.cantidadMetodos());
-		assertEquals(0,claseVacia.cantidadMetodos());
+		assertEquals(1,claseVacia.cantidadMetodos());
 		assertEquals(10,system.cantidadMetodos());
-		List<Metodo> lm1 = system.getMetodosPorNombre("read");
-		List<Metodo> lm2 = system.getMetodosPorNombre("printB");
-		List<Metodo> lm3 = system.getMetodosPorNombre("printC");
-		List<Metodo> lm4 = system.getMetodosPorNombre("printI");
-		List<Metodo> lm5 = system.getMetodosPorNombre("printS");
-		List<Metodo> lm6 = system.getMetodosPorNombre("println");
-		List<Metodo> lm7 = system.getMetodosPorNombre("printBln");
-		List<Metodo> lm8 = system.getMetodosPorNombre("printCln");
-		List<Metodo> lm9 = system.getMetodosPorNombre("printIln");
-		List<Metodo> lm10 = system.getMetodosPorNombre("printSln");
+		List<Metodo> lm1 = system.getTodosMetodosPorNombre("read");
+		List<Metodo> lm2 = system.getTodosMetodosPorNombre("printB");
+		List<Metodo> lm3 = system.getTodosMetodosPorNombre("printC");
+		List<Metodo> lm4 = system.getTodosMetodosPorNombre("printI");
+		List<Metodo> lm5 = system.getTodosMetodosPorNombre("printS");
+		List<Metodo> lm6 = system.getTodosMetodosPorNombre("println");
+		List<Metodo> lm7 = system.getTodosMetodosPorNombre("printBln");
+		List<Metodo> lm8 = system.getTodosMetodosPorNombre("printCln");
+		List<Metodo> lm9 = system.getTodosMetodosPorNombre("printIln");
+		List<Metodo> lm10 = system.getTodosMetodosPorNombre("printSln");
 		assertEquals(1,lm1.size());
 		assertEquals(1,lm2.size());
 		assertEquals(1,lm3.size());
@@ -225,7 +238,8 @@ class AnalizadorSemanticoTest {
 		Principal.main(args);
 	}
 	
-	@Test public void testUnConstructorSinArgsFormales() { 
+	@Test 
+	void testUnConstructorSinArgsFormales() { 
 		String[] args = {"src/test/resources/semantico/unConstructorSinArgsFormales.txt"};
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
@@ -379,8 +393,8 @@ class AnalizadorSemanticoTest {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		assertEquals(3,ts.getClases().size());
 		Clase prueba = ts.getClase("Prueba");
-		assertEquals(1,prueba.cantidadMetodos());
-		Metodo m1 = prueba.getMetodosPorNombre("met1").get(0);
+		assertEquals(2,prueba.cantidadMetodos());
+		Metodo m1 = prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("static", m1.getFormaMetodo());
 		assertFalse(m1.isMetodoFinal());
 		assertEquals("void",m1.getTipo().getNombre());
@@ -394,8 +408,8 @@ class AnalizadorSemanticoTest {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		assertEquals(3,ts.getClases().size());
 		Clase prueba = ts.getClase("Prueba");
-		assertEquals(1,prueba.cantidadMetodos());
-		Metodo m1 = prueba.getMetodosPorNombre("met1").get(0);
+		assertEquals(2,prueba.cantidadMetodos());
+		Metodo m1 = prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
 		assertTrue(m1.isMetodoFinal());
 		assertEquals("Prueba",m1.getTipo().getNombre());
@@ -411,8 +425,8 @@ class AnalizadorSemanticoTest {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		assertEquals(3,ts.getClases().size());
 		Clase prueba = ts.getClase("Prueba");
-		assertEquals(1,prueba.cantidadMetodos());
-		Metodo m1 = prueba.getMetodosPorNombre("met1").get(0);
+		assertEquals(2,prueba.cantidadMetodos());
+		Metodo m1 = prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
 		assertFalse(m1.isMetodoFinal());
 		assertEquals("Object",m1.getTipo().getNombre());
@@ -489,39 +503,39 @@ class AnalizadorSemanticoTest {
 		assertEquals(2,a.cantidadMetodos());
 		assertEquals(3,b.cantidadMetodos());
 		assertEquals(5,c.cantidadMetodos());
-		Metodo m1A = a.getMetodosPorNombre("m1").get(0);
+		Metodo m1A = a.getTodosMetodosPorNombre("m1").get(0);
 		assertEquals("dynamic",m1A.getFormaMetodo());
 		assertEquals("void",m1A.getTipo().getNombre());
 		assertEquals(0,m1A.getCantidadParametros());
-		Metodo m2A = a.getMetodosPorNombre("m2").get(0);
+		Metodo m2A = a.getTodosMetodosPorNombre("m2").get(0);
 		assertEquals("dynamic",m2A.getFormaMetodo());
 		assertEquals("void",m2A.getTipo().getNombre());
 		assertEquals(1,m2A.getCantidadParametros());
 		Parametro p1 = m2A.getParametroPorNombre("p");
 		assertEquals(1,p1.getPosicion());
 		assertEquals("int",p1.getTipo().getNombre());
-		Metodo m1B = b.getMetodosPorNombre("m1").get(0);
+		Metodo m1B = b.getTodosMetodosPorNombre("m1").get(0);
 		assertEquals(m1A,m1B);
-		Metodo m2B = b.getMetodosPorNombre("m2").get(0);
+		Metodo m2B = b.getTodosMetodosPorNombre("m2").get(0);
 		assertEquals("dynamic",m2B.getFormaMetodo());
 		assertEquals("void",m2B.getTipo().getNombre());
 		assertEquals(1,m2B.getCantidadParametros());
 		Parametro p2 = m2B.getParametroPorNombre("x");
 		assertEquals(1,p2.getPosicion());
 		assertEquals("int",p2.getTipo().getNombre());
-		Metodo m3B = b.getMetodosPorNombre("m3").get(0);
+		Metodo m3B = b.getTodosMetodosPorNombre("m3").get(0);
 		assertEquals("dynamic",m3B.getFormaMetodo());
 		assertEquals("void",m3B.getTipo().getNombre());
 		assertEquals(0,m3B.getCantidadParametros());
-		Metodo m1C = c.getMetodosPorNombre("m1").get(0);
+		Metodo m1C = c.getTodosMetodosPorNombre("m1").get(0);
 		assertEquals(m1A,m1C);
-		Metodo m2C = c.getMetodosPorNombre("m2").get(0);
+		Metodo m2C = c.getTodosMetodosPorNombre("m2").get(0);
 		assertEquals(m2B,m2C);
-		Metodo m3C = c.getMetodosPorNombre("m3").get(0);
+		Metodo m3C = c.getTodosMetodosPorNombre("m3").get(0);
 		assertEquals("dynamic",m3C.getFormaMetodo());
 		assertEquals("void",m3C.getTipo().getNombre());
 		assertEquals(0,m3C.getCantidadParametros());
-		Metodo m4C = c.getMetodosPorNombre("m4").get(0);
+		Metodo m4C = c.getTodosMetodosPorNombre("m4").get(0);
 		assertEquals("dynamic",m4C.getFormaMetodo());
 		assertEquals("void",m4C.getTipo().getNombre());
 		assertEquals(0,m4C.getCantidadParametros());
@@ -553,13 +567,13 @@ class AnalizadorSemanticoTest {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		assertEquals(3,ts.getClases().size());
 		Clase a = ts.getClase("A");
-		assertEquals(2,a.cantidadMetodos());
-		Metodo m1 = a.getMetodosPorNombre("m1").get(0);
+		assertEquals(3,a.cantidadMetodos());
+		Metodo m1 = a.getTodosMetodosPorNombre("m1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
 		assertFalse(m1.isMetodoFinal());
 		assertEquals("void",m1.getTipo().getNombre());
 		assertEquals(0, m1.getParametros().size());
-		Metodo m2 = a.getMetodosPorNombre("m1").get(1);
+		Metodo m2 = a.getTodosMetodosPorNombre("m1").get(1);
 		assertEquals("dynamic", m2.getFormaMetodo());
 		assertTrue(m2.isMetodoFinal());
 		assertEquals("void",m2.getTipo().getNombre());
@@ -629,8 +643,8 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaAtribitoTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
-		String[] args = { "src/test/resources/semantico/excepcionEsperadaAtribitoTipoClaseSinDeclarar.txt" };
+	void testExcepcionEsperadaAtributoTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaAtributoTipoClaseSinDeclarar.txt" };
 		AnalizadorSintactico analizadorSintactico;
 		try {
 			TablaSimbolos ts = TablaSimbolos.getInstance();

@@ -1,3 +1,4 @@
 class Prueba {
 	dynamic Object met1(int i, boolean b, char c) {}
+	static void main() {}
 }

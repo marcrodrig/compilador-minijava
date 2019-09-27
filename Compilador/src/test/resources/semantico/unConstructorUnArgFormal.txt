@@ -1,3 +1,4 @@
 class Prueba {
 	Prueba(int x) {}
+	static void main() {}
 }
