@@ -1,0 +1,11 @@
+class A {
+	dynamic void met1(boolean x) {}
+}
+
+class C extends B {
+	dynamic void met1(char x) {}
+	static void main () {}
+}
+
+class B extends A {
+}

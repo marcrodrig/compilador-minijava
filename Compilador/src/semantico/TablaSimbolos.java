@@ -3,13 +3,12 @@ package semantico;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-
 import lexico.Token;
 
 public class TablaSimbolos {
-	
+
 	private static TablaSimbolos instanciaUnica;
-	private  LinkedHashMap<String, Clase> clases;
+	private LinkedHashMap<String, Clase> clases;
 	private Clase claseActual;
 	private Metodo metodoActual;
 	private boolean mainDefinido;
@@ -25,24 +24,24 @@ public class TablaSimbolos {
 			instanciaUnica.inicializarClasesPredefinidas();
 		}
 	}
-	 
+
 	public static TablaSimbolos getInstance() {
 		createInstance();
-        return instanciaUnica;
+		return instanciaUnica;
 	}
-	
+
 	public void reset() {
 		instanciaUnica = null;
 	}
-	
+
 	private LinkedHashMap<String, Clase> inicializarClasesPredefinidas() {
 		Token tObject = new Token("idClase", "Object", 0, 0);
-		Clase object = new Clase(tObject,null);
+		Clase object = new Clase(tObject, null);
 		object.setMetodosConsolidados();
 		object.setAtributosConsolidados();
 		instanciaUnica.insertarClase(object);
 		Token tSystem = new Token("idClase", "System", 0, 0);
-		Clase system = new Clase(tSystem,"Object");
+		Clase system = new Clase(tSystem, "Object");
 		HashMap<String, Parametro> parametros = new HashMap<String, Parametro>();
 		Token token = new Token("idMetVar", "read", 0, 0);
 		Token tokenInt = new Token("int", "int", 0, 0);
@@ -123,66 +122,66 @@ public class TablaSimbolos {
 		return clases;
 	}
 
-	public HashMap<String,Clase> getClases() {
-		return clases;		
+	public HashMap<String, Clase> getClases() {
+		return clases;
 	}
-	
+
 	public Clase getClaseActual() {
 		return claseActual;
 	}
-	
+
 	public void setClaseActual(Clase clase) {
-		claseActual = clase;		
+		claseActual = clase;
 	}
 
 	public Metodo getMetodoActual() {
 		return metodoActual;
 	}
-	
+
 	public void setMetodoActual(Metodo met) {
 		metodoActual = met;
 	}
-	
+
 	public Clase getClase(String nombreClase) {
 		return clases.get(nombreClase);
 	}
-	
+
 	public void insertarClase(Clase clase) {
 		clases.put(clase.getNombre(), clase);
 	}
-	
+
 	public void insertarAtributo(VariableInstancia varIns) {
 		claseActual.getAtributos().put(varIns.getNombre(), varIns);
 	}
-	
+
 	public void insertarConstructor(Constructor ctor) {
-		claseActual.getConstructores().add(ctor);	
+		claseActual.getConstructores().add(ctor);
 	}
 
 	public void insertarMetodo(Metodo met) {
 		claseActual.getTodosMetodos().computeIfAbsent(met.getNombre(), k -> new ArrayList<>()).add(met);
 	}
-	
+
 	public boolean recuperacionSemantica() {
 		return recuperacionSemantica;
 	}
-	
+
 	public void setRS() {
 		recuperacionSemantica = true;
 	}
-	
+
 	public void chequeoDeclaraciones() throws ExcepcionSemantico {
 		for (Clase c : clases.values()) {
 			try {
-			c.chequeoDeclaraciones();
+				c.chequeoDeclaraciones();
 			} catch (ExcepcionSemantico e) {
-				//mainDefinido = c.tieneMetodoMain();
-				instanciaUnica.setRS();
+				// mainDefinido = c.tieneMetodoMain();
+				getInstance().setRS();
 				System.out.println(e.toString());
 			}
 		}
 		if (!mainDefinido)
-			throw new ExcepcionSemantico("Error semántico: Método main sin definir."); 
+			throw new ExcepcionSemantico("Error semántico: Método main sin definir.");
 	}
 
 	public void consolidacion() throws ExcepcionSemantico {
@@ -197,23 +196,9 @@ public class TablaSimbolos {
 			mainDefinido = true;
 		else {
 			if (!getClase(clase.getSuperclase()).tieneMetodoMain())
-				throw new ExcepcionSemantico("[" + clase.getTodosMetodosPorNombre("main").get(0).getNroLinea() + "] Error semántico: Método main ya definido.");
+				throw new ExcepcionSemantico("[" + clase.getTodosMetodosPorNombre("main").get(0).getNroLinea()
+						+ "] Error semántico: Método main ya definido.");
 		}
 	}
 
-	// BORRAR DESPUES
-/*	public void mostrarClases() {
-		for (Clase c : clases.values()) {
-			System.out.println("Clase: " + c.getNombre());
-			for (Metodo m : c.getMetodos().values()) {
-				System.out.println("Método: " + m.getNombre());
-				System.out.println("Forma Método: " + m.getFormaMetodo());
-				System.out.println("¿Es final?: " + m.isMetodoFinal());
-				System.out.println("Tipo Retorno: " + m.getTipo().getNombre());
-				for (Parametro p : m.getParametros().values()) {
-					System.out.println("Parámetro[" + p.getPosicion() + "]: nombre: " + p.getNombre() + " tipo: " + p.getTipo().getNombre());
-				}
-			}
-		}
-	}*/
-} 
+}

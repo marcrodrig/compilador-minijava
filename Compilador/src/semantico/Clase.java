@@ -152,7 +152,7 @@ public class Clase {
 		setHC();
 	}
 
-	private void chequeoAtributos() throws ExcepcionSemantico {
+	private void chequeoAtributos() {
 		for (VariableInstancia varIns : atributos.values())
 			try {
 				varIns.chequeoDeclaraciones();
@@ -162,7 +162,7 @@ public class Clase {
 			}
 	}
 
-	private void chequeoConstructores() throws ExcepcionSemantico {
+	private void chequeoConstructores() {
 		if (constructores.isEmpty()) {
 			agregarConstructorPredefinido();
 		} else {
@@ -182,7 +182,7 @@ public class Clase {
 		constructores.add(ctor);
 	}
 
-	private void chequeoMetodos() throws ExcepcionSemantico {
+	private void chequeoMetodos() {
 		for (List<Metodo> listaMetodos : metodos.values())
 			for (Metodo metodo : listaMetodos) {
 				try {
@@ -201,7 +201,7 @@ public class Clase {
 		consolidacionMetodos();
 	}
 
-	private void consolidacionAtributos() throws ExcepcionSemantico {
+	private void consolidacionAtributos() {
 		if (superclase != null && Principal.ts.getClase(superclase) != null) { // si no es object y está declarada
 			String ancestro = superclase;
 			while (!Principal.ts.getClase(ancestro).isAtributosConsolidados()) {
@@ -227,9 +227,11 @@ public class Clase {
 				for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
 					if (getTodosMetodosPorNombre(nombreMetodoAncestro) == null) {
 						metodos.put(nombreMetodoAncestro, metodosAncestro.get(nombreMetodoAncestro));
+						// chequear si setear método main
 					} else {
 						List<Metodo> metodosActual = metodos.get(nombreMetodoAncestro);
 						List<Metodo> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
+						Metodo metodoAgregar = null;
 						for (Metodo met1 : metodosActual)
 							for (Metodo met2 : metodosAncestroMismoNombre)
 								if (met1.getCantidadParametros() == met2.getCantidadParametros()) {
@@ -239,9 +241,14 @@ public class Clase {
 										Principal.ts.setRS();
 										System.out.println(e.toString());
 									}
-									// if(metodoAgregar.isMetodoMain())
-									// metodoMain = true;
+								} else {
+									metodoAgregar = met2;
 								}
+						if (metodoAgregar != null) {
+							metodosActual.add(metodoAgregar);
+							if (metodoAgregar.isMetodoMain())
+								metodoMain = true;
+						}
 					}
 				}
 			}

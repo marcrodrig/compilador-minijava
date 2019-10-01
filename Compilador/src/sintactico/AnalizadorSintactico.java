@@ -328,8 +328,6 @@ public class AnalizadorSintactico {
 		Metodo met = new Metodo(token, formaMetodo, tipo, metodoFinal, parametros);
 		Principal.ts.setMetodoActual(met);
 		bloque();
-		/*if (met.getNombre().equals("main") && met.getCantidadParametros() != 0)
-			throw new ExcepcionSemantico("[" + met.getNroLinea() + "] Error semántico: El método main no permite parámetros.");*/
 		int posicion = 1;
 		for (Parametro param : listaArgsFormales) {
 			param.setPosicion(posicion);
