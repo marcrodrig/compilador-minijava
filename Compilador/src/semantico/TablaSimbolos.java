@@ -2,16 +2,21 @@ package semantico;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import lexico.Token;
 
 public class TablaSimbolos {
+	
 	private static TablaSimbolos instanciaUnica;
-	private  HashMap<String, Clase> clases;
+	private  LinkedHashMap<String, Clase> clases;
 	private Clase claseActual;
 	private Metodo metodoActual;
+	private boolean mainDefinido;
+	private boolean recuperacionSemantica;
 
 	private TablaSimbolos() {
-		clases = new HashMap<String, Clase>();
+		clases = new LinkedHashMap<String, Clase>();
 	}
 
 	private synchronized static void createInstance() {
@@ -30,7 +35,7 @@ public class TablaSimbolos {
 		instanciaUnica = null;
 	}
 	
-	private HashMap<String, Clase> inicializarClasesPredefinidas() {
+	private LinkedHashMap<String, Clase> inicializarClasesPredefinidas() {
 		Token tObject = new Token("idClase", "Object", 0, 0);
 		Clase object = new Clase(tObject,null);
 		object.setMetodosConsolidados();
@@ -40,32 +45,37 @@ public class TablaSimbolos {
 		Clase system = new Clase(tSystem,"Object");
 		HashMap<String, Parametro> parametros = new HashMap<String, Parametro>();
 		Token token = new Token("idMetVar", "read", 0, 0);
-		Metodo metodo = new Metodo(token, "static", new TipoInt(), false, parametros);
+		Token tokenInt = new Token("int", "int", 0, 0);
+		Metodo metodo = new Metodo(token, "static", new TipoInt(tokenInt), false, parametros);
 		instanciaUnica.setClaseActual(system);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		Parametro param = new Parametro(new Token("idMetVar", "b", 0, 0), new TipoBoolean());
+		Token tokenBoolean = new Token("boolean", "boolean", 0, 0);
+		Parametro param = new Parametro(new Token("idMetVar", "b", 0, 0), new TipoBoolean(tokenBoolean));
 		param.setPosicion(1);
 		parametros.put("b", param);
 		token = new Token("idMetVar", "printB", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		param = new Parametro(new Token("idMetVar", "c", 0, 0), new TipoChar());
+		Token tokenChar = new Token("char", "char", 0, 0);
+		param = new Parametro(new Token("idMetVar", "c", 0, 0), new TipoChar(tokenChar));
 		param.setPosicion(1);
 		parametros.put("c", param);
 		token = new Token("idMetVar", "printC", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		param = new Parametro(new Token("idMetVar", "i", 0, 0), new TipoInt());
+		tokenInt = new Token("int", "int", 0, 0);
+		param = new Parametro(new Token("idMetVar", "i", 0, 0), new TipoInt(tokenInt));
 		param.setPosicion(1);
 		parametros.put("i", param);
 		token = new Token("idMetVar", "printI", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		param = new Parametro(new Token("idMetVar", "s", 0, 0), new TipoString());
+		Token tokenString = new Token("String", "String", 0, 0);
+		param = new Parametro(new Token("idMetVar", "s", 0, 0), new TipoString(tokenString));
 		param.setPosicion(1);
 		parametros.put("s", param);
 		token = new Token("idMetVar", "printS", 0, 0);
@@ -76,28 +86,32 @@ public class TablaSimbolos {
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		param = new Parametro(new Token("idMetVar", "b", 0, 0), new TipoBoolean());
+		tokenBoolean = new Token("boolean", "boolean", 0, 0);
+		param = new Parametro(new Token("idMetVar", "b", 0, 0), new TipoBoolean(tokenBoolean));
 		param.setPosicion(1);
 		parametros.put("b", param);
 		token = new Token("idMetVar", "printBln", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		param = new Parametro(new Token("idMetVar", "c", 0, 0), new TipoChar());
+		tokenChar = new Token("char", "char", 0, 0);
+		param = new Parametro(new Token("idMetVar", "c", 0, 0), new TipoChar(tokenChar));
 		param.setPosicion(1);
 		parametros.put("c", param);
 		token = new Token("idMetVar", "printCln", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		param = new Parametro(new Token("idMetVar", "i", 0, 0), new TipoInt());
+		tokenInt = new Token("int", "int", 0, 0);
+		param = new Parametro(new Token("idMetVar", "i", 0, 0), new TipoInt(tokenInt));
 		param.setPosicion(1);
 		parametros.put("i", param);
 		token = new Token("idMetVar", "printIln", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.insertarMetodo(metodo);
 		parametros = new HashMap<String, Parametro>();
-		param = new Parametro(new Token("idMetVar", "s", 0, 0), new TipoString());
+		tokenString = new Token("String", "String", 0, 0);
+		param = new Parametro(new Token("idMetVar", "s", 0, 0), new TipoString(tokenString));
 		param.setPosicion(1);
 		parametros.put("s", param);
 		token = new Token("idMetVar", "printSln", 0, 0);
@@ -149,20 +163,41 @@ public class TablaSimbolos {
 		claseActual.getTodosMetodos().computeIfAbsent(met.getNombre(), k -> new ArrayList<>()).add(met);
 	}
 	
+	public boolean recuperacionSemantica() {
+		return recuperacionSemantica;
+	}
+	
+	public void setRS() {
+		recuperacionSemantica = true;
+	}
+	
 	public void chequeoDeclaraciones() throws ExcepcionSemantico {
-		boolean main = false;
 		for (Clase c : clases.values()) {
-			boolean tieneMain = c.chequeoDeclaraciones();
-			if (!main)
-				main = tieneMain;
+			try {
+			c.chequeoDeclaraciones();
+			} catch (ExcepcionSemantico e) {
+				//mainDefinido = c.tieneMetodoMain();
+				instanciaUnica.setRS();
+				System.out.println(e.toString());
+			}
 		}
-		if (!main)
+		if (!mainDefinido)
 			throw new ExcepcionSemantico("Error semántico: Método main sin definir."); 
 	}
 
 	public void consolidacion() throws ExcepcionSemantico {
 		for (Clase c : clases.values()) {
-			c.consolidacion();
+			if (!c.tieneHerenciaCircular())
+				c.consolidacion();
+		}
+	}
+
+	public void chequeoMain(Clase clase) throws ExcepcionSemantico {
+		if (!mainDefinido)
+			mainDefinido = true;
+		else {
+			if (!getClase(clase.getSuperclase()).tieneMetodoMain())
+				throw new ExcepcionSemantico("[" + clase.getTodosMetodosPorNombre("main").get(0).getNroLinea() + "] Error semántico: Método main ya definido.");
 		}
 	}
 

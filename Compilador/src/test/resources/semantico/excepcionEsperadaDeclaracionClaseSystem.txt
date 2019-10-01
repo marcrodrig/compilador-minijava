@@ -1,1 +1,7 @@
 class System{ }
+
+class Object {}
+
+class Otra {
+	static void main() {}
+}

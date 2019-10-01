@@ -38,13 +38,15 @@ public class Principal {
 				try {
 					ts = TablaSimbolos.getInstance();
 					analizadorSintactico = new AnalizadorSintactico(args[0]);
-					boolean modoPanico = analizadorSintactico.start();
-					if (modoPanico)
-						System.out.println("Se completó el análisis sintáctico.");
-					else
-						System.out.println("El análisis sintáctico fue exitoso, no se encontraron errores.");
+					analizadorSintactico.start();
+					// Análisis semántico
 					ts.chequeoDeclaraciones();
 					ts.consolidacion();
+					if (ts.recuperacionSemantica())
+						System.out.println("Se completó el análisis semántico.");
+					else {
+						System.out.println("El análisis semántico fue exitoso, todas las entidades han sido correctamente declaradas.");
+					}
 				} catch (FileNotFoundException e1) {
 					System.out.println("El archivo de entrada no existe");
 				} catch (Exception e) {

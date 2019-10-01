@@ -1,3 +1,4 @@
 class A {
 	static B met1() {}
+static void main() {}
 }

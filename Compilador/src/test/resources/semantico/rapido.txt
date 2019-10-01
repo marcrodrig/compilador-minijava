@@ -1,6 +1,14 @@
-class E {
-	static int s1() {
-		if (x)
+class A {
+	dynamic void m3(int p1) {}
 }
-static void main() { }
+
+class B extends A {
+	public String a1;
 }
+
+
+class C extends B{
+	dynamic void m3(String p1) {}
+static void main() {}
+}
+

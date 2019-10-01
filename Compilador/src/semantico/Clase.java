@@ -2,10 +2,11 @@ package semantico;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import lexico.Token;
+import main.Principal;
 
 public class Clase {
 	private Token token;
@@ -17,6 +18,7 @@ public class Clase {
 	private boolean atributosConsolidados;
 	private boolean metodosConsolidados;
 	private boolean metodoMain;
+	private boolean hc;
 
 	public Clase(Token token, String superclase) {
 		this.token = token;
@@ -32,6 +34,10 @@ public class Clase {
 
 	public int getNroLinea() {
 		return token.getNroLinea();
+	}
+
+	public int getNroColumna() {
+		return token.getNroColumna();
 	}
 
 	public String getSuperclase() {
@@ -98,32 +104,46 @@ public class Clase {
 		metodosConsolidados = true;
 	}
 
-	public boolean chequeoDeclaraciones() throws ExcepcionSemantico {
+	public boolean tieneMetodoMain() {
+		return metodoMain;
+	}
+
+	public boolean tieneHerenciaCircular() {
+		return hc;
+	}
+
+	public void chequeoDeclaraciones() throws ExcepcionSemantico {
 		chequeoExistenciaSuperclase();
 		chequeoHerenciaCircular();
 		chequeoAtributos();
 		chequeoConstructores();
 		chequeoMetodos();
-		return metodoMain;
+		if (metodoMain) {
+			Principal.ts.chequeoMain(this);
+		}
 	}
 
 	private void chequeoExistenciaSuperclase() throws ExcepcionSemantico {
-		TablaSimbolos ts = TablaSimbolos.getInstance();
-		if (ts.getClase(superclase) == null && !getNombre().equals("Object"))
+		if (Principal.ts.getClase(superclase) == null && !getNombre().equals("Object"))
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + "] Error semántico: La superclase " + superclase
 					+ " de " + getNombre() + " no está definida.");
 	}
 
 	private void chequeoHerenciaCircular() throws ExcepcionSemantico {
+		if (getNombre().equals(superclase)) {
+			hc = true;
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+					+ "] Error semántico: La clase " + getNombre() + " tiene herencia circular.");
+		}
 		String ancestro = superclase;
 		boolean continuar = !getNombre().equals("Object") && !ancestro.equals("Object");
 		while (continuar) {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			if (!ts.getClase(ancestro).getVisitadoHC()) {
-				ancestro = ts.getClase(ancestro).getSuperclase();
+			if (Principal.ts.getClases().containsKey(ancestro) && !Principal.ts.getClase(ancestro).getVisitadoHC()) {
+				ancestro = Principal.ts.getClase(ancestro).getSuperclase();
 				if (getNombre().equals(ancestro)) {
-					throw new ExcepcionSemantico("[" + token.getNroLinea() + "] Error semántico: La clase "
-							+ getNombre() + " tiene herencia circular.");
+					hc = true;
+					throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+							+ "] Error semántico: La clase " + getNombre() + " tiene herencia circular.");
 				}
 				continuar = !ancestro.equals("Object");
 			} else
@@ -134,7 +154,12 @@ public class Clase {
 
 	private void chequeoAtributos() throws ExcepcionSemantico {
 		for (VariableInstancia varIns : atributos.values())
-			varIns.chequeoDeclaraciones();
+			try {
+				varIns.chequeoDeclaraciones();
+			} catch (ExcepcionSemantico e) {
+				Principal.ts.setRS();
+				System.out.println(e.toString());
+			}
 	}
 
 	private void chequeoConstructores() throws ExcepcionSemantico {
@@ -142,22 +167,32 @@ public class Clase {
 			agregarConstructorPredefinido();
 		} else {
 			for (Constructor ctor : constructores)
-				ctor.chequeoDeclaraciones(constructores);
+				try {
+					ctor.chequeoDeclaraciones(constructores);
+				} catch (ExcepcionSemantico e) {
+					Principal.ts.setRS();
+					System.out.println(e.toString());
+				}
 		}
 	}
 
 	private void agregarConstructorPredefinido() {
 		Token token = new Token("idClase", getNombre(), 0, 0);
-		Constructor ctor = new Constructor(token, new HashMap<String, Parametro>());
+		Constructor ctor = new Constructor(token, new LinkedHashMap<String, Parametro>());
 		constructores.add(ctor);
 	}
 
 	private void chequeoMetodos() throws ExcepcionSemantico {
 		for (List<Metodo> listaMetodos : metodos.values())
 			for (Metodo metodo : listaMetodos) {
-				boolean chequeoMain = metodo.chequeoDeclaraciones(listaMetodos);
-				if (!metodoMain)
-					metodoMain = chequeoMain;
+				try {
+					boolean chequeoMain = metodo.chequeoDeclaraciones(listaMetodos);
+					if (!metodoMain)
+						metodoMain = chequeoMain;
+				} catch (ExcepcionSemantico e) {
+					Principal.ts.setRS();
+					System.out.println(e.toString());
+				}
 			}
 	}
 
@@ -167,42 +202,47 @@ public class Clase {
 	}
 
 	private void consolidacionAtributos() throws ExcepcionSemantico {
-		if (superclase != null) { // si no es object
-			TablaSimbolos ts = TablaSimbolos.getInstance();
+		if (superclase != null && Principal.ts.getClase(superclase) != null) { // si no es object y está declarada
 			String ancestro = superclase;
-			while (!ts.getClase(ancestro).isAtributosConsolidados()) {
-				ts.getClase(ancestro).consolidacionAtributos();
+			while (!Principal.ts.getClase(ancestro).isAtributosConsolidados()) {
+				Principal.ts.getClase(ancestro).consolidacionAtributos();
 			}
-			HashMap<String, VariableInstancia> atributosAncestro = ts.getClase(ancestro).getAtributos();
+			HashMap<String, VariableInstancia> atributosAncestro = Principal.ts.getClase(ancestro).getAtributos();
 			for (String nombreAtributoAncestro : atributosAncestro.keySet()) {
 				if (getAtributoPorNombre(nombreAtributoAncestro) == null) {
 					atributos.put(nombreAtributoAncestro, atributosAncestro.get(nombreAtributoAncestro));
 				}
 			}
-			setAtributosConsolidados();
 		}
+		setAtributosConsolidados();
 	}
 
-	private void consolidacionMetodos() throws ExcepcionSemantico {
+	private void consolidacionMetodos() {
 		if (!isMetodosConsolidados()) {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
 			String ancestro = superclase;
-			while (!ts.getClase(ancestro).isMetodosConsolidados())
-				ts.getClase(ancestro).consolidacionMetodos();
-			Map<String, List<Metodo>> metodosAncestro = ts.getClase(ancestro).getTodosMetodos();
-			for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
-				if (getTodosMetodosPorNombre(nombreMetodoAncestro) == null) {
-					metodos.put(nombreMetodoAncestro, metodosAncestro.get(nombreMetodoAncestro));
-				} else {
-					List<Metodo> metodosActual = metodos.get(nombreMetodoAncestro);
-					List<Metodo> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
-					for (Metodo met1 : metodosActual)
-						for (Metodo met2 : metodosAncestroMismoNombre)
-							if (met1.getCantidadParametros() == met2.getCantidadParametros()) {
-								if (!met1.sobreescribeMetodo(met2))
-									metodosActual.add(met2);
-							} else
-								metodosActual.add(met2);
+			if (Principal.ts.getClase(ancestro) != null) {
+				while (!Principal.ts.getClase(ancestro).isMetodosConsolidados())
+					Principal.ts.getClase(ancestro).consolidacionMetodos();
+				Map<String, List<Metodo>> metodosAncestro = Principal.ts.getClase(ancestro).getTodosMetodos();
+				for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
+					if (getTodosMetodosPorNombre(nombreMetodoAncestro) == null) {
+						metodos.put(nombreMetodoAncestro, metodosAncestro.get(nombreMetodoAncestro));
+					} else {
+						List<Metodo> metodosActual = metodos.get(nombreMetodoAncestro);
+						List<Metodo> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
+						for (Metodo met1 : metodosActual)
+							for (Metodo met2 : metodosAncestroMismoNombre)
+								if (met1.getCantidadParametros() == met2.getCantidadParametros()) {
+									try {
+										met1.chequeoRedefinicionMetodo(met2);
+									} catch (ExcepcionSemantico e) {
+										Principal.ts.setRS();
+										System.out.println(e.toString());
+									}
+									// if(metodoAgregar.isMetodoMain())
+									// metodoMain = true;
+								}
+					}
 				}
 			}
 			setMetodosConsolidados();

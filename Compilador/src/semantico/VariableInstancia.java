@@ -33,7 +33,7 @@ public class VariableInstancia {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		if (getTipo() instanceof TipoClase)
 			if (ts.getClase(getTipo().getNombre()) == null)
-				throw new ExcepcionSemantico("[" + getNroLinea() + "] Error semántico: El tipo clase \""
+				throw new ExcepcionSemantico("[" + getTipo().getNroLinea() + ":" + getTipo().getNroColumna() + "] Error semántico: El tipo clase \""
 						+ getTipo().getNombre() + "\" no está definido.");
 	}
 

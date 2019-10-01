@@ -1,5 +1,5 @@
 package semantico;
 
-public interface TipoRetorno {
+public abstract class TipoRetorno {
 	public abstract String getNombre();
 }

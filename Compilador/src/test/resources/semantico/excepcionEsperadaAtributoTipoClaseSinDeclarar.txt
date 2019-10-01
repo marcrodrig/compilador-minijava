@@ -1,4 +1,5 @@
 class A {
 	private B x;
+	private C y;
 	static void main() {}
 }

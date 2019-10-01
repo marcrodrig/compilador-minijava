@@ -1,7 +1,7 @@
 package semantico;
 
-public class TipoVoid implements TipoRetorno {
-	String nombre = "void";
+public class TipoVoid extends TipoRetorno {
+	private String nombre = "void";
 	
 	public String getNombre() {
 		return nombre;

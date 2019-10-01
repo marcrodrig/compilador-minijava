@@ -1,5 +1,7 @@
 package semantico;
 
-public interface Tipo extends TipoRetorno {
+public abstract class Tipo extends TipoRetorno {
 	public abstract String getNombre();
+	public abstract int getNroLinea();
+	public abstract int getNroColumna();
 }

@@ -1,15 +1,24 @@
 package semantico;
 
-public class TipoClase implements TipoReferencia {
+import lexico.Token;
 
-	String nombre;
+public class TipoClase extends TipoReferencia {
+	private Token token;
 	
-	public TipoClase(String nombre) {
-		this.nombre = nombre;
+	public TipoClase(Token token) {
+		this.token = token;
 	}
 	
 	public String getNombre() {
-		return nombre;
+		return token.getLexema();
+	}
+
+	public int getNroLinea() {
+		return token.getNroLinea();
+	}
+
+	public int getNroColumna() {
+		return token.getNroColumna();
 	}
 	
 }

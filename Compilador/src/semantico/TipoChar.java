@@ -1,9 +1,23 @@
 package semantico;
 
-public class TipoChar implements TipoPrimitivo {
-	String nombre = "char";
+import lexico.Token;
+
+public class TipoChar extends TipoPrimitivo {
+	private Token token;
+	
+	public TipoChar(Token token) {
+		this.token = token;
+	}
 	
 	public String getNombre() {
-		return nombre;
+		return token.getLexema();
+	}
+
+	public int getNroLinea() {
+		return token.getNroLinea();
+	}
+
+	public int getNroColumna() {
+		return token.getNroColumna();
 	}
 }

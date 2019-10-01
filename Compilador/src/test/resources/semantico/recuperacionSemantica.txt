@@ -1,0 +1,20 @@
+class A extends A { }
+
+class Object {}
+
+class B extends C {
+	private int x,x;
+	C() { }
+	dynamic D met1(E x, F y) {}
+	dynamic D met1(int x, int x) {}
+	B(E x, F y) {}
+}
+
+class C extends X{
+	static void main() {}
+	C(int x) {}
+	C(int x) {}
+	static void met1(){}
+	static void met1(int x){}
+	static void met1(int y){}
+}

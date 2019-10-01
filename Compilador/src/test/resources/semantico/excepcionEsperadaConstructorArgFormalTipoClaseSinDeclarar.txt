@@ -1,3 +1,4 @@
 class A {
-	A(B x) {}
+	A(B x, C y) {}
+static void main(){}
 }

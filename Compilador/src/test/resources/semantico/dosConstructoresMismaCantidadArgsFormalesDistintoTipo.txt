@@ -1,4 +1,5 @@
 class Prueba {
 	Prueba(int i) {}
 	Prueba(boolean b) {}
+	static void main() {}
 }

@@ -1,13 +1,14 @@
 package test.java;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
-
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import lexico.ExcepcionLexico;
 import main.Principal;
 import semantico.Clase;
@@ -22,26 +23,44 @@ import sintactico.ExcepcionPanicMode;
 import sintactico.ExcepcionSintactico;
 
 class AnalizadorSemanticoTest {
-
+	    
+	@BeforeEach
+	void init(TestInfo testInfo) {
+		String displayName = testInfo.getDisplayName();
+		System.out.println(displayName);
+	}
+	    
 	@AfterEach
-	public void resetTS() {
+	void resetTS() {
+		System.out.println();
 		Principal.ts.reset();
 	}
-	/*
-	@Test
-	public void testRapido() { 
-		String[] args = {"src/test/resources/semantico/rapido.txt"};
-		Principal.main(args);
-	}*/
 	
 	@Test
+	void testRapido() { 
+		String[] args = {"src/test/resources/semantico/rapido.txt"};
+		Principal.main(args);
+	/*	TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(5,ts.getClases().size());
+		Clase a = ts.getClase("A");
+		Clase b = ts.getClase("B");
+		assertEquals(1,a.cantidadAtributos());
+		VariableInstancia va = a.getAtributoPorNombre("a1");
+		assertEquals("int", va.getTipo().getNombre());
+		assertEquals(1,b.cantidadAtributos());
+		VariableInstancia vb = b.getAtributoPorNombre("a1");
+		assertEquals("String", vb.getTipo().getNombre());*/
+	}
+	
+	@Test
+	@DisplayName("TEST: Excepción esperada método main ausente")
 	void testExcepcionEsperadaMetodoMainAusente() throws ExcepcionSemantico {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoMainAusente.txt" };
 		AnalizadorSintactico analizadorSintactico;
+		TablaSimbolos ts = TablaSimbolos.getInstance();
 		try {
 			analizadorSintactico = new AnalizadorSintactico(args[0]);
 			analizadorSintactico.start();
-			TablaSimbolos ts = TablaSimbolos.getInstance();
 			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
 				ts.chequeoDeclaraciones();
 			});
@@ -49,12 +68,13 @@ class AnalizadorSemanticoTest {
 		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico | ExcepcionPanicMode  e1) {
 			fail("No debería suceder esto");
 		}
+		ts.reset();
 		Principal.main(args);
 	}
 	
-	
-	@Test 
-	public void testUnaClaseConMeotodoMainChequeoClasesPredefinidas() { 
+	@Test
+	@DisplayName("TEST: Chequeo clases predefinidas")
+	void testUnaClaseConMetodoMainChequeoClasesPredefinidas() { 
 		String[] args = {"src/test/resources/semantico/unaClaseConMetodoMainChequeoClasesPredefinidas.txt"};
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
@@ -171,74 +191,35 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaDeclaracionClaseObject() {
+	@DisplayName("TEST: Recuperación semántica declaración clase Object")
+	void testExcepcionEsperadaDeclaracionClaseObjectRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDeclaracionClaseObject.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				analizadorSintactico.start();
-			});
-			assertEquals("[1] Error semántico: La clase Object ya está definida.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e1) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaDeclaracionClaseSystem() {
+	@DisplayName("TEST: Recuperación semántica declaración clase System y Object")
+	void testExcepcionEsperadaDeclaracionClaseSystemObjectRecuperacionSemanica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDeclaracionClaseSystem.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				analizadorSintactico.start();
-			});
-			assertEquals("[1] Error semántico: La clase System ya está definida.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e1) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaHerenciaCircular1() throws ExcepcionSemantico {
+	@DisplayName("TEST: Recuperación semántica herencia circular 1")
+	void testExcepcionEsperadaHerenciaCircular1RecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaHerenciaCircular1.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[3] Error semántico: La clase A tiene herencia circular.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico | ExcepcionPanicMode e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaHerenciaCircular2() throws ExcepcionSemantico {
+	@DisplayName("TEST: Recuperación semántica herencia circular 2")
+	void testExcepcionEsperadaHerenciaCircular2RecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaHerenciaCircular2.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[5] Error semántico: La clase A tiene herencia circular.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico | ExcepcionPanicMode e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
-	@Test 
+	@Test
+	@DisplayName("TEST: Chequeo un constructor sin argumentos formales")
 	void testUnConstructorSinArgsFormales() { 
 		String[] args = {"src/test/resources/semantico/unConstructorSinArgsFormales.txt"};
 		Principal.main(args);
@@ -251,7 +232,9 @@ class AnalizadorSemanticoTest {
 		assertEquals(0, ctor.getParametros().size());
 	}
 	
-	@Test public void testUnConstructorUnArgFormal() { 
+	@Test
+	@DisplayName("TEST: Chequeo un constructor con 1 argumento formal")
+	void testUnConstructorUnArgFormal() { 
 		String[] args = {"src/test/resources/semantico/unConstructorUnArgFormal.txt"};
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
@@ -265,7 +248,9 @@ class AnalizadorSemanticoTest {
 		assertEquals("int", p.getTipo().getNombre());
 	}
 	
-	@Test public void testUnConstructorTresArgsFormales() { 
+	@Test
+	@DisplayName("TEST: Chequeo un constructor con 3 argumentos formales")
+	void testUnConstructorTresArgsFormales() { 
 		String[] args = {"src/test/resources/semantico/unConstructorTresArgsFormales.txt"};
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
@@ -286,7 +271,9 @@ class AnalizadorSemanticoTest {
 		assertEquals(3,p3.getPosicion());
 	}
 	
-	@Test public void testSinConstructorChequeoPredefinido() { 
+	@Test
+	@DisplayName("TEST: Chequeo constructor predefinido para clase sin constructor")
+	void testSinConstructorChequeoPredefinido() { 
 		String[] args = {"src/test/resources/semantico/sinConstructorChequeoPredefinido.txt"};
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
@@ -299,40 +286,21 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaNombreConstructorDistintoDeNombreClase() throws ExcepcionSemantico {
+	@DisplayName("TEST: Recuperación semántica un constructor con nombre inválido")
+	void testExcepcionEsperadaNombreConstructorDistintoDeNombreClaseRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaNombreConstructorDistintoDeNombreClase.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				analizadorSintactico.start();
-			});
-			assertEquals("[2] Error semántico: El nombre del constructor es inválido, debe ser Prueba.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaDosConstructoresMismaSignatura() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica dos constructores con misma signatura")
+	void testExcepcionEsperadaDosConstructoresMismaSignaturaRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDosConstructoresMismaSignatura.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[3] Error semántico: Constructor con misma signatura ya definido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
+	@DisplayName("TEST: Chequeo dos constructores misma cantidad de argumentos formales pero distinto tipo")
 	void testDosConstructoresMismaCantidadArgsFormalesDistintoTipo() { 
 		String[] args = {"src/test/resources/semantico/dosConstructoresMismaCantidadArgsFormalesDistintoTipo.txt"};
 		Principal.main(args);
@@ -353,40 +321,21 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaConstructorDosParametrosMismoNombre() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica constructor con dos parámetros con el mismo nombre")
+	void testExcepcionEsperadaConstructorDosParametrosMismoNombreRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaConstructorDosParametrosMismoNombre.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				analizadorSintactico.start();
-			});
-			assertEquals("[2] Error semántico: Nombre de parámetro \"i\" repetido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaSuperclaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica superclase sin declarar")
+	void testExcepcionEsperadaSuperclaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaSuperclaseSinDeclarar.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[1] Error semántico: La superclase B de A no está definida.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
+	@DisplayName("TEST: Chequeo un método sin argumentos formales")
 	void testUnMetodoSinArgsFormales() { 
 		String[] args = {"src/test/resources/semantico/unMetodoSinArgsFormales.txt"};
 		Principal.main(args);
@@ -402,6 +351,7 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
+	@DisplayName("TEST: Chequeo un método con 1 argumento formal")
 	void testUnMetodoUnArgFormal() { 
 		String[] args = {"src/test/resources/semantico/unMetodoUnArgFormal.txt"};
 		Principal.main(args);
@@ -418,7 +368,8 @@ class AnalizadorSemanticoTest {
 		assertEquals("int", p.getTipo().getNombre());
 	}
 	
-	@Test 
+	@Test
+	@DisplayName("TEST: Chequeo un método con 3 argumentos formales")
 	void testUnMetodoTresArgsFormales() { 
 		String[] args = {"src/test/resources/semantico/unMetodoTresArgsFormales.txt"};
 		Principal.main(args);
@@ -440,58 +391,28 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaMetodoDosParametrosMismoNombre() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica método con dos parámetros con el mismo nombre")
+	void testExcepcionEsperadaMetodoDosParametrosMismoNombreRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoDosParametrosMismoNombre.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				analizadorSintactico.start();
-			});
-			assertEquals("[3] Error semántico: Nombre de parámetro \"i\" repetido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaDosMetodosMismaSignatura() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica dos métodos con misma signatura")
+	void testExcepcionEsperadaDosMetodosMismaSignaturaRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDosMetodosMismaSignatura.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[3] Error semántico: Método con mismo nombre y cantidad de parámetros ya definido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaMetodoRetornoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica método con el tipo de retorno sin declarar")
+	void testExcepcionEsperadaMetodoRetornoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoRetornoClaseSinDeclarar.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[2] Error semántico: El tipo de retorno B del método met1 no está definido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
+	@DisplayName("TEST: Chequeo consolidación de métodos")
 	void testConsolidacionMetodos() { 
 		String[] args = {"src/test/resources/semantico/consolidacionMetodos.txt"};
 		Principal.main(args);
@@ -542,25 +463,14 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaConsolidacionMetodosSobreescrituraFinal() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica redefinición de un método final")
+	void testExcepcionEsperadaConsolidacionMetodosSobreescrituraFinalRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaConsolidacionMetodosSobreescrituraFinal.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ts.chequeoDeclaraciones();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.consolidacion();
-			});
-			assertEquals("[10] Error semántico: El método m3 no se puede sobreescribir.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
-	@Test 
+	@Test
+	@DisplayName("TEST: Chequeo sobrecarga de método final")
 	void testSobrecargaMetodosConUnoFinal() { 
 		String[] args = {"src/test/resources/semantico/sobrecargaMetodosConUnoFinal.txt"};
 		Principal.main(args);
@@ -583,22 +493,14 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaNombreAtributoRepetido() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica nombre de atributo repetido")
+	void testExcepcionEsperadaNombreAtributoRepetidoRecuperacionSemantica() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaNombreAtributoRepetido.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				analizadorSintactico.start();
-			});
-			assertEquals("[3:23] Error semántico: Nombre de atributo \"a\" repetido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
+	@DisplayName("TEST: Chequeo consolidación de atributos")
 	void testConsolidacionAtributos() { 
 		String[] args = {"src/test/resources/semantico/consolidacionAtributos.txt"};
 		Principal.main(args);
@@ -643,56 +545,44 @@ class AnalizadorSemanticoTest {
 	}
 	
 	@Test
-	void testExcepcionEsperadaAtributoTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica atributo de tipo clase sin declarar")
+	void testExcepcionEsperadaAtributoTipoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaAtributoTipoClaseSinDeclarar.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[2] Error semántico: El tipo clase \"B\" no está definido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
-		Principal.main(args);
+		Principal.main(args);	
 	}
 	
 	@Test
-	void testExcepcionEsperadaMetodoArgFormalTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica método con argumentos de tipo clase sin declarar")
+	void testExcepcionEsperadaMetodoArgFormalTipoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoArgFormalTipoClaseSinDeclarar.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[2] Error semántico: El tipo clase A del parámetro formal x no está definido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
 		Principal.main(args);
 	}
 	
 	@Test
-	void testExcepcionEsperadaConstructorArgFormalTipoClaseSinDeclarar() throws ExcepcionSemantico, ExcepcionSintactico, ExcepcionPanicMode {
+	@DisplayName("TEST: Recuperación semántica constructor con argumentos de tipo clase sin declarar")
+	void testExcepcionEsperadaConstructorArgFormalTipoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaConstructorArgFormalTipoClaseSinDeclarar.txt" };
-		AnalizadorSintactico analizadorSintactico;
-		try {
-			TablaSimbolos ts = TablaSimbolos.getInstance();
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.chequeoDeclaraciones();
-			});
-			assertEquals("[2] Error semántico: El tipo clase B del parámetro formal x no está definido.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico e) {
-			fail("No debería suceder esto");
-		}
+		Principal.main(args);
+	}
+	
+	@Test
+	@DisplayName("TEST: Recuperación semántica dos métodos main en clases distintas sin relación de herencia")
+	void testExcepcionEsperadaDosMetodosMainRecuperacionSemantica() {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaDosMetodosMain.txt" };
+		Principal.main(args);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo definición método main, un main con parámetros")
+	void testExcepcionEsperadaMetodoMainConParametros() {
+		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoMainConParametros.txt" };
+		Principal.main(args);
+	}
+	
+	@Test
+	@DisplayName("TEST: Recuperación semántica de todo")
+	void testRecuperacionSemantica() {
+		String[] args = { "src/test/resources/semantico/recuperacionSemantica.txt" };
 		Principal.main(args);
 	}
 }

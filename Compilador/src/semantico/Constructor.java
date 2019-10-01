@@ -2,15 +2,16 @@ package semantico;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-
 import lexico.Token;
+import main.Principal;
 
 public class Constructor {
 	private Token token;
-	private HashMap<String, Parametro> parametros;
+	private LinkedHashMap<String, Parametro> parametros;
 	
-	public Constructor(Token token, HashMap<String, Parametro> parametros) {
+	public Constructor(Token token, LinkedHashMap<String, Parametro> parametros) {
 		this.token = token;
 		this.parametros = parametros;
 	}
@@ -21,6 +22,10 @@ public class Constructor {
 	
 	public int getNroLinea() {
 		return token.getNroLinea();
+	}
+	
+	private int getNroColumna() {
+		return token.getNroColumna();
 	}
 
 	public HashMap<String, Parametro> getParametros() {
@@ -36,23 +41,34 @@ public class Constructor {
 	public int getCantidadParametros() {
 		return parametros.size();
 	}
-
+	
 	public void chequeoDeclaraciones(List<Constructor> constructores) throws ExcepcionSemantico {
 		for (Parametro paramConstructor : getParametros().values())
-			paramConstructor.chequeoDeclaraciones();
+			try {
+				paramConstructor.chequeoDeclaraciones();
+			} catch (ExcepcionSemantico e) {
+				Principal.ts.setRS();
+				System.out.println(e.toString());
+			}
 		for (Constructor ctor : constructores) {
-			if (this != ctor && getCantidadParametros() == ctor.getCantidadParametros()) {
-				int posicion = 1;
-				while (posicion <= getCantidadParametros()) { // ver si menor o menor o igual
-					Parametro p1 = getParametroPorPosicion(posicion);
-					Parametro p2 = ctor.getParametroPorPosicion(posicion);
-					if (p1.getTipo().getNombre().equals(p2.getTipo().getNombre()))
-						throw new ExcepcionSemantico("[" + ctor.getNroLinea()
-								+ "] Error semántico: Constructor con misma signatura ya definido.");
-					posicion++;
+			if (this != ctor) {
+				if (getCantidadParametros() == ctor.getCantidadParametros()) {
+					boolean iguales = true;
+					if (getCantidadParametros() >= 1) {
+						int posicion = 1;
+						while (iguales && posicion <= getCantidadParametros()) { // ver si menor o menor o igual
+							Parametro p1 = getParametroPorPosicion(posicion);
+							Parametro p2 = ctor.getParametroPorPosicion(posicion);
+							iguales = p1.getTipo().getNombre().equals(p2.getTipo().getNombre());
+							posicion++;
+						}
+					} 
+					if (iguales)
+						throw new ExcepcionSemantico("[" + ctor.getNroLinea() + ":" + ctor.getNroColumna()
+								+ "] Error semántico: Constructor duplicado.");
 				}
 			}
 		}
 	}
-	
+
 }

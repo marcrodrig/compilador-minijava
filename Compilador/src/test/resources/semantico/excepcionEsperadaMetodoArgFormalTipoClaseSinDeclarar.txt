@@ -1,3 +1,4 @@
 class B {
-	dynamic void met1 (A x) { }
+	dynamic void met1 (A x, C y) { }
+	static void main() {}
 }

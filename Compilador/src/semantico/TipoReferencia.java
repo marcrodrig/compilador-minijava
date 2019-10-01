@@ -1,5 +1,5 @@
 package semantico;
 
-public interface TipoReferencia extends Tipo {
+public abstract class TipoReferencia extends Tipo {
 
 }
