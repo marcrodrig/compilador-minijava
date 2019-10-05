@@ -1,48 +1,18 @@
 package semantico;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import lexico.Token;
 import main.Principal;
 
-public class Constructor {
-	private Token token;
-	private LinkedHashMap<String, Parametro> parametros;
+public class Constructor extends Unidad {
 
 	public Constructor(Token token, LinkedHashMap<String, Parametro> parametros) {
-		this.token = token;
-		this.parametros = parametros;
+		super(token, parametros);
 	}
-
-	public String getNombre() {
-		return token.getLexema();
-	}
-
-	public int getNroLinea() {
-		return token.getNroLinea();
-	}
-
-	private int getNroColumna() {
-		return token.getNroColumna();
-	}
-
-	public HashMap<String, Parametro> getParametros() {
-		return parametros;
-	}
-
-	// posicion va desde 1
-	public Parametro getParametroPorPosicion(int posicion) {
-		ArrayList<Parametro> listaParametros = new ArrayList<Parametro>(parametros.values());
-		return listaParametros.get(posicion - 1);
-	}
-
-	public int getCantidadParametros() {
-		return parametros.size();
-	}
-
-	public void chequeoDeclaraciones(List<Constructor> constructores) throws ExcepcionSemantico {
+	
+	public void chequeoDeclaraciones(List<Unidad> constructores) throws ExcepcionSemantico {
+		//List<Unidad> constructores = Principal.ts.getClase(declaradaEn().getNombre()).getConstructores();
 		for (Parametro paramConstructor : getParametros().values())
 			try {
 				paramConstructor.chequeoDeclaraciones();
@@ -50,7 +20,7 @@ public class Constructor {
 				Principal.ts.setRS();
 				System.out.println(e.toString());
 			}
-		for (Constructor ctor : constructores) {
+		for (Unidad ctor : constructores) {
 			if (this != ctor) {
 				if (getCantidadParametros() == ctor.getCantidadParametros()) {
 					/*

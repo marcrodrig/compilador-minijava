@@ -12,20 +12,17 @@ public class Clase {
 	private Token token;
 	private String superclase;
 	private HashMap<String, VariableInstancia> atributos;
-	private List<Constructor> constructores;
-	private Map<String, List<Metodo>> metodos;
+	private Map<String, List<Unidad>> unidades;
 	private boolean visitadoHerenciaCircular;
-	private boolean atributosConsolidados;
-	private boolean metodosConsolidados;
-	private boolean metodoMain;
+	private boolean consolidada;
+	private Metodo metodoMain;
 	private boolean hc;
 
 	public Clase(Token token, String superclase) {
 		this.token = token;
 		this.superclase = superclase;
 		atributos = new HashMap<String, VariableInstancia>();
-		constructores = new ArrayList<Constructor>();
-		metodos = new HashMap<>();
+		unidades = new HashMap<>();
 	}
 
 	public String getNombre() {
@@ -43,7 +40,7 @@ public class Clase {
 	public String getSuperclase() {
 		return superclase;
 	}
-
+	
 	public HashMap<String, VariableInstancia> getAtributos() {
 		return atributos;
 	}
@@ -56,26 +53,35 @@ public class Clase {
 		return atributos.size();
 	}
 
-	public List<Constructor> getConstructores() {
+	public Map<String, List<Unidad>> getUnidades() {
+		return unidades;
+	}
+	
+	public List<Unidad> getConstructores() {
+		List<Unidad> constructores = unidades.get(getNombre());
+		if (constructores == null)
+			constructores = new ArrayList<Unidad>();
 		return constructores;
 	}
-
+	
 	// Posición desde 1
-	public Constructor getConstructor(int index) {
-		return constructores.get(index - 1);
+	public Unidad getConstructor(int index) {
+		return getConstructores().get(index - 1);
 	}
 
-	public Map<String, List<Metodo>> getTodosMetodos() {
+	public Map<String, List<Unidad>> getTodosMetodos() {
+		Map<String, List<Unidad>> metodos = new HashMap<>(unidades);
+		metodos.remove(getNombre());
 		return metodos;
 	}
 
-	public List<Metodo> getTodosMetodosPorNombre(String nombreMetodo) {
-		return metodos.get(nombreMetodo);
+	public List<Unidad> getTodosMetodosPorNombre(String nombreMetodo) {
+		return getTodosMetodos().get(nombreMetodo);
 	}
 
 	public int cantidadMetodos() {
 		int cantidad = 0;
-		for (List<Metodo> listaMetodos : metodos.values())
+		for (List<Unidad> listaMetodos : getTodosMetodos().values())
 			cantidad += listaMetodos.size();
 		return cantidad;
 	}
@@ -88,24 +94,12 @@ public class Clase {
 		visitadoHerenciaCircular = true;
 	}
 
-	private boolean isAtributosConsolidados() {
-		return atributosConsolidados;
+	public boolean estaConsolidada() {
+		return consolidada;
 	}
-
-	public void setAtributosConsolidados() {
-		atributosConsolidados = true;
-	}
-
-	public boolean isMetodosConsolidados() {
-		return metodosConsolidados;
-	}
-
-	public void setMetodosConsolidados() {
-		metodosConsolidados = true;
-	}
-
+	
 	public boolean tieneMetodoMain() {
-		return metodoMain;
+		return metodoMain != null;
 	}
 
 	public boolean tieneHerenciaCircular() {
@@ -118,9 +112,6 @@ public class Clase {
 		chequeoAtributos();
 		chequeoConstructores();
 		chequeoMetodos();
-		if (metodoMain) {
-			Principal.ts.chequeoMain(this);
-		}
 	}
 
 	private void chequeoExistenciaSuperclase() throws ExcepcionSemantico {
@@ -163,10 +154,11 @@ public class Clase {
 	}
 
 	private void chequeoConstructores() {
+		List <Unidad> constructores = getConstructores();
 		if (constructores.isEmpty()) {
 			agregarConstructorPredefinido();
 		} else {
-			for (Constructor ctor : constructores)
+			for (Unidad ctor : constructores)
 				try {
 					ctor.chequeoDeclaraciones(constructores);
 				} catch (ExcepcionSemantico e) {
@@ -179,16 +171,19 @@ public class Clase {
 	private void agregarConstructorPredefinido() {
 		Token token = new Token("idClase", getNombre(), 0, 0);
 		Constructor ctor = new Constructor(token, new LinkedHashMap<String, Parametro>());
-		constructores.add(ctor);
+		Principal.ts.insertarUnidad(ctor);
 	}
 
 	private void chequeoMetodos() {
-		for (List<Metodo> listaMetodos : metodos.values())
-			for (Metodo metodo : listaMetodos) {
+		for (List<Unidad> listaMetodos : getTodosMetodos().values())
+			for (Unidad unidad : listaMetodos) {
+				Metodo metodo = (Metodo) unidad;
 				try {
-					boolean chequeoMain = metodo.chequeoDeclaraciones(listaMetodos);
-					if (!metodoMain)
-						metodoMain = chequeoMain;
+					if (metodo.isMetodoMain()) {
+						metodoMain = metodo;
+						Principal.ts.chequeoMain(this, metodoMain);
+					} else
+						metodo.chequeoDeclaraciones(listaMetodos);
 				} catch (ExcepcionSemantico e) {
 					Principal.ts.setRS();
 					System.out.println(e.toString());
@@ -197,62 +192,58 @@ public class Clase {
 	}
 
 	public void consolidacion() throws ExcepcionSemantico {
-		consolidacionAtributos();
-		consolidacionMetodos();
+		if (Principal.ts.getClase(superclase) != null) {
+			while (!Principal.ts.getClase(superclase).estaConsolidada())
+				Principal.ts.getClase(superclase).consolidacion();
+			consolidacionAtributos();
+			consolidacionMetodos();
+			setConsolidada();
+		}
+	}
+
+	public void setConsolidada() {
+		consolidada = true;
 	}
 
 	private void consolidacionAtributos() {
-		if (superclase != null && Principal.ts.getClase(superclase) != null) { // si no es object y está declarada
-			String ancestro = superclase;
-			while (!Principal.ts.getClase(ancestro).isAtributosConsolidados()) {
-				Principal.ts.getClase(ancestro).consolidacionAtributos();
-			}
-			HashMap<String, VariableInstancia> atributosAncestro = Principal.ts.getClase(ancestro).getAtributos();
-			for (String nombreAtributoAncestro : atributosAncestro.keySet()) {
-				if (getAtributoPorNombre(nombreAtributoAncestro) == null) {
-					atributos.put(nombreAtributoAncestro, atributosAncestro.get(nombreAtributoAncestro));
-				}
-			}
-		}
-		setAtributosConsolidados();
+		HashMap<String, VariableInstancia> atributosAncestro = Principal.ts.getClase(superclase).getAtributos();
+		for (String nombreAtributoAncestro : atributosAncestro.keySet())
+			if (getAtributoPorNombre(nombreAtributoAncestro) == null)
+				atributos.put(nombreAtributoAncestro, atributosAncestro.get(nombreAtributoAncestro));
 	}
 
 	private void consolidacionMetodos() {
-		if (!isMetodosConsolidados()) {
-			String ancestro = superclase;
-			if (Principal.ts.getClase(ancestro) != null) {
-				while (!Principal.ts.getClase(ancestro).isMetodosConsolidados())
-					Principal.ts.getClase(ancestro).consolidacionMetodos();
-				Map<String, List<Metodo>> metodosAncestro = Principal.ts.getClase(ancestro).getTodosMetodos();
-				for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
-					if (getTodosMetodosPorNombre(nombreMetodoAncestro) == null) {
-						metodos.put(nombreMetodoAncestro, metodosAncestro.get(nombreMetodoAncestro));
-						// chequear si setear método main
-					} else {
-						List<Metodo> metodosActual = metodos.get(nombreMetodoAncestro);
-						List<Metodo> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
-						Metodo metodoAgregar = null;
-						for (Metodo met1 : metodosActual)
-							for (Metodo met2 : metodosAncestroMismoNombre)
-								if (met1.getCantidadParametros() == met2.getCantidadParametros()) {
-									try {
-										met1.chequeoRedefinicionMetodo(met2);
-									} catch (ExcepcionSemantico e) {
-										Principal.ts.setRS();
-										System.out.println(e.toString());
-									}
-								} else {
-									metodoAgregar = met2;
-								}
-						if (metodoAgregar != null) {
-							metodosActual.add(metodoAgregar);
-							if (metodoAgregar.isMetodoMain())
-								metodoMain = true;
-						}
+		Map<String, List<Unidad>> metodosAncestro = Principal.ts.getClase(superclase).getTodosMetodos();
+		for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
+			if (getTodosMetodosPorNombre(nombreMetodoAncestro) == null) {
+				unidades.put(nombreMetodoAncestro, Principal.ts.getClase(superclase).getTodosMetodosPorNombre(nombreMetodoAncestro));
+				// chequear si setear método main
+			} else {
+				List<Unidad> metodosActual = unidades.get(nombreMetodoAncestro);
+				List<Unidad> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
+				List<Unidad> listaMetodoAgregar = new ArrayList<Unidad>();
+				for (Unidad met1 : metodosActual)
+					for (Unidad met2 : metodosAncestroMismoNombre) {
+						Metodo metodo1 = (Metodo) met1;
+						Metodo metodo2 = (Metodo) met2;
+						if (met1.getCantidadParametros() == met2.getCantidadParametros()) {
+							try {
+								metodo1.chequeoRedefinicionMetodo(metodo2);
+							} catch (ExcepcionSemantico e) {
+								Principal.ts.setRS();
+								System.out.println(e.toString());
+							}
+						} else {
+							listaMetodoAgregar.add(metodo2);
+					if (metodo2.isMetodoMain())
+						metodoMain = metodo2;
+				}
 					}
+				if (!listaMetodoAgregar.isEmpty()) {
+					for (Unidad metodo : listaMetodoAgregar)
+						Principal.ts.insertarUnidad(metodo);
 				}
 			}
-			setMetodosConsolidados();
 		}
 	}
 

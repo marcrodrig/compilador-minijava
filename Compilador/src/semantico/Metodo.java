@@ -1,37 +1,21 @@
 package semantico;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import lexico.Token;
 import main.Principal;
 
-public class Metodo {
-	private Token token;
+public class Metodo extends Unidad {
 	private String formaMetodo;
 	private boolean metodoFinal;
 	private TipoRetorno tipo;
-	private HashMap<String, Parametro> parametros;
 
 	public Metodo(Token token, String formaMetodo, TipoRetorno tipo, boolean metodoFinal,
 			HashMap<String, Parametro> parametros) {
-		this.token = token;
+		super(token, parametros);
 		this.formaMetodo = formaMetodo;
 		this.metodoFinal = metodoFinal;
 		this.tipo = tipo;
-		this.parametros = parametros;
-	}
-
-	public String getNombre() {
-		return token.getLexema();
-	}
-
-	public int getNroLinea() {
-		return token.getNroLinea();
-	}
-
-	private int getNroColumna() {
-		return token.getNroColumna();
 	}
 
 	public String getFormaMetodo() {
@@ -46,26 +30,9 @@ public class Metodo {
 		return tipo;
 	}
 
-	public HashMap<String, Parametro> getParametros() {
-		return parametros;
-	}
-
-	public Parametro getParametroPorNombre(String string) {
-		return parametros.get(string);
-	}
-
-	// posicion va desde 1
-	public Parametro getParametroPorPosicion(int posicion) {
-		ArrayList<Parametro> listaParametros = new ArrayList<Parametro>(parametros.values());
-		return listaParametros.get(posicion - 1);
-	}
-
-	public int getCantidadParametros() {
-		return parametros.size();
-	}
-
-	private void chequeoMetodosSobrecargados(List<Metodo> listaMetodos) throws ExcepcionSemantico {
-		for (Metodo metodo : listaMetodos) {
+	private void chequeoMetodosSobrecargados(List<Unidad> listaMetodos) throws ExcepcionSemantico {
+		for (Unidad unidad : listaMetodos) {
+			Metodo metodo = (Metodo) unidad;
 			metodo.chequeoExistenciaTipoRetorno();
 			if (this != metodo && getCantidadParametros() == metodo.getCantidadParametros())
 				/*
@@ -87,9 +54,9 @@ public class Metodo {
 	private void chequeoExistenciaTipoRetorno() throws ExcepcionSemantico {
 		if (tipo instanceof TipoClase)
 			if (Principal.ts.getClase(tipo.getNombre()) == null)
-				throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+				throw new ExcepcionSemantico("[" + getNroLinea() + ":" + getNroColumna()
 						+ "] Error semántico: El tipo de retorno " + tipo.getNombre() + " del método "
-						+ token.getLexema() + " no está definido.");
+						+ getNombre() + " no está definido.");
 	}
 
 	public void chequeoRedefinicionMetodo(Metodo met2) throws ExcepcionSemantico {
@@ -103,11 +70,11 @@ public class Metodo {
 			posicion++;
 		}
 		if (!redefinido) {
-			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+			throw new ExcepcionSemantico("[" + getNroLinea() + ":" + getNroColumna()
 					+ "] Error semántico: Incorrecta redefinición de método " + getNombre() + ".");
 		}
 		if (redefinido && met2.isMetodoFinal())
-			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+			throw new ExcepcionSemantico("[" + getNroLinea() + ":" + getNroColumna()
 					+ "] Error semántico: El método " + getNombre() + " no se puede sobreescribir.");
 	}
 
@@ -116,8 +83,8 @@ public class Metodo {
 				&& getCantidadParametros() == 0;
 	}
 
-	public boolean chequeoDeclaraciones(List<Metodo> listaMetodos) throws ExcepcionSemantico {
-		for (Parametro paramMetodo : parametros.values())
+	public void chequeoDeclaraciones(List<Unidad> listaMetodos) throws ExcepcionSemantico {
+		for (Parametro paramMetodo : getParametros().values())
 			try {
 				paramMetodo.chequeoDeclaraciones();
 			} catch (ExcepcionSemantico e) {
@@ -125,7 +92,6 @@ public class Metodo {
 				System.out.println(e.toString());
 			}
 		chequeoMetodosSobrecargados(listaMetodos);
-		return isMetodoMain();
 	}
 
 }

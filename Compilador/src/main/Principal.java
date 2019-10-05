@@ -40,8 +40,7 @@ public class Principal {
 					analizadorSintactico = new AnalizadorSintactico(args[0]);
 					analizadorSintactico.start();
 					// Análisis semántico
-					ts.chequeoDeclaraciones();
-					ts.consolidacion();
+					ts.controlesSemanticos();
 					if (ts.recuperacionSemantica())
 						System.out.println("Se completó el análisis semántico.");
 					else {
