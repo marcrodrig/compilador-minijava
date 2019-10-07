@@ -151,8 +151,8 @@ public class TablaSimbolos {
 		clases.put(clase.getNombre(), clase);
 	}
 
-	public void insertarAtributo(VariableInstancia varIns) {
-		claseActual.getAtributos().put(varIns.getNombre(), varIns);
+	public void insertarAtributo(Variable varIns) {
+		claseActual.getAtributos().put(varIns.getNombre(), (VariableInstancia) varIns);
 	}
 
 	public void insertarUnidad(Unidad unidad) {

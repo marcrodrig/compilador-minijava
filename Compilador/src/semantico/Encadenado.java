@@ -4,9 +4,12 @@ public abstract class Encadenado {
 	private Encadenado cadena;
 	private boolean ladoIzq;
 	
-	public Encadenado(Encadenado cadena) {
-		this.cadena = cadena;
+	public Encadenado() {
+		
 	}
 	
-	//seguir
+	//seguir??
+	public void setCadena(Encadenado cadena) {
+		this.cadena = cadena;
+	}
 }

@@ -2,7 +2,7 @@ package semantico;
 
 import lexico.Token;
 
-public class Parametro extends Variable {
+public class Parametro extends VariableMetodo {
 	private int posicion;
 
 	public Parametro(Token token, Tipo tipo) {

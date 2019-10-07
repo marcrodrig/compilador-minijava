@@ -13,14 +13,18 @@ import semantico.Constructor;
 import semantico.Encadenado;
 import semantico.ExcepcionSemantico;
 import semantico.Metodo;
+import semantico.NodoAsignacion;
 import semantico.NodoBloque;
 import semantico.NodoConstructor;
+import semantico.NodoDecVarsLocales;
 import semantico.NodoExpresion;
 import semantico.NodoExpresionBinaria;
 import semantico.NodoExpresionParentizada;
 import semantico.NodoExpresionUnaria;
+import semantico.NodoIf;
 import semantico.NodoLiteral;
 import semantico.NodoLlamadaDirecta;
+import semantico.NodoLlamadaEncadenado;
 import semantico.NodoLlamadaEstatica;
 import semantico.NodoOperando;
 import semantico.NodoPrimario;
@@ -30,6 +34,7 @@ import semantico.NodoSentencia;
 import semantico.NodoSentenciaSimple;
 import semantico.NodoThis;
 import semantico.NodoVar;
+import semantico.NodoWhile;
 import semantico.Parametro;
 import semantico.Tipo;
 import semantico.TipoBoolean;
@@ -39,6 +44,8 @@ import semantico.TipoInt;
 import semantico.TipoRetorno;
 import semantico.TipoString;
 import semantico.TipoVoid;
+import semantico.VarLocal;
+import semantico.Variable;
 import semantico.VariableInstancia;
 import main.Principal;
 
@@ -191,14 +198,21 @@ public class AnalizadorSintactico {
 			Tipo tipo = tipo();
 			List<Token> listaTokenVariablesInstancia = new ArrayList<Token>();
 			listaDecAtrs(listaTokenVariablesInstancia);
-			decAsig();
+			List<Variable> varsInstancia = new ArrayList<Variable>();
+			for (Token tokenVarIns : listaTokenVariablesInstancia) {
+				VariableInstancia varIns = new VariableInstancia(tokenVarIns,tipo,modificadorVisibilidad);
+				varsInstancia.add(varIns);
+			}
+			NodoSentencia sentencia = decAsig(varsInstancia,null);
+			/*
+			 * ver donde agregar
+			 */
 			match(";");
-			for (Token tokenAtributo : listaTokenVariablesInstancia) {
-				VariableInstancia varIns = new VariableInstancia(tokenAtributo,tipo,modificadorVisibilidad);
+			for (Variable varIns : varsInstancia) {
 				if (Principal.ts.getClaseActual().getAtributos().get(varIns.getNombre()) == null)
 					Principal.ts.insertarAtributo(varIns);
 				else
-					throw new ExcepcionSemantico("[" + tokenAtributo.getNroLinea() + ":" + tokenAtributo.getNroColumna() + "] Error semántico: Nombre de atributo \"" + tokenAtributo.getLexema() + "\" repetido.");
+					throw new ExcepcionSemantico("[" + varIns.getNroLinea() + ":" + varIns.getNroColumna() + "] Error semántico: Nombre de atributo \"" + varIns.getNombre() + "\" repetido.");
 			}
 		} catch (ExcepcionSintactico e) {
 			modoPanicoAtributo(panicoLinea, panicoColumna, e.toString());
@@ -324,14 +338,19 @@ public class AnalizadorSintactico {
 		}
 	}
 
-	private void decAsig() throws ExcepcionLexico, ExcepcionSintactico {	
+	private NodoSentencia decAsig(List<Variable> varsLocales, NodoExpresion izq) throws ExcepcionLexico, ExcepcionSintactico {	
 		switch (tokenActual.getNombre()) {
 			case "=":				// primeros
 				match("=");
-				expresion();
-				break;
+				NodoExpresion exp = expresion();
+				if (varsLocales != null)
+					return new NodoAsignacion(varsLocales, null, exp);
+				else
+					return new NodoAsignacion(null, izq, exp);
 			case ";":				// siguientes
-				break;
+				return new NodoDecVarsLocales(varsLocales);
+				default:
+					return null; // o excepcion, ver cual
 		}
 	}
 	
@@ -350,8 +369,10 @@ public class AnalizadorSintactico {
 		int posicion = 1;
 		for (Parametro param : listaArgsFormales) {
 			param.setPosicion(posicion);
-			if (parametros.get(param.getNombre()) == null)
+			if (parametros.get(param.getNombre()) == null) {
 				parametros.put(param.getNombre(), param);
+				Principal.ts.getUnidadActual().insertarVarMetodo(param);
+			}
 			else
 				throw new ExcepcionSemantico("[" + param.getNroLinea() + ":" + param.getNroColumna() +"] Error semántico: Nombre de parámetro \"" + param.getNombre() + "\" repetido.");
 			posicion++;
@@ -474,8 +495,10 @@ public class AnalizadorSintactico {
 		int posicion = 1;
 		for (Parametro param : listaArgsFormales) {
 			param.setPosicion(posicion);
-			if (parametros.get(param.getNombre()) == null)
+			if (parametros.get(param.getNombre()) == null) {
 				parametros.put(param.getNombre(), param);
+				Principal.ts.getUnidadActual().insertarVarMetodo(param);
+			}
 			else
 				throw new ExcepcionSemantico("[" + param.getNroLinea() + ":" + param.getNroColumna() + "] Error semántico: Nombre de parámetro \"" + param.getNombre() + "\" repetido.");
 			posicion++;
@@ -485,7 +508,7 @@ public class AnalizadorSintactico {
 		Principal.ts.insertarUnidad(ctor);
 	}
 
-	private NodoBloque bloque() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private NodoBloque bloque() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		match("{");		// primeros
 		NodoBloque bloque = new NodoBloque();
 		Principal.ts.setBloqueActual(bloque);
@@ -494,7 +517,7 @@ public class AnalizadorSintactico {
 		return bloque;
 	}
 
-	private NodoBloque sentencias(NodoBloque bloque) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private NodoBloque sentencias(NodoBloque bloque) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		switch (tokenActual.getNombre()) {
 			case ";":				// primeros
 			case "idMetVar":		// primeros
@@ -530,7 +553,7 @@ public class AnalizadorSintactico {
 		}		
 	}
 
-	private NodoSentencia sentencia() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private NodoSentencia sentencia() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int panicoLinea = tokenActual.getNroLinea();
 		int panicoColumna = tokenActual.getNroColumna();
 		switch (tokenActual.getNombre()) {
@@ -546,7 +569,6 @@ public class AnalizadorSintactico {
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
-				break;
 			case "+":								// primeros
 			case "-":								// primeros
 			case "!":								// primeros
@@ -566,53 +588,65 @@ public class AnalizadorSintactico {
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
-				break;
 			case "boolean":							// primeros
 			case "char":							// primeros
 			case "int":								// primeros
 			case "String":							// primeros
-				/**
-				 * SEGUIR ACA
-				 */
-				tipoPrimitivo();
+				Tipo tipo = tipoPrimitivo();
 				try {
-					listaDecVars();
-					decAsig();
+					List<Token> listaTokenVariablesLocales = new ArrayList<Token>();
+					listaDecVars(listaTokenVariablesLocales);
+					List<Variable> varsLocales = new ArrayList<Variable>();
+					for (Token tokenVarLocal : listaTokenVariablesLocales) {
+						VarLocal varLocal = new VarLocal(tokenVarLocal,tipo);
+						varsLocales.add(varLocal);
+					}
+					NodoSentencia sentenciaDecAsig = decAsig(varsLocales, null);
 					match(";");
+					for (Variable varLocal : varsLocales) {
+						if (Principal.ts.getUnidadActual().getVarsParams().get(varLocal.getNombre()) == null)
+							Principal.ts.getUnidadActual().insertarVarMetodo(varLocal);
+						else
+							throw new ExcepcionSemantico("[" + varLocal.getNroLinea() + ":" + varLocal.getNroColumna() + "] Error semántico: Nombre de variable local \"" + varLocal.getNombre() + "\" repetido a un parámetro u otra variable local.");
+					}
+					return sentenciaDecAsig;
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
-				break;
 			case "idClase":							// primeros
+				Token tokenIdClase = tokenActual;
 				match("idClase");
 				try {
-					ladoDerechoIdClase();
+					NodoSentencia sentencia = ladoDerechoIdClase(tokenIdClase);
 					match(";");
+					return sentencia;
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
-				break;
 			case "if":								// primeros
 				match("if");
+				NodoExpresion condicion = null;
+				NodoSentencia entonces = null;
 				try {
 					match("(");
-					expresion();
+					condicion = expresion();
 					match(")");
 					ifPanico = true;
-					sentencia();
+					entonces = sentencia();
 					ifPanico = false;
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
-				rSentenciaIf();
-				break;
+				NodoSentencia sino = rSentenciaIf();
+				return new NodoIf(condicion,entonces,sino);
 			case "while":							// primeros
 				match("while");
 				try {
 					match("(");
-					expresion();
+					NodoExpresion condicionW = expresion();
 					match(")");
-					sentencia();
+					NodoSentencia sentWhile = sentencia();
+					return new NodoWhile(condicionW, sentWhile);
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
@@ -631,9 +665,10 @@ public class AnalizadorSintactico {
 			default:
 				throw new ExcepcionSintactico("Error sintáctico: Se espera la declaración de una sentencia.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral o this.\nEncontrado: " + tokenActual.getNombre());
 		}
+		return null; // no sucede esto
 	}
 	
-	private void modoPanicoBloque(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private void modoPanicoBloque(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int nroLineaFin = ultimaLineaAnalizada;
 		int nroColumnaFin = ultimaColumnaAnalizada;
 		ArrayList<String> siguientesValidos = new ArrayList<String>();
@@ -695,7 +730,8 @@ public class AnalizadorSintactico {
 		NodoPrimario exp = null;
 		Token token = tokenActual;
 		match("idMetVar");			// primeros
-		List<NodoExpresion> argsActuales = rLlamadaoIdEncadenado();
+		NodoLlamadaEncadenado encadenado = (NodoLlamadaEncadenado) rLlamadaoIdEncadenado(token); // ver bien
+		List<NodoExpresion> argsActuales = encadenado.getArgsActuales();
 		if(argsActuales.isEmpty())
 			exp = new NodoVar(token);
 		else
@@ -708,7 +744,7 @@ public class AnalizadorSintactico {
 	private NodoSentencia ladoDerechoIdMetVar(NodoExpresion exp1) throws ExcepcionLexico, ExcepcionSintactico {		
 		switch (tokenActual.getNombre()) {
 			case "=":					// primeros
-				return decAsig(exp1);
+				return decAsig(null, exp1);
 			case "&&":					// primeros
 			case "||":					// primeros
 			case "*":					// primeros
@@ -776,16 +812,18 @@ public class AnalizadorSintactico {
 		return new NodoSentenciaSimple(exp);
 	}
 
-	private void listaDecVars() throws ExcepcionLexico, ExcepcionSintactico {
+	private void listaDecVars(List<Token> listaTokenVariablesLocales) throws ExcepcionLexico, ExcepcionSintactico {
+		Token tokenVarLocal = tokenActual;
 		match("idMetVar");	// primeros
-		rListaDecVars();
+		listaTokenVariablesLocales.add(tokenVarLocal);
+		rListaDecVars(listaTokenVariablesLocales);
 	}
 
-	private void rListaDecVars() throws ExcepcionLexico, ExcepcionSintactico {
+	private void rListaDecVars(List<Token> listaTokenVariablesLocales) throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {
 			case ",":				// primeros
 				match(",");
-				listaDecVars();
+				listaDecVars(listaTokenVariablesLocales);
 				break;
 			case ";":				// siguientes
 			case "=":				// siguientes
@@ -795,34 +833,44 @@ public class AnalizadorSintactico {
 			}
 	}
 	
-	private void ladoDerechoIdClase() throws ExcepcionLexico, ExcepcionSintactico {
+	private NodoSentencia ladoDerechoIdClase(Token tokenIdClase) throws ExcepcionLexico, ExcepcionSintactico {
 		switch (tokenActual.getNombre()) {	// primeros
 			case "idMetVar":
-				listaDecVars();
-				decAsig();
-				break;
+				Tipo tipo = new TipoClase(tokenIdClase);
+				List<Token> listaTokenVariablesLocales = new ArrayList<Token>();
+				listaDecVars(listaTokenVariablesLocales);
+				List<Variable> varsLocales = new ArrayList<Variable>();
+				for (Token tokenVarLocal : listaTokenVariablesLocales) {
+					VarLocal varLocal = new VarLocal(tokenVarLocal,tipo);
+					varsLocales.add(varLocal);
+				}
+				return decAsig(varsLocales, null);
+				// creo que chequear va en el chequeo de sente
 			case ".":						// primeros
 				match(".");
-				llamadaMetodo();
-				rEncadenado();
-				desparentizada();
-				break;
+				NodoPrimario prim = llamadaMetodo(tokenIdClase);
+				Encadenado cadena = rEncadenado();
+				prim.setEncadenado(cadena);
+				return new NodoSentenciaSimple(desparentizada(prim));
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Error en sentencia comenzada con idClase.\nEsperado: . o idMetVar\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
-	private void rSentenciaIf() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
+	private NodoSentencia rSentenciaIf() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int panicoLinea = tokenActual.getNroLinea();
 		int panicoColumna = tokenActual.getNroColumna();
 		if (tokenActual.getNombre().equals("else")) {	// primeros
 			match("else");
 			try {	
-				sentencia();
+				return sentencia();
 			} catch (ExcepcionSintactico e) {
 				modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 			}
-		} else { }
+		} else {
+			
+		}
+		return null;
 	}
 	
 	private NodoExpresion retorno() throws ExcepcionLexico, ExcepcionSintactico {
@@ -1229,7 +1277,8 @@ public class AnalizadorSintactico {
 			case "idMetVar":					// primeros
 				Token token = tokenActual;
 				match("idMetVar");
-				List<NodoExpresion> argsActuales = rLlamadaoIdEncadenado(); // ver bien
+				NodoLlamadaEncadenado encadenado = (NodoLlamadaEncadenado) rLlamadaoIdEncadenado(token); // ver bien
+				List<NodoExpresion> argsActuales = encadenado.getArgsActuales();
 				if(argsActuales.isEmpty())
 					return new NodoVar(token);
 				else
@@ -1271,28 +1320,32 @@ public class AnalizadorSintactico {
 		return new NodoLlamadaEstatica(tokenIdClase,tokenIdMetVar,argsActuales);
 	}
 	
-	private void encadenado() throws ExcepcionLexico, ExcepcionSintactico {
-		llamadaoIdEncadenado();
-		rEncadenado();
+	private Encadenado encadenado() throws ExcepcionLexico, ExcepcionSintactico {
+		Encadenado enc = llamadaoIdEncadenado();
+		Encadenado cadena = rEncadenado();
+		enc.setCadena(cadena);
+		return enc;
 	}
 
-	private void llamadaoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
+	private Encadenado llamadaoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
 		match(".");					// primeros
+		Token tokenIdMetVar = tokenActual;
 		match("idMetVar");
-		rLlamadaoIdEncadenado();
+		return rLlamadaoIdEncadenado(tokenIdMetVar);
 	}
 
-	private List<NodoExpresion> rLlamadaoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
+	private Encadenado rLlamadaoIdEncadenado(Token tokenIdMetVar) throws ExcepcionLexico, ExcepcionSintactico {
 		if (tokenActual.getNombre().equals("(")) {	// primeros
-			return argsActuales();
+			List<NodoExpresion> argsActuales = argsActuales();
+			return new NodoLlamadaEncadenado(tokenIdMetVar,argsActuales);
 		} else { 
-			return new ArrayList<NodoExpresion>();
+			return null;
 		}
 	}
 	
 	private Encadenado rEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
 		if (tokenActual.getNombre().equals(".")) {	// primeros
-			encadenado();
+			return encadenado();
 		} else { return null; }
 	}
 

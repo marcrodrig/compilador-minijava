@@ -8,6 +8,7 @@ import lexico.Token;
 public abstract class Unidad {
 	private Token token;
 	private HashMap<String, Parametro> parametros;
+	private HashMap<String, VariableMetodo> varsParams;
 	Clase declaradaEn;
 	private NodoBloque bloque;
 	
@@ -16,6 +17,7 @@ public abstract class Unidad {
 		this.parametros = parametros;
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		this.declaradaEn = ts.getClaseActual();
+		varsParams = new HashMap<String, VariableMetodo>();
 	}
 
 	public String getNombre() {
@@ -57,4 +59,12 @@ public abstract class Unidad {
 	}
 	
 	public abstract void chequeoDeclaraciones(List<Unidad> unidades) throws ExcepcionSemantico;
+
+	public void insertarVarMetodo(Variable varMet) {
+		varsParams.put(varMet.getNombre(),(VariableMetodo) varMet);
+	}
+
+	public HashMap<String, VariableMetodo> getVarsParams() {
+		return varsParams;
+	}
 }
