@@ -364,6 +364,7 @@ public class AnalizadorSintactico {
 		HashMap<String, Parametro> parametros = new HashMap<String, Parametro>();
 		Metodo met = new Metodo(token, formaMetodo, tipo, metodoFinal, parametros);
 		Principal.ts.setUnidadActual(met);
+		Principal.ts.setBloque(null);
 		NodoBloque bloque = bloque();
 		Principal.ts.setBloque(bloque);
 		int posicion = 1;
@@ -491,7 +492,9 @@ public class AnalizadorSintactico {
 		LinkedHashMap<String, Parametro> parametros = new LinkedHashMap<String, Parametro>();
 		Constructor ctor = new Constructor(token, parametros);
 		Principal.ts.setUnidadActual(ctor);
-		bloque();
+		Principal.ts.setBloque(null);
+		NodoBloque bloque = bloque();
+		Principal.ts.setBloque(bloque);
 		int posicion = 1;
 		for (Parametro param : listaArgsFormales) {
 			param.setPosicion(posicion);
@@ -511,9 +514,11 @@ public class AnalizadorSintactico {
 	private NodoBloque bloque() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		match("{");		// primeros
 		NodoBloque bloque = new NodoBloque();
+		bloque.setPadre(Principal.ts.getBloqueActual());
 		Principal.ts.setBloqueActual(bloque);
 		sentencias(bloque);
 		match("}");
+		Principal.ts.setBloqueActual(bloque.getPadre());
 		return bloque;
 	}
 
@@ -732,7 +737,7 @@ public class AnalizadorSintactico {
 		match("idMetVar");			// primeros
 		NodoLlamadaEncadenado encadenado = (NodoLlamadaEncadenado) rLlamadaoIdEncadenado(token); // ver bien
 		List<NodoExpresion> argsActuales = encadenado.getArgsActuales();
-		if(argsActuales.isEmpty())
+		if(argsActuales == null)
 			exp = new NodoVar(token);
 		else
 			exp = new NodoLlamadaDirecta(token,argsActuales);
@@ -891,7 +896,7 @@ public class AnalizadorSintactico {
 			case "idClase":			// primeros
 				return expresion();
 			case ";":				// siguientes
-				return null; //VER
+				return null;
 			default:
 				throw new ExcepcionSintactico("Error sintáctico: Error en expresión de retorno.\nEsperado: +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this, new, (, idMetVar, idClase o ;\nEncontrado: " + tokenActual.getNombre());
 		}
@@ -1279,7 +1284,7 @@ public class AnalizadorSintactico {
 				match("idMetVar");
 				NodoLlamadaEncadenado encadenado = (NodoLlamadaEncadenado) rLlamadaoIdEncadenado(token); // ver bien
 				List<NodoExpresion> argsActuales = encadenado.getArgsActuales();
-				if(argsActuales.isEmpty())
+				if(argsActuales == null)
 					return new NodoVar(token);
 				else
 					return new NodoLlamadaDirecta(token,argsActuales);

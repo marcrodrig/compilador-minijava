@@ -1,0 +1,7 @@
+class A {
+	static void main() {}
+	dynamic void met1() {
+		x();
+		return ;
+	}
+}

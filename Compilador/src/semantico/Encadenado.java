@@ -7,9 +7,15 @@ public abstract class Encadenado {
 	public Encadenado() {
 		
 	}
+
+	public Encadenado getEncadenado() {
+		return cadena;
+	}
 	
-	//seguir??
 	public void setCadena(Encadenado cadena) {
 		this.cadena = cadena;
 	}
+
+	public abstract TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico;
+	
 }

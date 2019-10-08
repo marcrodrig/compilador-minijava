@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import lexico.Token;
+import main.Principal;
 
 public abstract class Unidad {
 	private Token token;
@@ -66,5 +67,10 @@ public abstract class Unidad {
 
 	public HashMap<String, VariableMetodo> getVarsParams() {
 		return varsParams;
+	}
+
+	public void chequeoSentencias() throws ExcepcionSemantico {
+		Principal.ts.setBloqueActual(null);
+		bloque.chequear();
 	}
 }

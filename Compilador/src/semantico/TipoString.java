@@ -9,6 +9,10 @@ public class TipoString extends TipoPrimitivo {
 		this.token = token;
 	}
 	
+	public String getNombreTipo() {
+		return token.getLexema();
+	}
+	
 	public String getNombre() {
 		return token.getLexema();
 	}

@@ -11,6 +11,10 @@ public abstract class Variable {
 		this.tipo = tipo;
 	}
 	
+	public String getNombreTipo() {
+		return tipo.getNombre();
+	}
+	
 	public String getNombre() {
 		return token.getLexema();
 	}

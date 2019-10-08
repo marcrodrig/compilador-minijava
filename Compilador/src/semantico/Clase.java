@@ -170,7 +170,10 @@ public class Clase {
 
 	private void agregarConstructorPredefinido() {
 		Token token = new Token("idClase", getNombre(), 0, 0);
-		Constructor ctor = new Constructor(token, new LinkedHashMap<String, Parametro>());
+		Unidad ctor = new Constructor(token, new LinkedHashMap<String, Parametro>());
+		Principal.ts.setUnidadActual(ctor);
+		NodoBloque bloque = new NodoBloque();
+		Principal.ts.setBloque(bloque);
 		Principal.ts.insertarUnidad(ctor);
 	}
 
@@ -245,6 +248,23 @@ public class Clase {
 				}
 			}
 		}
+	}
+
+	public void chequeoSentencias() throws ExcepcionSemantico {
+		for(Unidad u : getTodasUnidades()) {
+			Principal.ts.setUnidadActual(u);
+			u.chequeoSentencias();
+		}
+		
+	}
+
+	private List<Unidad> getTodasUnidades() {
+		List<Unidad> todasUnidades = new ArrayList<Unidad>();
+		for(String nombreUnidad : unidades.keySet()) {
+			List<Unidad> listaUnidad = unidades.get(nombreUnidad);
+			todasUnidades.addAll(listaUnidad);
+		}
+		return todasUnidades;
 	}
 
 }
