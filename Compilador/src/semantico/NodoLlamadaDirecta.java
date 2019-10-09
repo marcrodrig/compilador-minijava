@@ -31,7 +31,7 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 		int posicion = 1;
 		boolean conforma = true;
 		while (conforma && posicion <= metodo.getCantidadParametros()) {
-			conforma = metodo.getParametroPorPosicion(1).getTipo().conformaTipo(argumentosActuales.get(posicion-1).chequear());
+			conforma = metodo.getParametroPorPosicion(1).getTipo().esCompatible(argumentosActuales.get(posicion-1).chequear());
 			posicion++;
 		}
 		if (!conforma)

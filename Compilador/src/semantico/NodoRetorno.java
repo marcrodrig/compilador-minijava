@@ -25,7 +25,7 @@ public class NodoRetorno extends NodoSentencia {
 					+ "] Error semántico: El método " + unidadActual.getNombre() + " debe tener tipo de retorno void.");
 			} else {
 			TipoRetorno tipoExpresion = expresion.chequear();
-			if (!tipoMetodo.conformaTipo(tipoExpresion))
+			if (!tipoMetodo.esCompatible(tipoExpresion))
 				throw new ExcepcionSemantico("[" + unidadActual.getNroLinea() + ":" + unidadActual.getNroColumna()
 				+ "] Error semántico: El método " + unidadActual.getNombre() + " debe tener tipo de retorno " + tipoExpresion.getNombre() + ".");
 			}

@@ -5,12 +5,12 @@ import main.Principal;
 public abstract class TipoRetorno {
 	public abstract String getNombre();
 
-	public boolean conformaTipo(TipoRetorno tipoExpresion) {
+	/*public boolean conformaTipo(TipoRetorno tipoExpresion) {
 		String tipo = getNombre();
 		String nombreTipoExpresion = tipoExpresion.getNombreTipo();
 		/*
 		 * CHEQUEAR ESTO int e intLiteral
-		 */
+		 
 		if (!tipo.equals(nombreTipoExpresion)) {
 			boolean conforma = true;
 			if (this instanceof TipoClase) {
@@ -22,7 +22,7 @@ public abstract class TipoRetorno {
 			} else return false;
 		} else
 		return true;
-	}
+	}*/
 
-	protected abstract String getNombreTipo();
+	public abstract boolean esCompatible(TipoRetorno tipo);
 }

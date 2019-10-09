@@ -1,0 +1,11 @@
+class A {
+	public B x;
+	static void main() {}
+	dynamic void met1() {
+		x.met2(3);
+	}
+}
+
+class B {
+	dynamic void met(int x) {}
+}

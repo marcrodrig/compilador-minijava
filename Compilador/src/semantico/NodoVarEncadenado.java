@@ -9,4 +9,12 @@ public class NodoVarEncadenado extends Encadenado {
 		this.token = token;
 	}
 
+	@Override
+	public TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico {
+		/**
+		 * SEGUIR ACA
+		 */
+		return null;
+	}
+
 }

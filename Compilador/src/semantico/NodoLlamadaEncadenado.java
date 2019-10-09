@@ -20,9 +20,6 @@ public class NodoLlamadaEncadenado extends Encadenado {
 
 	@Override
 	public TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico {
-		/**
-		 * hacer control nodo llamada encadenada
-		 */
 		if (tipo instanceof TipoClase) {
 		Clase clase = Principal.ts.getClase(tipo.getNombre());
 		List<Unidad> metodos = clase.getTodosMetodosPorNombre(token.getLexema());
@@ -40,7 +37,7 @@ public class NodoLlamadaEncadenado extends Encadenado {
 		int posicion = 1;
 		boolean conforma = true;
 		while (conforma && posicion <= metodo.getCantidadParametros()) {
-			conforma = metodo.getParametroPorPosicion(1).getTipo().conformaTipo(argumentosActuales.get(posicion-1).chequear());
+			conforma = metodo.getParametroPorPosicion(1).getTipo().esCompatible(argumentosActuales.get(posicion-1).chequear());
 			posicion++;
 		}
 		if (!conforma)

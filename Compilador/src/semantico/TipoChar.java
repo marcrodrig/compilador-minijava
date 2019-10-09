@@ -24,4 +24,9 @@ public class TipoChar extends TipoPrimitivo {
 	public int getNroColumna() {
 		return token.getNroColumna();
 	}
+	
+	@Override
+	public boolean esCompatible(TipoRetorno tipo) {
+		return (tipo instanceof TipoChar);
+	}
 }

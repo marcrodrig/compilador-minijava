@@ -34,6 +34,7 @@ import semantico.NodoSentencia;
 import semantico.NodoSentenciaSimple;
 import semantico.NodoThis;
 import semantico.NodoVar;
+import semantico.NodoVarEncadenado;
 import semantico.NodoWhile;
 import semantico.Parametro;
 import semantico.Tipo;
@@ -735,12 +736,19 @@ public class AnalizadorSintactico {
 		NodoPrimario exp = null;
 		Token token = tokenActual;
 		match("idMetVar");			// primeros
-		NodoLlamadaEncadenado encadenado = (NodoLlamadaEncadenado) rLlamadaoIdEncadenado(token); // ver bien
-		List<NodoExpresion> argsActuales = encadenado.getArgsActuales();
-		if(argsActuales == null)
+		Encadenado encadenado = rLlamadaoIdEncadenado(token); // ver bien
+		if(encadenado == null)
 			exp = new NodoVar(token);
-		else
+		else {
+			if (encadenado instanceof NodoLlamadaEncadenado) {
+			NodoLlamadaEncadenado llamadaEnc = (NodoLlamadaEncadenado) encadenado;
+			List<NodoExpresion> argsActuales = llamadaEnc.getArgsActuales();
 			exp = new NodoLlamadaDirecta(token,argsActuales);
+			} else {
+				exp = new NodoVar(token);
+				exp.setEncadenado(encadenado);
+			}
+		}
 		Encadenado cadena = rEncadenado();
 		exp.setEncadenado(cadena);
 		return exp;
@@ -1250,7 +1258,7 @@ public class AnalizadorSintactico {
 		switch (tokenActual.getNombre()) {
 			case "null":						// primeros
 				match("null");
-				break;
+				return null;
 			case "true":						// primeros
 				match("true");
 				break;
@@ -1327,9 +1335,12 @@ public class AnalizadorSintactico {
 	
 	private Encadenado encadenado() throws ExcepcionLexico, ExcepcionSintactico {
 		Encadenado enc = llamadaoIdEncadenado();
-		Encadenado cadena = rEncadenado();
-		enc.setCadena(cadena);
-		return enc;
+		if (enc != null) {
+			Encadenado cadena = rEncadenado();
+			enc.setCadena(cadena);
+			return enc;
+		}
+		return null;
 	}
 
 	private Encadenado llamadaoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
@@ -1344,7 +1355,8 @@ public class AnalizadorSintactico {
 			List<NodoExpresion> argsActuales = argsActuales();
 			return new NodoLlamadaEncadenado(tokenIdMetVar,argsActuales);
 		} else { 
-			return null;
+//			return null;
+			return new NodoVarEncadenado(tokenIdMetVar);
 		}
 	}
 	

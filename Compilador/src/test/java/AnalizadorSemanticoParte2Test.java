@@ -94,8 +94,35 @@ class AnalizadorSemanticoParte2Test {
 	
 	@Test
 	@DisplayName("TEST: Chequeo un método con un return válido")
-	void testMetodoResolucionNombreInciso1c() {
-		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso1c.txt" };
+	void testMetodoResolucionNombreInciso2a() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso2a.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso3a() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso3a.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso3b() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso3b.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso4a() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso4a.txt" };
 		Principal.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		assertEquals(1, 1);
