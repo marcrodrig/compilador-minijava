@@ -1,0 +1,6 @@
+class A {
+	static void main() {
+		if (5+3)
+			m();
+	}
+}

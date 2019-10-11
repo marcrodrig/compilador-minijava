@@ -1,6 +1,7 @@
 package semantico;
 
 import lexico.Token;
+import main.Principal;
 
 public class NodoVarEncadenado extends Encadenado {
 	private Token token;
@@ -11,10 +12,35 @@ public class NodoVarEncadenado extends Encadenado {
 
 	@Override
 	public TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico {
-		/**
-		 * SEGUIR ACA
-		 */
-		return null;
+		if (tipo instanceof TipoClase) {
+			Clase clase = Principal.ts.getClase(tipo.getNombre());
+			VariableInstancia atributo = clase.getAtributoPorNombre(token.getLexema());
+			if (atributo == null)
+				throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+						+ "] Error semántico: No existe el atributo \"" + token.getLexema() + "\" en la clase "
+						+ tipo.getNombre() + ".");
+		/*	else /*{
+				if (atributo.getVisibilidad().equals("private"))
+					throw new ExcepcionSemantico(
+							"[" + token.getNroLinea() + ":" + token.getNroColumna() + "] Error semántico: El atributo \""
+									+ token.getLexema() + "\" en la clase " + tipo.getNombre() + " es privado.");
+				else
+					if (atributo.getVisibilidad().equals("protected") && !Principal.ts.getUnidadActual().declaradaEn().getNombre().equals(tipo.getNombre()) && !Principal.ts.getUnidadActual().declaradaEn().esDescendiente(clase.getNombre())) {
+							throw new ExcepcionSemantico(
+									"[" + token.getNroLinea() + ":" + token.getNroColumna() + "] Error semántico: El atributo \""
+											+ token.getLexema() + "\" en la clase " + tipo.getNombre() + " es protected y en el contexto actual no se puede acceder.");
+					}*/
+				else { // es public o protected
+					Tipo tipoAtributo = atributo.getTipo();
+					if (getEncadenado() == null)
+						return tipoAtributo;
+					else
+						return getEncadenado().chequear(tipoAtributo);
+				}
+			//}
+		} else
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+					+ "] Error semántico: La variable encadenada debe tener como receptor un tipo clase.");
 	}
 
 }

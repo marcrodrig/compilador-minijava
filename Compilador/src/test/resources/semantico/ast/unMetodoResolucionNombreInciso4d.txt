@@ -1,0 +1,12 @@
+class A {
+	public B x;
+	static void main() {}
+	dynamic B met1() {
+		x.met2(3).y;
+	}
+}
+
+class B {
+	protected int y;
+	dynamic B met2(int x) {}
+}

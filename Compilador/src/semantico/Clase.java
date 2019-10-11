@@ -253,7 +253,12 @@ public class Clase {
 	public void chequeoSentencias() throws ExcepcionSemantico {
 		for(Unidad u : getTodasUnidades()) {
 			Principal.ts.setUnidadActual(u);
+			try {
 			u.chequeoSentencias();
+			} catch (ExcepcionSemantico e) {
+				Principal.ts.setRS();
+				System.out.println(e.toString());
+			}
 		}
 		
 	}
@@ -265,6 +270,15 @@ public class Clase {
 			todasUnidades.addAll(listaUnidad);
 		}
 		return todasUnidades;
+	}
+
+	public boolean esDescendiente(String nombreClase) {
+		boolean descendiente = false;
+		Clase hereda = Principal.ts.getClase(getSuperclase());
+		while (!false && !hereda.getNombre().equals("Object"))
+			descendiente = hereda.getNombre().equals(nombreClase);
+			hereda = Principal.ts.getClase(hereda.getSuperclase());
+		return descendiente;
 	}
 
 }

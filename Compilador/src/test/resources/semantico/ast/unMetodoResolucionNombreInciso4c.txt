@@ -1,0 +1,12 @@
+class A {
+	public B x;
+	static void main() {}
+	dynamic B met1() {
+		x.met2(3).y;
+	}
+}
+
+class B {
+	private int z;
+	dynamic B met2(int x) {}
+}

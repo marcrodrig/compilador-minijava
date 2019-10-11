@@ -127,4 +127,143 @@ class AnalizadorSemanticoParte2Test {
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		assertEquals(1, 1);
 	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso4b() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso4b.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso4c() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso4c.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso4d() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso4d.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso4e() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso4e.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso4f() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso4f.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso4g() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso4g.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso5a() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso5a.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso5b() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso5b.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso5c() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso5c.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoResolucionNombreInciso5d() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoResolucionNombreInciso5d.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoConIfExpresionNoBoolean() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoConIfExpresionNoBoolean.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoConIfThenInvalido() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoConIfThenInvalido.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoConIfElseInvalido() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoConIfElseInvalido.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoConWhileExpresionNoBoolean() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoConWhileExpresionNoBoolean.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	@Test
+	@DisplayName("TEST: Chequeo un método con un return válido")
+	void testMetodoConWhileSentenciaInvalida() {
+		String[] args = { "src/test/resources/semantico/ast/unMetodoConWhileSentenciaInvalida.txt" };
+		Principal.main(args);
+		TablaSimbolos ts = TablaSimbolos.getInstance();
+		assertEquals(1, 1);
+	}
+	
+	/**
+	 * TESTEAR NODOTHIS
+	 */
 }

@@ -1,0 +1,16 @@
+class A extends B {
+	public B x;
+	static void main() {}
+	dynamic B met1() {
+		x.met2(3).y;
+	}
+}
+
+class B extends C {
+	protected int z;
+	dynamic B met2(int x) {}
+}
+
+class C {
+	protected int y;
+} 

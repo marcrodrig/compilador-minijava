@@ -630,6 +630,8 @@ public class AnalizadorSintactico {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 			case "if":								// primeros
+				int nroLineaIf = tokenActual.getNroLinea();
+				int nroColumnaIf = tokenActual.getNroColumna();
 				match("if");
 				NodoExpresion condicion = null;
 				NodoSentencia entonces = null;
@@ -644,15 +646,16 @@ public class AnalizadorSintactico {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
 				NodoSentencia sino = rSentenciaIf();
-				return new NodoIf(condicion,entonces,sino);
+				return new NodoIf(nroLineaIf,nroColumnaIf,condicion,entonces,sino);
 			case "while":							// primeros
+				Token tkWhile = tokenActual;
 				match("while");
 				try {
 					match("(");
 					NodoExpresion condicionW = expresion();
 					match(")");
 					NodoSentencia sentWhile = sentencia();
-					return new NodoWhile(condicionW, sentWhile);
+					return new NodoWhile(tkWhile.getNroLinea(), tkWhile.getNroColumna(), condicionW, sentWhile);
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
