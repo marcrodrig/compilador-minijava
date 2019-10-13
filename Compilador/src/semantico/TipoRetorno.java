@@ -1,7 +1,5 @@
 package semantico;
 
-import main.Principal;
-
 public abstract class TipoRetorno {
 	public abstract String getNombre();
 

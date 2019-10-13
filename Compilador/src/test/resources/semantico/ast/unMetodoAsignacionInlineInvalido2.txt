@@ -1,0 +1,8 @@
+class A {
+	private int x;
+	static void main() {}
+	dynamic void met1() {
+		m().x = true;
+	}
+	dynamic A m() {}
+}

@@ -3,8 +3,6 @@ package semantico;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.Principal;
-
 public class NodoBloque extends NodoSentencia {
 	private NodoBloque padre;
 	private List<NodoSentencia> sentencias;

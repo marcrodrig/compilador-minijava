@@ -2,7 +2,7 @@ package semantico;
 
 public abstract class Encadenado {
 	private Encadenado cadena;
-	private boolean ladoIzq;
+	//private boolean ladoIzq;
 	
 	public Encadenado() {
 		

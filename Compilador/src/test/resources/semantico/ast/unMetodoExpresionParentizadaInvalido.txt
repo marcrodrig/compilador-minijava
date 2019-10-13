@@ -1,0 +1,6 @@
+class A {
+	static void main() {}
+	dynamic boolean met1() {
+		(3==true);
+	}
+}

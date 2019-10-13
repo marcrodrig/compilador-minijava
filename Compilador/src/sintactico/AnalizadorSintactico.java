@@ -208,6 +208,9 @@ public class AnalizadorSintactico {
 			/*
 			 * ver donde agregar
 			 */
+			/**
+			 * CHEQUEAR INLINE DE ATRIBUTOS
+			 */
 			match(";");
 			for (Variable varIns : varsInstancia) {
 				if (Principal.ts.getClaseActual().getAtributos().get(varIns.getNombre()) == null)
@@ -342,12 +345,13 @@ public class AnalizadorSintactico {
 	private NodoSentencia decAsig(List<Variable> varsLocales, NodoExpresion izq) throws ExcepcionLexico, ExcepcionSintactico {	
 		switch (tokenActual.getNombre()) {
 			case "=":				// primeros
+				int nroLinea = tokenActual.getNroLinea();
 				match("=");
 				NodoExpresion exp = expresion();
-				if (varsLocales != null)
-					return new NodoAsignacion(varsLocales, null, exp);
-				else
-					return new NodoAsignacion(null, izq, exp);
+				if (varsLocales != null) // asignacion inline
+					return new NodoAsignacion(varsLocales, null, exp, nroLinea);
+				else // metodo lado izquierdo
+					return new NodoAsignacion(null, izq, exp, nroLinea);
 			case ";":				// siguientes
 				return new NodoDecVarsLocales(varsLocales);
 				default:
@@ -569,9 +573,9 @@ public class AnalizadorSintactico {
 			case "idMetVar":						// primeros
 				try {
 					NodoExpresion exp1 = ladoIzquierdo();
-					NodoSentencia sentenciaJejejee = ladoDerechoIdMetVar(exp1);
+					NodoSentencia sent = ladoDerechoIdMetVar(exp1);
 					match(";");
-					return sentenciaJejejee;
+					return sent;
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
@@ -609,12 +613,12 @@ public class AnalizadorSintactico {
 					}
 					NodoSentencia sentenciaDecAsig = decAsig(varsLocales, null);
 					match(";");
-					for (Variable varLocal : varsLocales) {
+					/*for (Variable varLocal : varsLocales) {
 						if (Principal.ts.getUnidadActual().getVarsParams().get(varLocal.getNombre()) == null)
 							Principal.ts.getUnidadActual().insertarVarMetodo(varLocal);
 						else
 							throw new ExcepcionSemantico("[" + varLocal.getNroLinea() + ":" + varLocal.getNroColumna() + "] Error semántico: Nombre de variable local \"" + varLocal.getNombre() + "\" repetido a un parámetro u otra variable local.");
-					}
+					}*/
 					return sentenciaDecAsig;
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());

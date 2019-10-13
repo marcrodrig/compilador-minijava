@@ -1,0 +1,7 @@
+class A {
+	static void main() {}
+	dynamic boolean met1() {
+		met2();
+	}
+	static void met2() {}
+}

@@ -26,19 +26,19 @@ public class NodoExpresionBinaria extends NodoExpresion {
         	if (tipoLadoIzq.getNombre().equals("int") && tipoLadoDer.getNombre().equals("int"))
         		return new TipoInt(operador);
         	else
-        		throw new ExcepcionSemantico("[" + operador.getNroLinea() + "] Error semántico: Tipos incompatibles en expresión binaria con el operadpr \"" + operador.getLexema() + "\".");
+        		throw new ExcepcionSemantico("[" + operador.getNroLinea() + "] Error semántico: Tipos incompatibles en expresión binaria con el operador \"" + operador.getLexema() + "\".");
         case "&&":
         case "||":
         	if (tipoLadoIzq.getNombre().equals("boolean") && tipoLadoDer.getNombre().equals("boolean"))
         		return new TipoBoolean(operador);
         	else
-        		throw new ExcepcionSemantico("[" + operador.getNroLinea() + "] Error semántico: Tipos incompatibles en expresión binaria con el operadpr \"" + operador.getLexema() + "\".");
+        		throw new ExcepcionSemantico("[" + operador.getNroLinea() + "] Error semántico: Tipos incompatibles en expresión binaria con el operador \"" + operador.getLexema() + "\".");
 		case "==":
 		case "!=":
 			if(tipoLadoIzq.esCompatible(tipoLadoDer))
 				return new TipoBoolean(operador);
         	else
-        		throw new ExcepcionSemantico("[" + operador.getNroLinea() + "] Error semántico: Tipos incompatibles en expresión binaria con el operadpr \"" + operador.getLexema() + "\".");
+        		throw new ExcepcionSemantico("[" + operador.getNroLinea() + "] Error semántico: Tipos incompatibles en expresión binaria con el operador \"" + operador.getLexema() + "\".");
 		default:
 		return null;
 	}

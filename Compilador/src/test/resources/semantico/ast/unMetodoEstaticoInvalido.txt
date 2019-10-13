@@ -1,0 +1,11 @@
+class A {
+	static void main() {}
+	dynamic boolean met1() {
+		B.met3(true);
+	}
+	static void met2() {}
+}
+
+class B {
+	static void met3(int x) {}
+}
