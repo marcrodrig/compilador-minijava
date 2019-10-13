@@ -2,18 +2,19 @@ package semantico;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import lexico.Token;
 import main.Principal;
 
 public abstract class Unidad {
 	private Token token;
-	private HashMap<String, Parametro> parametros;
+	private LinkedHashMap<String, Parametro> parametros;
 	private HashMap<String, VariableMetodo> varsParams;
-	Clase declaradaEn;
+	private Clase declaradaEn;
 	private NodoBloque bloque;
 	
-	public Unidad(Token token, HashMap<String, Parametro> parametros) {
+	public Unidad(Token token, LinkedHashMap<String, Parametro> parametros) {
 		this.token = token;
 		this.parametros = parametros;
 		TablaSimbolos ts = TablaSimbolos.getInstance();

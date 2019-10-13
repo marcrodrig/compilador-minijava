@@ -1,0 +1,8 @@
+class A {
+	static void main() {}
+	dynamic void m1(int p1, String p2) {}
+}
+
+class B extends A {
+	dynamic void m1(String p2, int p1) {}
+}

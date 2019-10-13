@@ -19,13 +19,14 @@ public class NodoBloque extends NodoSentencia {
 		this.padre = padre;
 	}
 	
-	public void chequear() throws ExcepcionSemantico {
+	public NodoBloque getPadre() {
+		return padre;
+	}
+
+	@Override
+	protected void chequear() throws ExcepcionSemantico {
 		for(NodoSentencia sentencia : sentencias) {
 			sentencia.chequear();
 		}
-	}
-
-	public NodoBloque getPadre() {
-		return padre;
 	}
 }

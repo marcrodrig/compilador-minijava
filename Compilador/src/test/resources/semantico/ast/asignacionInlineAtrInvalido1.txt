@@ -1,0 +1,7 @@
+class A {
+	private int x = '3';
+	static void main() {}
+	A(int x) {
+		boolean x;
+	}
+}

@@ -1,6 +1,6 @@
 package semantico;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import lexico.Token;
 import main.Principal;
@@ -11,7 +11,7 @@ public class Metodo extends Unidad {
 	private TipoRetorno tipo;
 
 	public Metodo(Token token, String formaMetodo, TipoRetorno tipo, boolean metodoFinal,
-			HashMap<String, Parametro> parametros) {
+			LinkedHashMap<String, Parametro> parametros) {
 		super(token, parametros);
 		this.formaMetodo = formaMetodo;
 		this.metodoFinal = metodoFinal;
@@ -35,19 +35,8 @@ public class Metodo extends Unidad {
 			Metodo metodo = (Metodo) unidad;
 			metodo.chequeoExistenciaTipoRetorno();
 			if (this != metodo && getCantidadParametros() == metodo.getCantidadParametros())
-				/*
-				 * boolean iguales = true; if (getCantidadParametros() >= 1) { int posicion = 1;
-				 * while (posicion <= getCantidadParametros()) { // ver si menor o menor o igual
-				 * Parametro p1 = getParametroPorPosicion(posicion); Parametro p2 =
-				 * metodo.getParametroPorPosicion(posicion); iguales =
-				 * p1.getTipo().getNombre().equals(p2.getTipo().getNombre()); posicion++; } if
-				 * (iguales)
-				 */
 				throw new ExcepcionSemantico("[" + metodo.getNroLinea() + ":" + metodo.getNroColumna()
 						+ "] Error semántico: Método duplicado (misma cantidad de argumentos formales).");
-			// } else
-			// throw new ExcepcionSemantico("[" + metodo.getNroLinea() + "] Error semántico:
-			// Método duplicado.");
 		}
 	}
 

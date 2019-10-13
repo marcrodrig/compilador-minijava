@@ -17,12 +17,14 @@ public class Clase {
 	private boolean consolidada;
 	private Metodo metodoMain;
 	private boolean hc;
+	private List<NodoSentencia> inlineAtrs;
 
 	public Clase(Token token, String superclase) {
 		this.token = token;
 		this.superclase = superclase;
 		atributos = new HashMap<String, VariableInstancia>();
 		unidades = new HashMap<>();
+		inlineAtrs = new ArrayList<NodoSentencia>();
 	}
 
 	public String getNombre() {
@@ -250,8 +252,19 @@ public class Clase {
 		}
 	}
 
-	public void chequeoSentencias() throws ExcepcionSemantico {
+	public void chequeoSentencias() {
+		for (NodoSentencia inlineAtr : inlineAtrs) {
+			try {
+				inlineAtr.chequear();
+			} catch (ExcepcionSemantico e) {
+				Principal.ts.setRS();
+				System.out.println(e.toString());
+			}
+		}
 		for(Unidad u : getTodasUnidades()) {
+			/**
+			 * agregar declarada en ?
+			 */
 			Principal.ts.setUnidadActual(u);
 			try {
 			u.chequeoSentencias();
@@ -279,6 +292,14 @@ public class Clase {
 			descendiente = hereda.getNombre().equals(nombreClase);
 			hereda = Principal.ts.getClase(hereda.getSuperclase());
 		return descendiente;
+	}
+
+	public List<NodoSentencia> getInlineAtrs() {
+		return inlineAtrs;
+	}
+	
+	public void insertarAsignacionInlineAtributo(NodoSentencia sentencia) {
+		inlineAtrs.add(sentencia);
 	}
 
 }

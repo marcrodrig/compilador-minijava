@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import lexico.Token;
-import main.Principal;
 
 public class TablaSimbolos {
 
@@ -45,7 +44,7 @@ public class TablaSimbolos {
 		Token tSystem = new Token("idClase", "System", 0, 0);
 		Clase system = new Clase(tSystem, "Object");
 		instanciaUnica.setClaseActual(system);
-		HashMap<String, Parametro> parametros = new HashMap<String, Parametro>();
+		LinkedHashMap<String, Parametro> parametros = new LinkedHashMap<String, Parametro>();
 		Token token = new Token("idMetVar", "read", 0, 0);
 		Token tokenInt = new Token("int", "int", 0, 0);
 		Metodo metodo = new Metodo(token, "static", new TipoInt(tokenInt), false, parametros);
@@ -54,7 +53,7 @@ public class TablaSimbolos {
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.setClaseActual(system);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		Token tokenBoolean = new Token("boolean", "boolean", 0, 0);
 		Parametro param = new Parametro(new Token("idMetVar", "b", 0, 0), new TipoBoolean(tokenBoolean));
 		param.setPosicion(1);
@@ -65,7 +64,7 @@ public class TablaSimbolos {
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		Token tokenChar = new Token("char", "char", 0, 0);
 		param = new Parametro(new Token("idMetVar", "c", 0, 0), new TipoChar(tokenChar));
 		param.setPosicion(1);
@@ -76,7 +75,7 @@ public class TablaSimbolos {
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		tokenInt = new Token("int", "int", 0, 0);
 		param = new Parametro(new Token("idMetVar", "i", 0, 0), new TipoInt(tokenInt));
 		param.setPosicion(1);
@@ -87,7 +86,7 @@ public class TablaSimbolos {
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		Token tokenString = new Token("String", "String", 0, 0);
 		param = new Parametro(new Token("idMetVar", "s", 0, 0), new TipoString(tokenString));
 		param.setPosicion(1);
@@ -98,14 +97,14 @@ public class TablaSimbolos {
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		token = new Token("idMetVar", "println", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		tokenBoolean = new Token("boolean", "boolean", 0, 0);
 		param = new Parametro(new Token("idMetVar", "b", 0, 0), new TipoBoolean(tokenBoolean));
 		param.setPosicion(1);
@@ -116,7 +115,7 @@ public class TablaSimbolos {
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		tokenChar = new Token("char", "char", 0, 0);
 		param = new Parametro(new Token("idMetVar", "c", 0, 0), new TipoChar(tokenChar));
 		param.setPosicion(1);
@@ -127,7 +126,7 @@ public class TablaSimbolos {
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		tokenInt = new Token("int", "int", 0, 0);
 		param = new Parametro(new Token("idMetVar", "i", 0, 0), new TipoInt(tokenInt));
 		param.setPosicion(1);
@@ -138,7 +137,7 @@ public class TablaSimbolos {
 		bloque = new NodoBloque();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
-		parametros = new HashMap<String, Parametro>();
+		parametros = new LinkedHashMap<String, Parametro>();
 		tokenString = new Token("String", "String", 0, 0);
 		param = new Parametro(new Token("idMetVar", "s", 0, 0), new TipoString(tokenString));
 		param.setPosicion(1);
@@ -248,15 +247,10 @@ public class TablaSimbolos {
 		this.bloqueActual = bloque;		
 	}
 
-	private void chequeoSentencias() throws ExcepcionSemantico {
+	private void chequeoSentencias() {
 		for (Clase c : clases.values()) {
-			try {
-				setClaseActual(c);
-				c.chequeoSentencias();
-			} catch (ExcepcionSemantico e) {
-				getInstance().setRS();
-				System.out.println(e.toString());
-			}
+			setClaseActual(c);
+			c.chequeoSentencias();
 		}
 	}
 	
