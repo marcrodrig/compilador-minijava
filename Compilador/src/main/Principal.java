@@ -1,22 +1,25 @@
 package main;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import gc.GeneradorCodigo;
 import semantico.TablaSimbolos;
 import sintactico.AnalizadorSintactico;
 
 
 /**
- * Clase Principal. Módulo principal de la Etapa 3.
+ * Clase Principal. Módulo principal de la Etapa 5.
  * 
  * @author Rodríguez, Marcelo
  *
  */
 public class Principal {
 	/**
-	 * Método principal de la Etapa 3. En args se tendrán los parámetros de entrada
-	 * para la ejecución del Analizador Sintáctico. Se mostrará por consola la
-	 * salida del análisis sintáctico. El primer argumento si se ingresa lo llamamos
+	 * Método principal de la Etapa 5. En args se tendrán los parámetros de entrada
+	 * para la ejecución del Analizador Semántico. Se mostrará por consola la
+	 * salida del análisis semántico. El primer argumento si se ingresa lo llamamos
 	 * "IN_FILE" IN_FILE debe ser la ruta de un archivo de extensión .txt o .java.
 	 * 
 	 * @param args los parámetros de entrada de la ejecución del Proyecto
@@ -25,7 +28,7 @@ public class Principal {
 	public static TablaSimbolos ts;
 	
 	public static void main(String[] args) {
-		if (args.length > 1 || args.length == 0) {
+		if (args.length > 2 || args.length == 0) {
 			String nuevaLinea = System.lineSeparator();
 			System.out.println("Cantidad de parámetros inválida.");
 			System.out.println(
@@ -33,6 +36,18 @@ public class Principal {
 		} else {
 			String archivoEntrada = args[0];
 			String extensionArchivoEntrada = getFileExtension(archivoEntrada);
+			String archivoSalida = null;
+			if (args.length == 2)
+				archivoSalida = args[1];
+			else {
+		        Path path = Paths.get(archivoEntrada); 
+		        Path fileName = path.getFileName(); 
+				String[] archivo = fileName.toString().split("\\.");
+				archivoSalida = System.getProperty("user.dir") + "/" + archivo[0] + ".ceiasm";
+			}
+			String extensionArchivoSalida = getFileExtension(archivoSalida);
+			if (validarSalida(extensionArchivoSalida)) {
+				GeneradorCodigo.archivoSalida = archivoSalida;
 			if (validarEntrada(extensionArchivoEntrada)) {
 				AnalizadorSintactico analizadorSintactico;
 				try {
@@ -42,9 +57,11 @@ public class Principal {
 					// Análisis semántico
 					ts.controlesSemanticos();
 					if (ts.recuperacionSemantica())
-						System.out.println("Se completó el análisis semántico.");
+						System.out.println("Se completó el análisis semántico, no se genera código porque se recuperó de errores semánticos.");
 					else {
 						System.out.println("El análisis semántico fue exitoso, todas las entidades han sido correctamente declaradas.");
+						ts.generar();
+						System.out.println("Generación de código intermedio: " + archivoSalida);
 					}
 				} catch (FileNotFoundException e1) {
 					System.out.println("El archivo de entrada no existe");
@@ -57,6 +74,9 @@ public class Principal {
 				System.out.println("Modo de uso: <PROGRAM_NAME> <IN_FILE>" + nuevaLinea
 						+ "IN_FILE: archivo extensión .java o .txt");
 			}
+		} else {
+			System.out.println("Error en la extensión del archivo de salida.");
+		}
 		}
 	}
 
@@ -78,6 +98,10 @@ public class Principal {
 	 */
 	private static boolean validarEntrada(String extensionEntrada) {
 		return extensionEntrada.equals("txt") || extensionEntrada.equals("java");
+	}
+	
+	private static boolean validarSalida(String extensionSalida) {
+		return extensionSalida.equals("ceiasm");
 	}
 
 }

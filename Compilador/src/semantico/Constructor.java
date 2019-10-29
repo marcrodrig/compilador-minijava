@@ -2,6 +2,8 @@ package semantico;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
@@ -27,6 +29,29 @@ public class Constructor extends Unidad {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected void generar() {
+		GeneradorCodigo.getInstance().write(getLabel() + ":");
+
+		GeneradorCodigo.getInstance().write("\tLOADFP\t; Guardo enlace dinámico");
+		GeneradorCodigo.getInstance().write("\tLOADSP\t; Inicializo FP");
+		GeneradorCodigo.getInstance().write("\tSTOREFP");
+		GeneradorCodigo.getInstance().newLine();
+    
+        NodoBloque bloque = getBloque();
+        if (bloque == null)
+        	GeneradorCodigo.getInstance().write("\tNOP");
+        else
+            bloque.generar();
+        
+
+        GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
+        GeneradorCodigo.getInstance().write("\tRET " + (getCantidadParametros() + 1) + "\t; Retorno y libero espacio de los parametros del metodo y del THIS " + getNombre());
+
+        GeneradorCodigo.getInstance().newLine();
+		
 	}
 
 }

@@ -11,4 +11,9 @@ public class NodoSentenciaSimple extends NodoSentencia {
 	protected void chequear() throws ExcepcionSemantico {
 		expresion.chequear();
 	}
+
+	@Override
+	protected void generar() {
+		expresion.generar();
+	}
 }

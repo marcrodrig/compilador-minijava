@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
@@ -12,7 +14,7 @@ public class Clase {
 	private Token token;
 	private String superclase;
 	private HashMap<String, VariableInstancia> atributos;
-	private Map<String, List<Unidad>> unidades;
+	private LinkedHashMap<String, List<Unidad>> unidades;
 	private boolean visitadoHerenciaCircular;
 	private boolean consolidada;
 	private Metodo metodoMain;
@@ -23,7 +25,7 @@ public class Clase {
 		this.token = token;
 		this.superclase = superclase;
 		atributos = new HashMap<String, VariableInstancia>();
-		unidades = new HashMap<>();
+		unidades = new LinkedHashMap<String, List<Unidad>>();
 		inlineAtrs = new ArrayList<NodoSentencia>();
 	}
 
@@ -174,8 +176,9 @@ public class Clase {
 		Token token = new Token("idClase", getNombre(), 0, 0);
 		Unidad ctor = new Constructor(token, new LinkedHashMap<String, Parametro>());
 		Principal.ts.setUnidadActual(ctor);
-		NodoBloque bloque = new NodoBloque();
-		Principal.ts.setBloque(bloque);
+		//NodoBloque bloque = new NodoBloque();
+		//Principal.ts.setBloque(bloque);
+		Principal.ts.setBloque(null);
 		Principal.ts.insertarUnidad(ctor);
 	}
 
@@ -261,19 +264,17 @@ public class Clase {
 				System.out.println(e.toString());
 			}
 		}
-		for(Unidad u : getTodasUnidades()) {
-			/**
-			 * agregar declarada en ?
-			 */
-			Principal.ts.setUnidadActual(u);
-			try {
-			u.chequeoSentencias();
-			} catch (ExcepcionSemantico e) {
-				Principal.ts.setRS();
-				System.out.println(e.toString());
+		for (Unidad u : getTodasUnidades()) {
+			if (u.declaradaEn().getNombre().equals(Principal.ts.getClaseActual().getNombre())) {
+				Principal.ts.setUnidadActual(u);
+				try {
+					u.chequeoSentencias();
+				} catch (ExcepcionSemantico e) {
+					Principal.ts.setRS();
+					System.out.println(e.toString());
+				}
 			}
 		}
-		
 	}
 
 	private List<Unidad> getTodasUnidades() {
@@ -302,4 +303,63 @@ public class Clase {
 		inlineAtrs.add(sentencia);
 	}
 
+	public void generar() {
+		GeneradorCodigo.getInstance().write(".DATA");
+		GeneradorCodigo.getInstance().write("VT_" + getNombre() + ":");
+		for (Unidad u : getTodasUnidades())
+			GeneradorCodigo.getInstance().write("DW " + u.getLabel());
+		GeneradorCodigo.getInstance().write(".CODE");
+		for (Unidad u : getTodasUnidades()) {
+			if (u.declaradaEn().getNombre().equals(Principal.ts.getClaseActual().getNombre())) {
+				u.generar();
+	}
+		}
+	}
+	
 }
+
+/*
+ * 
+ * 
+ * GenCode.gen().write("# Clase "+nombre);
+		GenCode.gen().write("# Creo la VTable");
+		GenCode.gen().nl();
+		GenCode.gen().nl();
+
+		GenCode.gen().write(".DATA");
+
+		String ls="DW ";
+		for (int i = 0; i < cantMetDyn; i++) {
+			for (Metodo m : metodos.values()) {
+				if(m.getOffset()==i) {
+					ls+=m.getLabel()+",";
+				}
+			}
+		}
+
+
+		if(cantMetDyn>0) {
+			ls = ls.substring(0,ls.length()-1); //Elimino la ultima coma
+			GenCode.gen().write("VT_"+nombre+": "+ls);
+		}
+		else {
+			GenCode.gen().write("VT_"+nombre+": DW 0");
+		}
+		GenCode.gen().nl();
+		GenCode.gen().nl();
+
+		GenCode.gen().write(".CODE");
+
+
+
+
+		for (Metodo m : metodos.values()) {
+			ASintactico.getTs().setMetodoActual(m);
+			m.chequearSentencias();
+			if(m.getClase().getNombre().equals(ASintactico.getTs().getClaseActual().getNombre()))
+				if(!m.getTipo().getNombre().equals("void") && !m.getTieneReturn()) {
+					throw new Exception("El metodo "+m.getNombre()+" debe retornar algo de tipo "+m.getTipo().getNombre());
+				}
+		}
+	}
+*/

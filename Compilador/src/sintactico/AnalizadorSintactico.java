@@ -525,8 +525,8 @@ public class AnalizadorSintactico {
 				return new NodoPuntoComa();
 			case "idMetVar":						// primeros
 				try {
-					NodoExpresion exp1 = ladoIzquierdo();
-					NodoSentencia sent = ladoDerechoIdMetVar(exp1);
+					NodoExpresion exp = ladoIzquierdo();
+					NodoSentencia sent = ladoDerechoIdMetVar(exp);
 					match(";");
 					return sent;
 				} catch (ExcepcionSintactico e) {
@@ -689,15 +689,15 @@ public class AnalizadorSintactico {
 	private NodoExpresion ladoIzquierdo() throws ExcepcionLexico, ExcepcionSintactico {
 		NodoPrimario exp = null;
 		Token token = tokenActual;
-		match("idMetVar");			// primeros
+		match("idMetVar"); // primeros
 		Encadenado encadenado = rLlamadaoIdEncadenado(token); // ver bien
-		if(encadenado == null)
+		if (encadenado == null)
 			exp = new NodoVar(token);
 		else {
 			if (encadenado instanceof NodoLlamadaEncadenado) {
-			NodoLlamadaEncadenado llamadaEnc = (NodoLlamadaEncadenado) encadenado;
-			List<NodoExpresion> argsActuales = llamadaEnc.getArgsActuales();
-			exp = new NodoLlamadaDirecta(token,argsActuales);
+				NodoLlamadaEncadenado llamadaEnc = (NodoLlamadaEncadenado) encadenado;
+				List<NodoExpresion> argsActuales = llamadaEnc.getArgsActuales();
+				exp = new NodoLlamadaDirecta(token, argsActuales);
 			} else {
 				exp = new NodoVar(token);
 				exp.setEncadenado(encadenado);
@@ -708,10 +708,10 @@ public class AnalizadorSintactico {
 		return exp;
 	}
 	
-	private NodoSentencia ladoDerechoIdMetVar(NodoExpresion exp1) throws ExcepcionLexico, ExcepcionSintactico {		
+	private NodoSentencia ladoDerechoIdMetVar(NodoExpresion exp) throws ExcepcionLexico, ExcepcionSintactico {		
 		switch (tokenActual.getNombre()) {
 			case "=":					// primeros
-				return decAsig(null, exp1);
+				return decAsig(null, exp);
 			case "&&":					// primeros
 			case "||":					// primeros
 			case "*":					// primeros
@@ -725,9 +725,9 @@ public class AnalizadorSintactico {
 			case ">=":					// primeros
 			case "<":					// primeros
 			case "<=":					// primeros
-				return new NodoSentenciaSimple(desparentizada(exp1));
+				return new NodoSentenciaSimple(desparentizada(exp));
 			case ";":					// siguientes
-				return new NodoSentenciaSimple(exp1);				
+				return new NodoSentenciaSimple(exp);				
 			default:
 				throw new ExcepcionSintactico("Error sintáctico: Sentencia simple desparentizada inválida.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
 		}
@@ -1197,8 +1197,8 @@ public class AnalizadorSintactico {
 				Encadenado cadena = rEncadenado();
 				primario.setEncadenado(cadena);
 				return primario;
-				default:
-					return null; //agregado por cuestión del lenguaje
+			default:
+				return null; //agregado por cuestión del lenguaje
 		}
 	}
 	
@@ -1249,8 +1249,8 @@ public class AnalizadorSintactico {
 				return llamadaEstatica();
 			case "new":							// primeros
 				return llamadaConstructor();
-				default:
-					return null; //agregado por cuestión del lenguaje
+			default:
+				return null; //agregado por cuestión del lenguaje
 		}
 	}
 	

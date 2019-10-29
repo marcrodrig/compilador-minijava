@@ -2,6 +2,7 @@ package semantico;
 
 import java.util.List;
 
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
@@ -9,6 +10,7 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 	private Token tokenIdClase;
 	private Token tokenIdMetVar;
 	private List<NodoExpresion> argsActuales;
+	private Metodo metodo;
 
 	public NodoLlamadaEstatica(Token tokenIdClase, Token tokenIdMetVar, List<NodoExpresion> argsActuales) {
 		this.tokenIdClase = tokenIdClase;
@@ -21,7 +23,7 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 		Clase clase = Principal.ts.getClase(tokenIdClase.getLexema());
 		if (clase != null) {
 		List<Unidad> metodos = clase.getTodosMetodosPorNombre(tokenIdMetVar.getLexema());
-		Metodo metodo = null;
+		//Metodo metodo = null;
 		if (metodos != null) {
 			for (Unidad u : metodos) {
 				Metodo met = (Metodo) u;
@@ -52,5 +54,15 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 			throw new ExcepcionSemantico("[" + tokenIdClase.getNroLinea() + ":" + tokenIdClase.getNroColumna()
 			+ "] Error semántico: La clase " + tokenIdClase.getLexema() + " no está declarada.");
 		
+	}
+
+	@Override
+	protected void generar() {
+		if(!metodo.getTipo().getNombre().equals("void"))
+			GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo memoria para el retorno del metodo");
+		for (NodoExpresion exp : argsActuales)
+			exp.generar();
+		GeneradorCodigo.getInstance().write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
+		GeneradorCodigo.getInstance().write("\tCALL\t; Llamo al metodo");
 	}
 }

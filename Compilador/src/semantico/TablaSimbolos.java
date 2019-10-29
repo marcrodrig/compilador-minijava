@@ -3,6 +3,8 @@ package semantico;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
+import gc.GeneradorCodigo;
 import lexico.Token;
 
 public class TablaSimbolos {
@@ -61,7 +63,8 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printB", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintB();
+		metodo.setOffset(1);
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -254,4 +257,41 @@ public class TablaSimbolos {
 		}
 	}
 	
+	public void generar() {
+		GeneradorCodigo.getInstance().write(".CODE");
+		GeneradorCodigo.getInstance().write("PUSH simple_heap_init");
+		GeneradorCodigo.getInstance().write("CALL");
+		GeneradorCodigo.getInstance().write("PUSH " + main.getLabel());
+		GeneradorCodigo.getInstance().write("CALL");
+		GeneradorCodigo.getInstance().write("HALT");
+		GeneradorCodigo.getInstance().newLine();
+	
+		GeneradorCodigo.getInstance().write("simple_heap_init:");
+		GeneradorCodigo.getInstance().write("\tRET 0\t; Retorna inmediatamente");
+		GeneradorCodigo.getInstance().newLine();
+		
+		GeneradorCodigo.getInstance().write("simple_malloc:");
+		GeneradorCodigo.getInstance().write("\tLOADFP\t; Inicialización unidad");
+		GeneradorCodigo.getInstance().write("\tLOADSP");
+		GeneradorCodigo.getInstance().write("\tSTOREFP\t; Finaliza inicialización del RA");
+		GeneradorCodigo.getInstance().write("\tLOADHL\t; hl");
+		GeneradorCodigo.getInstance().write("\tDUP\t; hl");
+		GeneradorCodigo.getInstance().write("\tPUSH 1\t; 1");
+		GeneradorCodigo.getInstance().write("\tADD\t; hl + 1");
+		GeneradorCodigo.getInstance().write("\tSTORE 4\t; Guarda el resultado (un puntero a la primer celda de la región de memoria)");
+		GeneradorCodigo.getInstance().write("\tLOAD 3\t; Carga cantidad de celdas a alojar (parámetro que debe ser positivo)");
+		GeneradorCodigo.getInstance().write("\tADD");
+		GeneradorCodigo.getInstance().write("\tSTOREHL\t; Mueve el heap limit (hl). Expande el heap");
+		GeneradorCodigo.getInstance().write("\tSTOREFP");
+		GeneradorCodigo.getInstance().write("\tRET 1\t; Retorna eliminando el parámetro");
+		GeneradorCodigo.getInstance().newLine();
+		
+		for (Clase c : clases.values()) {
+			setClaseActual(c);
+			GeneradorCodigo.getInstance().write("# Definición de la clase " + c.getNombre());
+			c.generar();
+		}
+		
+		GeneradorCodigo.getInstance().close();
+	}
 }

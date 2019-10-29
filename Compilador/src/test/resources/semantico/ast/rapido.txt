@@ -1,8 +1,17 @@
 class A {
+	private int x = 3;
+	public B y;
 	static void main() {}
-	dynamic void m1(int p1, String p2) {}
+
+	static void met2() {
+		B y;
+		y.x.z;
+	}
+
 }
 
-class B extends A {
-	dynamic void m1(String p2, int p1) {}
+
+class B {
+	public B x;
+public int z;
 }

@@ -22,8 +22,16 @@ public class NodoVar extends NodoPrimario {
 		else {
 			Clase claseActual = Principal.ts.getClaseActual();
 			VariableInstancia varIns = claseActual.getAtributoPorNombre(token.getLexema());
-			if (varIns != null && !varIns.getVisibilidad().equals("private"))
+			if (varIns != null && !varIns.getVisibilidad().equals("private")) {
+				Unidad unidad = Principal.ts.getUnidadActual();
+				if (unidad instanceof Metodo) {
+					Metodo metodo = (Metodo) unidad;
+					if (metodo.getFormaMetodo().equals("static") && varIns instanceof VariableInstancia)
+						throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+						+ "] Error semántico: En método estático no se puede acceder a un atributo de instancia.");
+				}
 				tipo = varIns.getTipo();
+			}
 			else
 				throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 				+ "] Error semántico: Variable \"" + token.getLexema() + "\" inválida en " + unidadActual.getNombre() + ".");

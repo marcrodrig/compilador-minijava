@@ -1,0 +1,160 @@
+.CODE
+PUSH simple_heap_init
+CALL
+PUSH main_A_0
+CALL
+HALT
+
+simple_heap_init:
+	RET 0	; Retorna inmediatamente
+
+simple_malloc:
+	LOADFP	; Inicialización unidad
+	LOADSP
+	STOREFP	; Finaliza inicialización del RA
+	LOADHL	; hl
+	DUP	; hl
+	PUSH 1	; 1
+	ADD	; hl + 1
+	STORE 4	; Guarda el resultado (un puntero a la primer celda de la región de memoria)
+	LOAD 3	; Carga cantidad de celdas a alojar (parámetro que debe ser positivo)
+	ADD
+	STOREHL	; Mueve el heap limit (hl). Expande el heap
+	STOREFP
+	RET 1	; Retorna eliminando el parámetro
+
+# Definición de la clase Object
+.DATA
+VT_Object:
+DW Object_Object_1
+.CODE
+Object_Object_1:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	NOP
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Object
+
+# Definición de la clase System
+.DATA
+VT_System:
+DW read_System_2
+DW printB_System_3
+DW printC_System_4
+DW printI_System_5
+DW printS_System_6
+DW println_System_7
+DW printBln_System_8
+DW printCln_System_9
+DW printIln_System_10
+DW printSln_System_11
+DW System_System_12
+.CODE
+read_System_2:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo read
+printB_System_3:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	BPRINT
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printB
+printC_System_4:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printC
+printI_System_5:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printI
+printS_System_6:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printS
+println_System_7:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo println
+printBln_System_8:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printBln
+printCln_System_9:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printCln
+printIln_System_10:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printIln
+printSln_System_11:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printSln
+System_System_12:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	NOP
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
+
+# Definición de la clase A
+.DATA
+VT_A:
+DW main_A_0
+DW A_A_13
+.CODE
+main_A_0:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	PUSH 1	; true
+	PUSH printB_System_3	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo main
+A_A_13:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	NOP
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
+

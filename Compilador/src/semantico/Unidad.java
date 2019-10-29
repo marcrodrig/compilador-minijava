@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
@@ -13,6 +15,8 @@ public abstract class Unidad {
 	private HashMap<String, VariableMetodo> varsParams;
 	private Clase declaradaEn;
 	private NodoBloque bloque;
+	private int offset;
+	private String label;
 	
 	public Unidad(Token token, LinkedHashMap<String, Parametro> parametros) {
 		this.token = token;
@@ -56,6 +60,10 @@ public abstract class Unidad {
 		return declaradaEn;
 	}
 	
+	public NodoBloque getBloque() {
+		return bloque;
+	}
+	
 	public void setBloque(NodoBloque bloque) {
 		this.bloque = bloque;
 	}
@@ -72,6 +80,23 @@ public abstract class Unidad {
 
 	public void chequeoSentencias() throws ExcepcionSemantico {
 		Principal.ts.setBloqueActual(null);
-		bloque.chequear();
+		if (bloque != null)
+			bloque.chequear();
 	}
+	
+	public String getLabel() {
+		if (label == null)
+			label = "" + getNombre() + "_" + declaradaEn.getNombre() + "_" + GeneradorCodigo.getInstance().nLabel();
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
+	protected abstract void generar();
 }

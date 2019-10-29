@@ -2,6 +2,7 @@ package semantico;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
@@ -81,6 +82,27 @@ public class Metodo extends Unidad {
 				System.out.println(e.toString());
 			}
 		chequeoMetodosSobrecargados(listaMetodos);
+	}
+
+	@Override
+	protected void generar() {
+		GeneradorCodigo.getInstance().write(getLabel() + ":");
+
+		GeneradorCodigo.getInstance().write("\tLOADFP\t; Guardo enlace dinámico");
+		GeneradorCodigo.getInstance().write("\tLOADSP\t; Inicializo FP");
+		GeneradorCodigo.getInstance().write("\tSTOREFP");
+		GeneradorCodigo.getInstance().newLine();
+		/**
+		 * CHEQUEAR
+		 */
+		NodoBloque bloque = getBloque();
+        bloque.generar();
+        GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
+        if (formaMetodo.equals("static")) {
+        	GeneradorCodigo.getInstance().write("\tRET " + getCantidadParametros() + "\t; Retorno y libero espacio de los parametros del metodo " + getNombre());
+        } else
+        GeneradorCodigo.getInstance().write("\tRET " + (getCantidadParametros() + 1) + "\t; Retorno y libero espacio de los parametros del metodo y del THIS " + getNombre());
+		
 	}
 
 }

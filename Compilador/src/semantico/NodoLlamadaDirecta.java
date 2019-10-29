@@ -25,7 +25,7 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 				metodo = met;
 		}
 		}
-		if (metodo == null)  // no hay visibilidad en metodos, ver
+		if (metodo == null)
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 			+ "] Error semántico: El método " + token.getLexema() + " con " + argumentosActuales.size() + " parámetros de la clase " + claseActual.getNombre() + " no es un método válido.");
 		if (metodo.getFormaMetodo().equals("static"))
