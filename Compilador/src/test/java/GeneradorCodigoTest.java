@@ -41,24 +41,11 @@ class GeneradorCodigoTest {
 		String[] args = { "src/test/resources/gci/impresionLiteralFalse.txt" };
 		Principal.main(args);
 	}
-	/*@Test
-	@DisplayName("TEST: Excepción esperada método main ausente")
-	void testExcepcionEsperadaMetodoMainAusente() {
-		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoMainAusente.txt" };
-		/*AnalizadorSintactico analizadorSintactico;
-		TablaSimbolos ts = TablaSimbolos.getInstance();
-		try {
-			analizadorSintactico = new AnalizadorSintactico(args[0]);
-			analizadorSintactico.start();
-			ExcepcionSemantico e = assertThrows(ExcepcionSemantico.class, () -> {
-				ts.controlesSemanticos();
-			});
-			assertEquals("Error semántico: Método main sin definir.", e.toString());
-		} catch (FileNotFoundException | ExcepcionLexico | ExcepcionSintactico | ExcepcionPanicMode e1) {
-			fail("No debería suceder esto");
-		}
-		ts.reset();
+	
+	@Test
+	void testImpresionLiteralEntero() {
+		String[] args = { "src/test/resources/gci/impresionLiteralEntero.txt" };
 		Principal.main(args);
-	}*/
+	}
 
 }

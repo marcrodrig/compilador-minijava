@@ -12,7 +12,7 @@ import main.Principal;
 public abstract class Unidad {
 	private Token token;
 	private LinkedHashMap<String, Parametro> parametros;
-	private HashMap<String, VariableMetodo> varsParams;
+	private HashMap<String, Variable> varsParams;
 	private Clase declaradaEn;
 	private NodoBloque bloque;
 	private int offset;
@@ -23,7 +23,7 @@ public abstract class Unidad {
 		this.parametros = parametros;
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		this.declaradaEn = ts.getClaseActual();
-		varsParams = new HashMap<String, VariableMetodo>();
+		varsParams = new HashMap<String, Variable>();
 	}
 
 	public String getNombre() {
@@ -73,8 +73,12 @@ public abstract class Unidad {
 	public void insertarVarMetodo(Variable varMet) {
 		varsParams.put(varMet.getNombre(),(VariableMetodo) varMet);
 	}
+	
+	public void insertarVarIns(Variable varIns) {
+		varsParams.put(varIns.getNombre(),(VariableInstancia) varIns);
+	}
 
-	public HashMap<String, VariableMetodo> getVarsParams() {
+	public HashMap<String, Variable> getVarsParams() {
 		return varsParams;
 	}
 
@@ -82,6 +86,7 @@ public abstract class Unidad {
 		Principal.ts.setBloqueActual(null);
 		if (bloque != null)
 			bloque.chequear();
+		
 	}
 	
 	public String getLabel() {

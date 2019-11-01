@@ -15,6 +15,12 @@ public class NodoDecVarsLocales extends NodoSentencia {
 	protected void chequear() throws ExcepcionSemantico {
 		Unidad unidadActual = Principal.ts.getUnidadActual();
 		for (Variable var : vars) {
+			Tipo tipoVarLocal = var.getTipo();
+			if (tipoVarLocal instanceof TipoClase) {
+				if (Principal.ts.getClase(tipoVarLocal.getNombre()) == null)
+					throw new ExcepcionSemantico("[" + tipoVarLocal.getNroLinea() + ":" + tipoVarLocal.getNroColumna()
+							+ "] Error semántico: El tipo clase \"" + tipoVarLocal.getNombre() + "\" no está definido.");
+			}
 			if (unidadActual.getVarsParams().get(var.getNombre()) == null)
 				unidadActual.insertarVarMetodo(var);
 			else

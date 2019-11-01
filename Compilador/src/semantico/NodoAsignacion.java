@@ -22,6 +22,12 @@ public class NodoAsignacion extends NodoSentencia {
 		if (vars != null) { // asignación inline en constructor/método o atributo
 			Unidad unidadActual = Principal.ts.getUnidadActual();
 			for (Variable var : vars) {
+				Tipo tipoVarLocal = var.getTipo();
+				if (tipoVarLocal instanceof TipoClase) {
+					if (Principal.ts.getClase(tipoVarLocal.getNombre()) == null)
+						throw new ExcepcionSemantico("[" + tipoVarLocal.getNroLinea() + ":" + tipoVarLocal.getNroColumna()
+								+ "] Error semántico: El tipo clase \"" + tipoVarLocal.getNombre() + "\" no está definido.");
+				}
 				if (var instanceof VarLocal) {
 				if (unidadActual.getVarsParams().get(var.getNombre()) == null)
 					unidadActual.insertarVarMetodo(var);
@@ -40,8 +46,36 @@ public class NodoAsignacion extends NodoSentencia {
 			if(!tipoAsignacionInline.esCompatible(tipoLadoDerecho))
 				throw new ExcepcionSemantico("[" + nroLinea + "] Error semántico: Tipos incompatibles en asignación inline.");
 		} else { // método lado izquierdo
+			if (ladoIzquierdo instanceof NodoLlamadaDirecta) {
+				NodoLlamadaDirecta nodo = (NodoLlamadaDirecta) ladoIzquierdo;
+			if (nodo.getEncadenado() == null)
+				throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
+				+ "] Error semántico: No se puede asignar un valor a un método.");
+			}
+			if (ladoIzquierdo instanceof NodoLlamadaEstatica) {
+				NodoLlamadaEstatica nodo = (NodoLlamadaEstatica) ladoIzquierdo;
+			if (nodo.getEncadenado() == null)
+				throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
+				+ "] Error semántico: No se puede asignar un valor a un método.");
+			}
+			if (ladoIzquierdo instanceof NodoPrimario) {
+				NodoPrimario nodoP = (NodoPrimario) ladoIzquierdo;
+				Encadenado ultimoEncadenado = nodoP.getEncadenado();
+				while(ultimoEncadenado.getEncadenado() != null) {
+					ultimoEncadenado = ultimoEncadenado.getEncadenado();
+				}
+				if (ultimoEncadenado instanceof NodoLlamadaEncadenado) {
+					NodoLlamadaEncadenado nodo = (NodoLlamadaEncadenado) ultimoEncadenado;
+					throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
+					+ "] Error semántico: No se puede asignar un valor a un método.");
+				}
+			}
 			TipoRetorno tipoLadoIzquierdo = ladoIzquierdo.chequear();
-			TipoRetorno tipoLadoDerecho = ladoDerecho.chequear();
+			TipoRetorno tipoLadoDerecho;
+			if (ladoDerecho == null)
+				tipoLadoDerecho = null;
+			else
+				tipoLadoDerecho = ladoDerecho.chequear();
 			if(!tipoLadoIzquierdo.esCompatible(tipoLadoDerecho))
 				throw new ExcepcionSemantico("[" + nroLinea
 				+ "] Error semántico: Tipos incompatibles en asignación con una llamada a izquierda.");

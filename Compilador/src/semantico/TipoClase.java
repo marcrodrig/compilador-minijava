@@ -14,10 +14,10 @@ public class TipoClase extends Tipo {
 
 	@Override
 	public boolean esCompatible(TipoRetorno tipo) {
-        if (!this.getNombre().equals("null")) {
-            if (tipo.getNombre().equals("null")) {
+     //   if (!this.getNombre().equals("null")) {
+            if (tipo == null) //{
                 return true;
-            }
+        //    }
             Clase clase = Principal.ts.getClase(getNombre());
             if (clase != null) {
             	Clase claseReceptora = Principal.ts.getClase(tipo.getNombre());
@@ -35,9 +35,6 @@ public class TipoClase extends Tipo {
             } else {
                 return false;
             }
-        } else {
-            return false;
-        }
     }
 	
 	public String getNombre() {

@@ -1,5 +1,22 @@
-class A {
-	static void main() {
-		System.printB(true);
+class P {
+	static int m1() {
+		4=5;
 	}
+	static void main() {}
 }
+
+/*class A {
+	private A a1;
+	dynamic void m1() {
+		B y = new B();
+		a1.m2() = 4;
+		m2();
+		m2() = 4;
+		A.m3();
+		A.m3() = 5;
+	}
+	dynamic int m2() {}
+	static int m3() {}
+	static void main() {}
+}
+*/

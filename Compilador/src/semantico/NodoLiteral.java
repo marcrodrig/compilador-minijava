@@ -14,13 +14,13 @@ public class NodoLiteral extends NodoOperando {
 		switch (token.getNombre()) {
 			case "true":
 			case "false":
-				return new TipoBoolean(token);
+				return new TipoBoolean(new Token("boolean", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
 			case "charLiteral":
 				return new TipoChar(new Token("char", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
 			case "intLiteral":
 				return new TipoInt(new Token("int", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
 			case "stringLiteral":
-				return new TipoChar(new Token("String", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
+				return new TipoString(new Token("String", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
 			default:
 				return null;
 		}
@@ -33,12 +33,12 @@ public class NodoLiteral extends NodoOperando {
 		case "false":
 			TipoBoolean.generar(token);
 	/*	case "charLiteral":
-			return new TipoChar(new Token("char", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
+			return new TipoChar(new Token("char", token.getLexema(), token.getNroLinea(), token.getNroColumna()));*/
 		case "intLiteral":
-			return new TipoInt(new Token("int", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
+			TipoInt.generar(token);
 		case "stringLiteral":
-			return new TipoChar(new Token("String", token.getLexema(), token.getNroLinea(), token.getNroColumna()));
-		default:
+			TipoString.generar(token);
+		/*default:
 			return null;*/
 	}
 		

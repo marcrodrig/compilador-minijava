@@ -8,16 +8,26 @@ import main.Principal;
 public class NodoLlamadaEncadenado extends Encadenado {
 	private Token token;
 	private List<NodoExpresion> argumentosActuales;
+	//private boolean ladoIzq;
 	
 	public NodoLlamadaEncadenado(Token token, List<NodoExpresion> argumentosActuales) {
 		this.token = token;
 		this.argumentosActuales = argumentosActuales;
+	//	this.ladoIzq = ladoIzq;
 	}
 	
 	public List<NodoExpresion> getArgsActuales() {
 		return argumentosActuales;
 	}
 
+	public int getNroLinea() {
+		return token.getNroLinea();
+	}
+	
+	public int getNroColumna() {
+		return token.getNroColumna();
+	}
+	
 	@Override
 	public TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico {
 		if (tipo instanceof TipoClase) {

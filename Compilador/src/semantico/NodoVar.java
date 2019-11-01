@@ -16,17 +16,17 @@ public class NodoVar extends NodoPrimario {
 	public TipoRetorno chequear() throws ExcepcionSemantico {
 		Unidad unidadActual = Principal.ts.getUnidadActual();
 		Tipo tipo = null;
-		HashMap<String, VariableMetodo> varsParamsUnidadActual = unidadActual.getVarsParams(); 
+		HashMap<String, Variable> varsParamsUnidadActual = unidadActual.getVarsParams(); 
 		if (varsParamsUnidadActual.containsKey(token.getLexema()))
 			tipo = varsParamsUnidadActual.get(token.getLexema()).getTipo();
 		else {
 			Clase claseActual = Principal.ts.getClaseActual();
 			VariableInstancia varIns = claseActual.getAtributoPorNombre(token.getLexema());
-			if (varIns != null && !varIns.getVisibilidad().equals("private")) {
+			if (varIns != null) { // && !varIns.getVisibilidad().equals("private")) {
 				Unidad unidad = Principal.ts.getUnidadActual();
 				if (unidad instanceof Metodo) {
 					Metodo metodo = (Metodo) unidad;
-					if (metodo.getFormaMetodo().equals("static") && varIns instanceof VariableInstancia)
+					if (metodo.getFormaMetodo().equals("static")) //&& varIns instanceof VariableInstancia)
 						throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 						+ "] Error semántico: En método estático no se puede acceder a un atributo de instancia.");
 				}

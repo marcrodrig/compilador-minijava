@@ -60,7 +60,7 @@ public class Principal {
 						System.out.println("Se completó el análisis semántico, no se genera código porque se recuperó de errores semánticos.");
 					else {
 						System.out.println("El análisis semántico fue exitoso, todas las entidades han sido correctamente declaradas.");
-						ts.generar();
+						//ts.generar();
 						System.out.println("Generación de código intermedio: " + archivoSalida);
 					}
 				} catch (FileNotFoundException e1) {

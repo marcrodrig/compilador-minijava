@@ -86,7 +86,7 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printI", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintI();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -186,6 +186,7 @@ public class TablaSimbolos {
 
 	public void insertarAtributo(Variable varIns) {
 		claseActual.getAtributos().put(varIns.getNombre(), (VariableInstancia) varIns);
+		unidadActual.insertarVarIns(varIns);
 	}
 
 	public void insertarUnidad(Unidad unidad) {

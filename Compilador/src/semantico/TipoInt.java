@@ -1,5 +1,6 @@
 package semantico;
 
+import gc.GeneradorCodigo;
 import lexico.Token;
 
 public class TipoInt extends TipoPrimitivo {
@@ -13,4 +14,7 @@ public class TipoInt extends TipoPrimitivo {
 		return (tipo instanceof TipoInt);
 	}
 	
+	public static void generar(Token token) {
+		GeneradorCodigo.getInstance().write("\tPUSH " + token.getLexema() + "\t; entero");
+	}
 }

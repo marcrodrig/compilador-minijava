@@ -31,7 +31,12 @@ public class NodoBloque extends NodoSentencia {
 		//soy el bloque actual
 		Principal.ts.setBloqueActual(this);
 		for(NodoSentencia sentencia : sentencias) {
+			try {
 			sentencia.chequear();
+		} catch (ExcepcionSemantico e) {
+			Principal.ts.setRS();
+			System.out.println(e.toString());
+		}
 		}
 	}
 

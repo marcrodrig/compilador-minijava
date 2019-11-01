@@ -17,6 +17,14 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 		this.tokenIdMetVar = tokenIdMetVar;
 		this.argsActuales = argsActuales;
 	}
+	
+	public int getNroLinea() {
+		return tokenIdClase.getNroLinea();
+	}
+	
+	public int getNroColumna() {
+		return tokenIdClase.getNroColumna();
+	}
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {

@@ -12,6 +12,14 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 		this.token = token;
 		this.argumentosActuales = argumentosActuales;
 	}
+	
+	public int getNroLinea() {
+		return token.getNroLinea();
+	}
+	
+	public int getNroColumna() {
+		return token.getNroColumna();
+	}
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
@@ -28,9 +36,18 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 		if (metodo == null)
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 			+ "] Error semántico: El método " + token.getLexema() + " con " + argumentosActuales.size() + " parámetros de la clase " + claseActual.getNombre() + " no es un método válido.");
-		if (metodo.getFormaMetodo().equals("static"))
+		if (metodo.getFormaMetodo().equals("static") && !metodo.declaradaEn().getNombre().equals(claseActual.getNombre()))
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 			+ "] Error semántico: El método " + token.getLexema() + " con " + argumentosActuales.size() + " parámetros de la clase " + claseActual.getNombre() + " es estático, no se puede llamar directamente.");
+		if (metodo.getFormaMetodo().equals("dynamic")) {
+			Unidad unidadActual = Principal.ts.getUnidadActual();
+			if (unidadActual instanceof Metodo) {
+				Metodo metodoContexto = (Metodo) unidadActual;
+				if (metodoContexto.getFormaMetodo().equals("static"))
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+			+ "] Error semántico: El método " + token.getLexema() + " con " + argumentosActuales.size() + " parámetros de la clase " + claseActual.getNombre() + " es dinámico, no se puede llamar directamente en un contexto estático.");
+		}
+		}
 		int posicion = 1;
 		boolean conforma = true;
 		while (conforma && posicion <= metodo.getCantidadParametros()) {

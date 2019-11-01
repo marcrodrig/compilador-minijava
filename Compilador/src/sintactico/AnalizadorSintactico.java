@@ -506,9 +506,10 @@ public class AnalizadorSintactico {
 			case "stringLiteral":	// primeros
 			case "this":			// primeros
 				NodoSentencia sentencia = sentencia();
+				if (sentencia != null ) {
 				bloque.insertarSentencia(sentencia);
 				sentencias(bloque);
-				return bloque;
+				return bloque; }
 			case "}":				// siguientes
 				return bloque;
 			default:
@@ -532,6 +533,7 @@ public class AnalizadorSintactico {
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
+				break;
 			case "+":								// primeros
 			case "-":								// primeros
 			case "!":								// primeros
@@ -551,6 +553,7 @@ public class AnalizadorSintactico {
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
+				break;
 			case "boolean":							// primeros
 			case "char":							// primeros
 			case "int":								// primeros
@@ -570,6 +573,7 @@ public class AnalizadorSintactico {
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
+				break;
 			case "idClase":							// primeros
 				Token tokenIdClase = tokenActual;
 				match("idClase");
@@ -580,6 +584,7 @@ public class AnalizadorSintactico {
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
+				break;
 			case "if":								// primeros
 				int nroLineaIf = tokenActual.getNroLinea();
 				int nroColumnaIf = tokenActual.getNroColumna();
@@ -622,10 +627,11 @@ public class AnalizadorSintactico {
 				} catch (ExcepcionSintactico e) {
 					modoPanicoBloque(panicoLinea, panicoColumna, e.toString());
 				}
+				break;
 			default:
 				throw new ExcepcionSintactico("Error sintáctico: Se espera la declaración de una sentencia.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral o this.\nEncontrado: " + tokenActual.getNombre());
 		}
-		return null; // no sucede esto
+		return null; // caso excepcional
 	}
 	
 	private void modoPanicoBloque(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
@@ -817,7 +823,10 @@ public class AnalizadorSintactico {
 				NodoPrimario prim = llamadaMetodo(tokenIdClase);
 				Encadenado cadena = rEncadenado();
 				prim.setEncadenado(cadena);
-				return new NodoSentenciaSimple(desparentizada(prim));
+				if (tokenActual.getNombre().equals("="))
+					return decAsig(null, prim);
+				else
+					return new NodoSentenciaSimple(desparentizada(prim));
 			default:
 				throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Error en sentencia comenzada con idClase.\nEsperado: . o idMetVar\nEncontrado: " + tokenActual.getNombre());
 		}
@@ -893,7 +902,7 @@ public class AnalizadorSintactico {
 			case ";":					// siguientes
 				return expresion;
 			default:
-				throw new ExcepcionSintactico("Error sintáctico: Sentencia simple desparentizada inválida.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
+				throw new ExcepcionSintactico("Error sintáctico: Sentencia simple desparentizada inválida.\nEsperado: &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
 		}
 	}
 
@@ -1239,12 +1248,19 @@ public class AnalizadorSintactico {
 			case "idMetVar":					// primeros
 				Token token = tokenActual;
 				match("idMetVar");
-				NodoLlamadaEncadenado encadenado = (NodoLlamadaEncadenado) rLlamadaoIdEncadenado(token); // ver bien
-				List<NodoExpresion> argsActuales = encadenado.getArgsActuales();
-				if(argsActuales == null)
+			//	ladoIzq = true;
+				Encadenado encadenado = rLlamadaoIdEncadenado(token); // ver bien
+			//	ladoIzq = false;
+				if (encadenado == null)
 					return new NodoVar(token);
-				else
-					return new NodoLlamadaDirecta(token,argsActuales);
+				else {
+					if (encadenado instanceof NodoLlamadaEncadenado) {
+						NodoLlamadaEncadenado enc = (NodoLlamadaEncadenado) encadenado;
+						List<NodoExpresion> argsActuales = enc.getArgsActuales();
+						return new NodoLlamadaDirecta(token,argsActuales);
+						//return new NodoLlamadaDirecta(token,argsActuales,ladoIzq);
+					}
+				}
 			case "idClase":						// primeros
 				return llamadaEstatica();
 			case "new":							// primeros
@@ -1303,8 +1319,8 @@ public class AnalizadorSintactico {
 		if (tokenActual.getNombre().equals("(")) {	// primeros
 			List<NodoExpresion> argsActuales = argsActuales();
 			return new NodoLlamadaEncadenado(tokenIdMetVar,argsActuales);
-		} else { 
-			return new NodoVarEncadenado(tokenIdMetVar);
+		} else {
+			return new NodoVarEncadenado(tokenIdMetVar); // ver bien
 		}
 	}
 	
