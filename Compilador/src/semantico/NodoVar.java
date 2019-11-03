@@ -2,11 +2,13 @@ package semantico;
 
 import java.util.HashMap;
 
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
 public class NodoVar extends NodoPrimario {
 	private Token token;
+	boolean esLadoIzqAsig;
 	
 	public NodoVar(Token token) {
 		this.token = token;
@@ -41,4 +43,51 @@ public class NodoVar extends NodoPrimario {
 		else
 			return getEncadenado().chequear(tipo);
 	}
+
+	public void setEsLadoIzqAsig() {
+		esLadoIzqAsig = true;
+	}
+
+	@Override
+	protected void generar() {
+		/*Si evar es variable de instancia
+			Gen LOAD 3
+			Si(no es ladoIzquierdoAsig o cadena no es nulo)
+				Gen LOADREF evar.offset
+			Sino
+				Gen SWAP
+				Gen STOREREF evar.offset
+		Sino si evar es parámetro/local
+			Si(no es ladoIzquierdoAsig o cadena no es nulo
+				Gen LOAD evar.offset
+			Sino
+				Gen STORE evar.offset
+		Si cadena es no nulo
+			cadena.generar*/
+		Encadenado encadenado = getEncadenado();
+		Clase claseActual = Principal.ts.getClaseActual();
+		VariableInstancia varIns = claseActual.getAtributoPorNombre(token.getLexema());
+		if (varIns != null) {
+			GeneradorCodigo.getInstance().write("\tLOAD 3");
+			if (!esLadoIzqAsig || encadenado != null)
+				GeneradorCodigo.getInstance().write("\tLOADREF " + varIns.getOffset());
+			else {
+				GeneradorCodigo.getInstance().write("\tSWAP");
+				GeneradorCodigo.getInstance().write("\tSTOREREF " + varIns.getOffset());
+			}
+		} else {
+			Unidad unidadActual = Principal.ts.getUnidadActual();
+			Variable varParam = unidadActual.getVarParamPorNombre(token.getLexema());
+			if (varParam != null) {
+				if (!esLadoIzqAsig || encadenado != null)
+					GeneradorCodigo.getInstance().write("\tLOAD " + varParam.getOffset());
+				else {
+					GeneradorCodigo.getInstance().write("\tSTORE " + varParam.getOffset());
+				}
+			}
+		}
+		if (encadenado != null)
+			encadenado.generar();
+	}
+	
 }

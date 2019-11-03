@@ -17,6 +17,11 @@ public class Constructor extends Unidad {
 		for (Parametro paramConstructor : getParametros().values())
 			try {
 				paramConstructor.chequeoDeclaraciones();
+				paramConstructor.setOffset(2 + getCantidadParametros() - paramConstructor.getPosicion());
+              /**
+                 * VER SI AGREGAR
+                 * vars.put(p.getNombre(), p);
+                 */
 			} catch (ExcepcionSemantico e) {
 				Principal.ts.setRS();
 				System.out.println(e.toString());

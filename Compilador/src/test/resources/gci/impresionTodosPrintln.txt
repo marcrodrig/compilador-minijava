@@ -1,0 +1,10 @@
+class A {
+	static void main() {
+		System.printBln(true);
+		System.printBln(false);
+		System.println();
+		System.printCln('a');
+		System.printIln(1984);
+		System.printSln("Hello World!");
+	}
+}

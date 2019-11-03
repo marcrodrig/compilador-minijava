@@ -18,4 +18,5 @@ public abstract class Encadenado {
 
 	public abstract TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico;
 	
+	protected abstract void generar();
 }

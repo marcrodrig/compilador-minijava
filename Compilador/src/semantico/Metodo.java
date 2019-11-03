@@ -77,6 +77,14 @@ public class Metodo extends Unidad {
 		for (Parametro paramMetodo : getParametros().values())
 			try {
 				paramMetodo.chequeoDeclaraciones();
+				if (formaMetodo.equals("static")) {
+	                paramMetodo.setOffset(2 + getCantidadParametros() - paramMetodo.getPosicion());
+	            } else {
+	                paramMetodo.setOffset(3 + getCantidadParametros() - paramMetodo.getPosicion());
+	            }    /**
+	                 * VER SI AGREGAR
+	                 * vars.put(p.getNombre(), p);
+	                 */
 			} catch (ExcepcionSemantico e) {
 				Principal.ts.setRS();
 				System.out.println(e.toString());

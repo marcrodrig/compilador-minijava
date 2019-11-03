@@ -3,7 +3,6 @@ package main;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import gc.GeneradorCodigo;
 import semantico.TablaSimbolos;
 import sintactico.AnalizadorSintactico;
@@ -16,14 +15,6 @@ import sintactico.AnalizadorSintactico;
  *
  */
 public class Principal {
-	/**
-	 * Método principal de la Etapa 5. En args se tendrán los parámetros de entrada
-	 * para la ejecución del Analizador Semántico. Se mostrará por consola la
-	 * salida del análisis semántico. El primer argumento si se ingresa lo llamamos
-	 * "IN_FILE" IN_FILE debe ser la ruta de un archivo de extensión .txt o .java.
-	 * 
-	 * @param args los parámetros de entrada de la ejecución del Proyecto
-	 */
 	
 	public static TablaSimbolos ts;
 	
@@ -60,7 +51,7 @@ public class Principal {
 						System.out.println("Se completó el análisis semántico, no se genera código porque se recuperó de errores semánticos.");
 					else {
 						System.out.println("El análisis semántico fue exitoso, todas las entidades han sido correctamente declaradas.");
-						//ts.generar();
+						ts.generar();
 						System.out.println("Generación de código intermedio: " + archivoSalida);
 					}
 				} catch (FileNotFoundException e1) {

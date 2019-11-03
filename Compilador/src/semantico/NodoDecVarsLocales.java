@@ -1,7 +1,7 @@
 package semantico;
 
 import java.util.List;
-
+import gc.GeneradorCodigo;
 import main.Principal;
 
 public class NodoDecVarsLocales extends NodoSentencia {
@@ -26,6 +26,11 @@ public class NodoDecVarsLocales extends NodoSentencia {
 			else
 				throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
 		}
+	}
+
+	@Override
+	protected void generar() {
+		GeneradorCodigo.getInstance().write("RMEM " + vars.size() + "\t; Reservo espacio para vars locales");
 	}
 	
 }

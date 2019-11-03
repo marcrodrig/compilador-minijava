@@ -1,0 +1,8 @@
+class A {
+	static void main() {
+		int x;
+		System.printS("Ingrese un número entero: ");
+		x = System.read();
+		System.printI(x);
+	}
+}

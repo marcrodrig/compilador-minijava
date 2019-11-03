@@ -65,4 +65,10 @@ public class NodoLlamadaEncadenado extends Encadenado {
 					+ "] Error semántico: La llamada encadenada debe tener como receptor un tipo clase y el tipo receptor es "
 					+ tipo.getNombre() + ".");
 	}
+
+	@Override
+	protected void generar() {
+		// TODO Auto-generated method stub
+		
+	}
 }

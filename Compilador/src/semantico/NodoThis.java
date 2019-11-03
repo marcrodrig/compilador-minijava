@@ -1,5 +1,6 @@
 package semantico;
 
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
@@ -25,5 +26,10 @@ public class NodoThis extends NodoPrimario {
 			return tipoClase;
 		else
 			return getEncadenado().chequear(tipoClase);
+	}
+
+	@Override
+	protected void generar() {
+		 GeneradorCodigo.getInstance().write("\tLOAD 3\t; Cargo THIS");
 	}
 }

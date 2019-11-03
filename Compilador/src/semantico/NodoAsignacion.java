@@ -61,9 +61,10 @@ public class NodoAsignacion extends NodoSentencia {
 			if (ladoIzquierdo instanceof NodoPrimario) {
 				NodoPrimario nodoP = (NodoPrimario) ladoIzquierdo;
 				Encadenado ultimoEncadenado = nodoP.getEncadenado();
-				while(ultimoEncadenado.getEncadenado() != null) {
-					ultimoEncadenado = ultimoEncadenado.getEncadenado();
-				}
+				if (ultimoEncadenado != null)
+					while(ultimoEncadenado.getEncadenado() != null) {
+						ultimoEncadenado = ultimoEncadenado.getEncadenado();
+					}
 				if (ultimoEncadenado instanceof NodoLlamadaEncadenado) {
 					NodoLlamadaEncadenado nodo = (NodoLlamadaEncadenado) ultimoEncadenado;
 					throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
@@ -80,5 +81,10 @@ public class NodoAsignacion extends NodoSentencia {
 				throw new ExcepcionSemantico("[" + nroLinea
 				+ "] Error semántico: Tipos incompatibles en asignación con una llamada a izquierda.");
 		}
+	}
+
+	@Override
+	protected void generar() {
+		// TODO Auto-generated method stub
 	}
 }

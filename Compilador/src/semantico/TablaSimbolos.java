@@ -51,7 +51,7 @@ public class TablaSimbolos {
 		Token tokenInt = new Token("int", "int", 0, 0);
 		Metodo metodo = new Metodo(token, "static", new TipoInt(tokenInt), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		NodoBloque bloque = new NodoBloque();
+		NodoBloque bloque = new NodoBloqueRead();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.setClaseActual(system);
 		instanciaUnica.insertarUnidad(metodo);
@@ -64,7 +64,7 @@ public class TablaSimbolos {
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
 		bloque = new NodoBloquePrintB();
-		metodo.setOffset(1);
+	//	metodo.setOffset(1);
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -75,7 +75,7 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printC", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintC();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -97,14 +97,14 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printS", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintS();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
 		token = new Token("idMetVar", "println", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintln();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -115,7 +115,7 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printBln", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintBln();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -126,7 +126,7 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printCln", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintCln();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -137,7 +137,7 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printIln", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintIln();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -148,7 +148,7 @@ public class TablaSimbolos {
 		token = new Token("idMetVar", "printSln", 0, 0);
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
-		bloque = new NodoBloque();
+		bloque = new NodoBloquePrintSln();
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		system.setConsolidada();

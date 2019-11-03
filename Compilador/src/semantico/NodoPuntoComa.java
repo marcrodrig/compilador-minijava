@@ -7,5 +7,11 @@ public class NodoPuntoComa extends NodoSentencia {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void generar() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

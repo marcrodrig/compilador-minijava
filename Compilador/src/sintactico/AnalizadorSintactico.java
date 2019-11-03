@@ -303,8 +303,14 @@ public class AnalizadorSintactico {
 				NodoExpresion exp = expresion();
 				if (vars != null) // asignacion inline
 					return new NodoAsignacion(vars, null, exp, nroLinea);
-				else // metodo lado izquierdo
+				else // metodo lado izquierdo 
+				{
+					if (izq instanceof NodoVar) {
+						NodoVar nv = (NodoVar) izq;
+						nv.setEsLadoIzqAsig();
+					}
 					return new NodoAsignacion(null, izq, exp, nroLinea);
+				}
 			case ";":				// siguientes
 				return new NodoDecVarsLocales(vars);
 				default:
@@ -1319,7 +1325,10 @@ public class AnalizadorSintactico {
 		if (tokenActual.getNombre().equals("(")) {	// primeros
 			List<NodoExpresion> argsActuales = argsActuales();
 			return new NodoLlamadaEncadenado(tokenIdMetVar,argsActuales);
-		} else {
+		} else {// ver bien
+			if (tokenActual.getNombre().equals(")")) {
+				return null;
+			}
 			return new NodoVarEncadenado(tokenIdMetVar); // ver bien
 		}
 	}

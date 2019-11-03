@@ -19,6 +19,6 @@ public class TipoString extends TipoPrimitivo {
 		String nLabel = GeneradorCodigo.getInstance().nLabel();
 		GeneradorCodigo.getInstance().write("string" + nLabel + ": DW " + token.getLexema() + ",0");
 		GeneradorCodigo.getInstance().write(".CODE");
-		GeneradorCodigo.getInstance().write("PUSH string" + nLabel + " # Apilo etiqueta del String");
+		GeneradorCodigo.getInstance().write("\tPUSH string" + nLabel + "\t; Apilo etiqueta del String");
 	}
 }

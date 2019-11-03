@@ -42,4 +42,10 @@ public class NodoVarEncadenado extends Encadenado {
 					+ "] Error semántico: La variable encadenada debe tener como receptor un tipo clase.");
 	}
 
+	@Override
+	protected void generar() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

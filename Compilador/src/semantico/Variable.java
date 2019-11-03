@@ -5,6 +5,7 @@ import lexico.Token;
 public abstract class Variable {
 	private Token token;
 	private Tipo tipo;
+	private int offset;
 	
 	public Variable(Token token, Tipo tipo){
 		this.token = token;
@@ -30,6 +31,14 @@ public abstract class Variable {
 	public Tipo getTipo() {
 		return tipo;
 	}
+	
+	public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
 	
 	public void chequeoDeclaraciones() throws ExcepcionSemantico {
 		TablaSimbolos ts = TablaSimbolos.getInstance();

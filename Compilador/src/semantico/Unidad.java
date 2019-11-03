@@ -15,7 +15,7 @@ public abstract class Unidad {
 	private HashMap<String, Variable> varsParams;
 	private Clase declaradaEn;
 	private NodoBloque bloque;
-	private int offset;
+	private int offsetVar;
 	private String label;
 	
 	public Unidad(Token token, LinkedHashMap<String, Parametro> parametros) {
@@ -71,6 +71,8 @@ public abstract class Unidad {
 	public abstract void chequeoDeclaraciones(List<Unidad> unidades) throws ExcepcionSemantico;
 
 	public void insertarVarMetodo(Variable varMet) {
+		varMet.setOffset(getOffsetVar());
+        setOffsetVar(getOffsetVar() - 1);
 		varsParams.put(varMet.getNombre(),(VariableMetodo) varMet);
 	}
 	
@@ -82,6 +84,10 @@ public abstract class Unidad {
 		return varsParams;
 	}
 
+	public Variable getVarParamPorNombre(String string) {
+		return varsParams.get(string);
+	}
+	
 	public void chequeoSentencias() throws ExcepcionSemantico {
 		Principal.ts.setBloqueActual(null);
 		if (bloque != null)
@@ -99,9 +105,13 @@ public abstract class Unidad {
 		this.label = label;
 	}
 	
-	public void setOffset(int offset) {
-		this.offset = offset;
+	public int getOffsetVar() {
+		return offsetVar;
 	}
-
+	
+	public void setOffsetVar(int offset) {
+		offsetVar = offset;
+	}
+	
 	protected abstract void generar();
 }

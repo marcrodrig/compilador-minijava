@@ -32,12 +32,16 @@ public class NodoLiteral extends NodoOperando {
 		case "true":
 		case "false":
 			TipoBoolean.generar(token);
-	/*	case "charLiteral":
-			return new TipoChar(new Token("char", token.getLexema(), token.getNroLinea(), token.getNroColumna()));*/
+			break;
+		case "charLiteral":
+			TipoChar.generar(token);
+			break;
 		case "intLiteral":
 			TipoInt.generar(token);
+			break;
 		case "stringLiteral":
 			TipoString.generar(token);
+			break;
 		/*default:
 			return null;*/
 	}
