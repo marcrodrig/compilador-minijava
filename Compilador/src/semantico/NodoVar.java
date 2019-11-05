@@ -8,7 +8,7 @@ import main.Principal;
 
 public class NodoVar extends NodoPrimario {
 	private Token token;
-	boolean esLadoIzqAsig;
+	private boolean esLadoIzqAsig;
 	
 	public NodoVar(Token token) {
 		this.token = token;

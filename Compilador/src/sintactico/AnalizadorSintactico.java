@@ -305,9 +305,24 @@ public class AnalizadorSintactico {
 					return new NodoAsignacion(vars, null, exp, nroLinea);
 				else // metodo lado izquierdo 
 				{
-					if (izq instanceof NodoVar) {
+					if (izq instanceof NodoPrimario) {
+						NodoPrimario np = (NodoPrimario) izq;
+					if (np instanceof NodoVar) {
 						NodoVar nv = (NodoVar) izq;
 						nv.setEsLadoIzqAsig();
+					}
+					if (np instanceof NodoThis) {
+						NodoThis nt = (NodoThis) np;
+						nt.setEsLadoIzqAsig();
+					}
+					Encadenado ultimoEncadenado = np.getEncadenado();
+					if (ultimoEncadenado != null) {
+						while(ultimoEncadenado.getEncadenado() != null) {
+							ultimoEncadenado.setEsLadoIzqAsig();
+							ultimoEncadenado = ultimoEncadenado.getEncadenado();
+						}
+						ultimoEncadenado.setEsLadoIzqAsig();
+					}
 					}
 					return new NodoAsignacion(null, izq, exp, nroLinea);
 				}
@@ -1309,27 +1324,40 @@ public class AnalizadorSintactico {
 		if (enc != null) {
 			Encadenado cadena = rEncadenado();
 			enc.setCadena(cadena);
-			return enc;
+			//return enc;
 		}
-		return null;
+		return enc;
 	}
 
 	private Encadenado llamadaoIdEncadenado() throws ExcepcionLexico, ExcepcionSintactico {
 		match(".");					// primeros
 		Token tokenIdMetVar = tokenActual;
 		match("idMetVar");
-		return rLlamadaoIdEncadenado(tokenIdMetVar);
+		Encadenado enc = rLlamadaoIdEncadenado(tokenIdMetVar);
+		if (enc == null)
+			enc = new NodoVarEncadenado(tokenIdMetVar);
+		return enc;
 	}
 
 	private Encadenado rLlamadaoIdEncadenado(Token tokenIdMetVar) throws ExcepcionLexico, ExcepcionSintactico {
+		/**
+		 * CORREGIR
+		 */
+		
 		if (tokenActual.getNombre().equals("(")) {	// primeros
 			List<NodoExpresion> argsActuales = argsActuales();
 			return new NodoLlamadaEncadenado(tokenIdMetVar,argsActuales);
 		} else {// ver bien
-			if (tokenActual.getNombre().equals(")")) {
+		// estaba antes	if (tokenActual.getNombre().equals("idMetVar"))
+			//	return null;
+			//}
+				//return new NodoVarEncadenado(tokenIdMetVar); // ver bien
+		//estaba antes	else
+	//antes			return null;
+		//	if (tokenActual.getNombre().equals("idMetVar"))
+		//		return new NodoVarEncadenado(tokenActual);
+		//	else
 				return null;
-			}
-			return new NodoVarEncadenado(tokenIdMetVar); // ver bien
 		}
 	}
 	

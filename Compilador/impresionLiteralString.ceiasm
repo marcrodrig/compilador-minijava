@@ -158,13 +158,16 @@ main_A_0:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	PUSH 1	; true
-	PUSH printB_System_3	; Apilo la etiqueta del metodo
+.DATA
+string13: DW "Hola mundo!",0
+.CODE
+	PUSH string13	; Apilo etiqueta del String
+	PUSH printS_System_6	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
-A_A_13:
+A_A_14:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP

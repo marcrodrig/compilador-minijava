@@ -15,7 +15,7 @@ public abstract class Unidad {
 	private HashMap<String, Variable> varsParams;
 	private Clase declaradaEn;
 	private NodoBloque bloque;
-	private int offsetVar;
+	private int offset, offsetVar;
 	private String label;
 	
 	public Unidad(Token token, LinkedHashMap<String, Parametro> parametros) {
@@ -54,6 +54,10 @@ public abstract class Unidad {
 	
 	public int getCantidadParametros() {
 		return parametros.size();
+	}
+	
+	public int getCantidadVariables() {
+		return Math.abs(getCantidadParametros() - varsParams.size());
 	}
 	
 	public Clase declaradaEn() {
@@ -104,6 +108,14 @@ public abstract class Unidad {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	
+	public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
 	
 	public int getOffsetVar() {
 		return offsetVar;

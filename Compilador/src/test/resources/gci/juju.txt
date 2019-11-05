@@ -1,0 +1,19 @@
+class A {
+	private int x;
+	static void main() {
+		A a;
+		a = new A();
+		int num;
+		num = a.getNum();
+		(System.printS("A continuación debería mostrar un 27: "));
+		(System.printIln(num));
+		
+	}
+	dynamic int getNum() {
+		met().x = 27;
+		return x;
+	}
+	dynamic A met() {
+		return this;
+	}
+}

@@ -1,17 +1,19 @@
 package semantico;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import gc.GeneradorCodigo;
 import main.Principal;
 
 public class NodoBloque extends NodoSentencia {
 	private NodoBloque padre;
 	private List<NodoSentencia> sentencias;
-	//varsLocales??
+	private HashMap<String, Variable> varsLocales;
 	
 	public NodoBloque() {
 		sentencias = new ArrayList<NodoSentencia>();
+		varsLocales = new HashMap<String, Variable>();
 	}
 	
 	public void insertarSentencia(NodoSentencia sentencia) {
@@ -44,6 +46,11 @@ public class NodoBloque extends NodoSentencia {
 		for(NodoSentencia sentencia : sentencias) {
 			sentencia.generar();
 		}
+        GeneradorCodigo.getInstance().write("\tFMEM " + varsLocales.size() + " # Libero espacio de variables locales al bloque");
+	}
+
+	public void agregarVariableLocal(Variable v) {
+		varsLocales.put(v.getNombre(), v);
 	}
 
 }

@@ -2,12 +2,14 @@ package semantico;
 
 import java.util.List;
 
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
 public class NodoLlamadaEncadenado extends Encadenado {
 	private Token token;
 	private List<NodoExpresion> argumentosActuales;
+	private Metodo metodo;
 	//private boolean ladoIzq;
 	
 	public NodoLlamadaEncadenado(Token token, List<NodoExpresion> argumentosActuales) {
@@ -33,7 +35,7 @@ public class NodoLlamadaEncadenado extends Encadenado {
 		if (tipo instanceof TipoClase) {
 			Clase clase = Principal.ts.getClase(tipo.getNombre());
 			List<Unidad> metodos = clase.getTodosMetodosPorNombre(token.getLexema());
-			Metodo metodo = null;
+			metodo = null;
 			if (metodos != null) {
 				for (Unidad u : metodos) {
 					Metodo met = (Metodo) u;
@@ -68,7 +70,24 @@ public class NodoLlamadaEncadenado extends Encadenado {
 
 	@Override
 	protected void generar() {
-		// TODO Auto-generated method stub
-		
+		if (metodo.getFormaMetodo().equals("dynamic")) {
+			if(metodo.getTipo() != null) {
+				GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo lugar para el retorno");
+				GeneradorCodigo.getInstance().write("\tSWAP");
+			}
+			for (NodoExpresion exp : argumentosActuales) {
+				exp.generar();
+				GeneradorCodigo.getInstance().write("\tSWAP"); }
+			GeneradorCodigo.getInstance().write("\tDUP");
+			GeneradorCodigo.getInstance().write("\tLOADREF 0");
+			GeneradorCodigo.getInstance().write("\tLOADREF " + metodo.getOffset() + "\t; Cargo la dirección del método");
+			GeneradorCodigo.getInstance().write("\tCALL");
+		} else {
+			/*
+			 * COMPLETAR
+			 */
+		}
+		if (getEncadenado() != null)
+			getEncadenado().generar();
 	}
 }

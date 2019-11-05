@@ -16,5 +16,11 @@ public class NodoExpresionParentizada extends NodoPrimario {
 		else
 			return encadenado.chequear(tipoExpresion);
 	}
+
+	@Override
+	protected void generar() {
+		expresion.generar();
+		// ver encadenado
+	}
 	
 }

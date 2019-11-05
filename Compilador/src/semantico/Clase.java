@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
@@ -80,7 +79,11 @@ public class Clase {
 	}
 
 	public List<Unidad> getTodosMetodosPorNombre(String nombreMetodo) {
-		return getTodosMetodos().get(nombreMetodo);
+		List <Unidad> lista = getTodosMetodos().get(nombreMetodo);
+		if (lista == null)
+			return new ArrayList<Unidad>();
+		else
+			return lista;
 	}
 
 	public int cantidadMetodos() {
@@ -197,6 +200,47 @@ public class Clase {
 					System.out.println(e.toString());
 				}
 			}
+		setOffsetMetodos();
+	}
+	
+	private void setOffsetMetodos() {
+        Clase clasePadre = Principal.ts.getClase(superclase);
+        if (clasePadre != null) { // No es Object
+        int cantMetodosPadre = clasePadre.getCantidadMetodosDynamic();
+        for (String nombreMetodo : getTodosMetodos().keySet()) {
+           // if (s.charAt(0) != '@') {
+           //     Metodo m = metodos.get(s);
+        	for (Unidad u : getTodosMetodosPorNombre(nombreMetodo)) {
+        		Metodo metodo = (Metodo) u;
+                if (!metodo.getNombre().equals(getNombre()) && !metodo.getFormaMetodo().equals("static")) {
+                    if (!clasePadre.tieneMetodo(metodo)) {
+                        metodo.setOffset(cantMetodosPadre++);
+                    }
+                }
+            }
+        }
+        }
+    }
+
+	private boolean tieneMetodo(Metodo metodo) {
+		boolean tiene = false;
+		for (Unidad u : getTodosMetodosPorNombre(metodo.getNombre())) {
+			Metodo met = (Metodo) u;
+			if (!tiene)
+				tiene = metodo == met;
+		}
+		return tiene;
+	}
+
+	private int getCantidadMetodosDynamic() {
+		int cantidad = 0;
+		for (List<Unidad> listaMetodos : getTodosMetodos().values())
+			for (Unidad u : listaMetodos) {
+				Metodo metodo = (Metodo) u;
+				if (metodo.getFormaMetodo().equals("dynamic"))
+					cantidad++;
+			}
+		return cantidad;
 	}
 
 	public void consolidacion() throws ExcepcionSemantico {
@@ -306,60 +350,22 @@ public class Clase {
 	public void generar() {
 		GeneradorCodigo.getInstance().write(".DATA");
 		GeneradorCodigo.getInstance().write("VT_" + getNombre() + ":");
-		for (Unidad u : getTodasUnidades())
-			GeneradorCodigo.getInstance().write("DW " + u.getLabel());
+		if (getCantidadMetodosDynamic() == 0)
+			GeneradorCodigo.getInstance().write("DW 0");
+		else
+			for (List<Unidad> listaMetodos : getTodosMetodos().values())
+				for (Unidad u : listaMetodos) {
+					Metodo metodo = (Metodo) u;
+					if (metodo.getFormaMetodo().equals("dynamic"))
+						GeneradorCodigo.getInstance().write("DW " + metodo.getLabel());;
+				}
 		GeneradorCodigo.getInstance().write(".CODE");
 		for (Unidad u : getTodasUnidades()) {
 			if (u.declaradaEn().getNombre().equals(Principal.ts.getClaseActual().getNombre())) {
+				Principal.ts.setUnidadActual(u);
 				u.generar();
 	}
 		}
 	}
 	
 }
-
-/*
- * 
- * 
- * GenCode.gen().write("# Clase "+nombre);
-		GenCode.gen().write("# Creo la VTable");
-		GenCode.gen().nl();
-		GenCode.gen().nl();
-
-		GenCode.gen().write(".DATA");
-
-		String ls="DW ";
-		for (int i = 0; i < cantMetDyn; i++) {
-			for (Metodo m : metodos.values()) {
-				if(m.getOffset()==i) {
-					ls+=m.getLabel()+",";
-				}
-			}
-		}
-
-
-		if(cantMetDyn>0) {
-			ls = ls.substring(0,ls.length()-1); //Elimino la ultima coma
-			GenCode.gen().write("VT_"+nombre+": "+ls);
-		}
-		else {
-			GenCode.gen().write("VT_"+nombre+": DW 0");
-		}
-		GenCode.gen().nl();
-		GenCode.gen().nl();
-
-		GenCode.gen().write(".CODE");
-
-
-
-
-		for (Metodo m : metodos.values()) {
-			ASintactico.getTs().setMetodoActual(m);
-			m.chequearSentencias();
-			if(m.getClase().getNombre().equals(ASintactico.getTs().getClaseActual().getNombre()))
-				if(!m.getTipo().getNombre().equals("void") && !m.getTieneReturn()) {
-					throw new Exception("El metodo "+m.getNombre()+" debe retornar algo de tipo "+m.getTipo().getNombre());
-				}
-		}
-	}
-*/

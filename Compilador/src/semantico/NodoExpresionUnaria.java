@@ -1,5 +1,6 @@
 package semantico;
 
+import gc.GeneradorCodigo;
 import lexico.Token;
 
 public class NodoExpresionUnaria extends NodoExpresion {
@@ -15,23 +16,36 @@ public class NodoExpresionUnaria extends NodoExpresion {
 	public TipoRetorno chequear() throws ExcepcionSemantico {
 		TipoRetorno tipoExpresion = expresion.chequear();
 		switch (operador.getLexema()) {
-		case "+":
-		case "-":
-			if (tipoExpresion.getNombre().equals("int"))
-				return new TipoInt(operador);
-			else
-				throw new ExcepcionSemantico("[" + operador.getNroLinea()
-						+ "] Error semántico: Tipos incompatibles en expresión unaria con el operador \""
-						+ operador.getLexema() + "\".");
-		case "!":
-			if (tipoExpresion.getNombre().equals("boolean"))
-				return new TipoBoolean(operador);
-			else
-				throw new ExcepcionSemantico("[" + operador.getNroLinea()
-						+ "] Error semántico: Tipos incompatibles en expresión unaria con el operador \""
-						+ operador.getLexema() + "\".");
-		default:
-			return null;
+			case "+":
+			case "-":
+				if (tipoExpresion.getNombre().equals("int"))
+					return new TipoInt(operador);
+				else
+					throw new ExcepcionSemantico("[" + operador.getNroLinea()
+							+ "] Error semántico: Tipos incompatibles en expresión unaria con el operador \""
+							+ operador.getLexema() + "\".");
+			case "!":
+				if (tipoExpresion.getNombre().equals("boolean"))
+					return new TipoBoolean(operador);
+				else
+					throw new ExcepcionSemantico("[" + operador.getNroLinea()
+							+ "] Error semántico: Tipos incompatibles en expresión unaria con el operador \""
+							+ operador.getLexema() + "\".");
+			default:
+				return null;
+		}
+	}
+
+	@Override
+	protected void generar() {
+		expresion.generar();
+		switch (operador.getLexema()) {
+			case "-":
+				GeneradorCodigo.getInstance().write("\tNEG");
+				break;
+			case "!":
+				GeneradorCodigo.getInstance().write("\tNOT");
+				break;
 		}
 	}
 

@@ -1,12 +1,15 @@
 package semantico;
 
 import java.util.List;
+
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
 public class NodoConstructor extends NodoPrimario {
 	private Token token;
 	private List<NodoExpresion> argumentosActuales;
+	private Constructor ctor;
 
 	public NodoConstructor(Token token, List<NodoExpresion> argumentosActuales) {
 		this.token = token;
@@ -20,7 +23,7 @@ public class NodoConstructor extends NodoPrimario {
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 					+ "] Error semántico: La clase \"" + token.getLexema() + "\" no está declarada.");
 		List<Unidad> constructores = clase.getConstructores();
-		Constructor ctor = null;
+		ctor = null;
 		for (Unidad u : constructores)
 			if (u.getCantidadParametros() == argumentosActuales.size())
 				ctor = (Constructor) u;
@@ -44,4 +47,30 @@ public class NodoConstructor extends NodoPrimario {
 		else
 			return getEncadenado().chequear(new TipoClase(token));
 	}
+	
+	@Override
+	protected void generar() {
+		// Creación CIR
+		GeneradorCodigo.getInstance().write("\tRMEM 1\t; Creación CIR");
+		GeneradorCodigo.getInstance().write("\tPUSH " + (ctor.getCantidadVariables() + 1));
+		GeneradorCodigo.getInstance().write("\tPUSH simple_malloc");
+		GeneradorCodigo.getInstance().write("\tCALL");
+		// Asignación de la VT al CIR creado
+		GeneradorCodigo.getInstance().write("\tDUP\t; Asignación de la VT al CIR creado");
+		GeneradorCodigo.getInstance().write("\tPUSH VT_" + ctor.getNombre());
+		GeneradorCodigo.getInstance().write("\tSTOREREF 0");
+		GeneradorCodigo.getInstance().write("\tDUP");
+		// Proceso argumentos actuales
+		for (NodoExpresion exp : argumentosActuales) {
+			exp.generar();
+			GeneradorCodigo.getInstance().write("\tSWAP"); }
+		// Llamada
+		GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
+		GeneradorCodigo.getInstance().write("\tCALL");
+		// Proceso encadenado
+		if(getEncadenado() != null) {
+			getEncadenado().generar();
+		}			
+	}
+	 
 }

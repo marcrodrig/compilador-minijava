@@ -1,13 +1,9 @@
 package test.java;
 
-import static org.junit.Assert.fail;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-
 import gc.GeneradorCodigo;
 import main.Principal;
 
@@ -66,7 +62,6 @@ class GeneradorCodigoTest {
 	void testReadImpresionEntero() {
 		String[] args = { "src/test/resources/gci/readImpresionEntero.txt" };
 		Principal.main(args);
-		fail("Chequear bien");
 	}
 	
 	@Test
@@ -74,4 +69,29 @@ class GeneradorCodigoTest {
 		String[] args = { "src/test/resources/gci/impresionTodosPrintln.txt" };
 		Principal.main(args);
 	}
+	
+	@Test
+	void testImpresionIfConYSinElse() {
+		String[] args = { "src/test/resources/gci/impresionIfConYSinElse.txt" };
+		Principal.main(args);
+	}
+	
+	@Test
+	void testImpresionWhile() {
+		String[] args = { "src/test/resources/gci/impresionWhile.txt" };
+		Principal.main(args);
+	}
+	
+	@Test
+	void testImpresionConstructorLlamadaDirectaReturn() {
+		String[] args = { "src/test/resources/gci/impresionConstructorLlamadaDirectaReturn.txt" };
+		Principal.main(args);
+	}
+	
+	@Test
+	void testJ() {
+		String[] args = { "src/test/resources/gci/juju.txt" };
+		Principal.main(args);
+	}
+	
 }

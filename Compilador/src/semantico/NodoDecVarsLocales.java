@@ -9,6 +9,9 @@ public class NodoDecVarsLocales extends NodoSentencia {
 	
 	public NodoDecVarsLocales(List<Variable> vars) {
 		this.vars = vars;
+		for (Variable v : vars)
+			if (!(v instanceof VariableInstancia))
+				Principal.ts.getBloqueActual().agregarVariableLocal(v);
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class NodoDecVarsLocales extends NodoSentencia {
 
 	@Override
 	protected void generar() {
-		GeneradorCodigo.getInstance().write("RMEM " + vars.size() + "\t; Reservo espacio para vars locales");
+		GeneradorCodigo.getInstance().write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
 	}
 	
 }

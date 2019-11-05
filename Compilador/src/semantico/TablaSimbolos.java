@@ -292,7 +292,7 @@ public class TablaSimbolos {
 			GeneradorCodigo.getInstance().write("# Definición de la clase " + c.getNombre());
 			c.generar();
 		}
-		
+
 		GeneradorCodigo.getInstance().close();
 	}
 }

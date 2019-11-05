@@ -2,7 +2,7 @@ package semantico;
 
 public abstract class Encadenado {
 	private Encadenado cadena;
-	//private boolean ladoIzq;
+	private boolean esLadoIzqAsig;
 	
 	public Encadenado() {
 		
@@ -17,6 +17,14 @@ public abstract class Encadenado {
 	}
 
 	public abstract TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico;
+	
+	public boolean esLadoIzqAsig() {
+		return esLadoIzqAsig;
+	}
+	
+	public void setEsLadoIzqAsig() {
+		esLadoIzqAsig = true;
+	}
 	
 	protected abstract void generar();
 }

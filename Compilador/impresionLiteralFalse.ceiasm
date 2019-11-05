@@ -26,7 +26,7 @@ simple_malloc:
 # Definición de la clase Object
 .DATA
 VT_Object:
-DW Object_Object_1
+DW 0
 .CODE
 Object_Object_1:
 	LOADFP	; Guardo enlace dinámico
@@ -40,23 +40,19 @@ Object_Object_1:
 # Definición de la clase System
 .DATA
 VT_System:
-DW read_System_2
-DW printB_System_3
-DW printC_System_4
-DW printI_System_5
-DW printS_System_6
-DW println_System_7
-DW printBln_System_8
-DW printCln_System_9
-DW printIln_System_10
-DW printSln_System_11
-DW System_System_12
+DW 0
 .CODE
 read_System_2:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	READ
+	PUSH 48
+	SUB
+	STORE 3
+	STOREFP
+	RET 0
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo read
 printB_System_3:
@@ -73,6 +69,8 @@ printC_System_4:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	LOAD 3
+	CPRINT
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo printC
 printI_System_5:
@@ -80,6 +78,8 @@ printI_System_5:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	LOAD 3
+	IPRINT
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo printI
 printS_System_6:
@@ -87,6 +87,8 @@ printS_System_6:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	LOAD 3
+	SPRINT
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo printS
 println_System_7:
@@ -94,6 +96,7 @@ println_System_7:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo println
 printBln_System_8:
@@ -101,6 +104,9 @@ printBln_System_8:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	LOAD 3
+	BPRINT
+	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo printBln
 printCln_System_9:
@@ -108,6 +114,9 @@ printCln_System_9:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	LOAD 3
+	CPRINT
+	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo printCln
 printIln_System_10:
@@ -115,6 +124,9 @@ printIln_System_10:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	LOAD 3
+	IPRINT
+	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo printIln
 printSln_System_11:
@@ -122,6 +134,9 @@ printSln_System_11:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	LOAD 3
+	SPRINT
+	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo printSln
 System_System_12:
@@ -136,8 +151,7 @@ System_System_12:
 # Definición de la clase A
 .DATA
 VT_A:
-DW main_A_0
-DW A_A_13
+DW 0
 .CODE
 main_A_0:
 	LOADFP	; Guardo enlace dinámico
@@ -147,6 +161,7 @@ main_A_0:
 	PUSH 0	; false
 	PUSH printB_System_3	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
+	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
 A_A_13:

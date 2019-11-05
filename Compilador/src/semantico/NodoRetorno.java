@@ -1,9 +1,11 @@
 package semantico;
 
+import gc.GeneradorCodigo;
 import main.Principal;
 
 public class NodoRetorno extends NodoSentencia {
 	private NodoExpresion expresion;
+	private Metodo metodo;
 	
 	public NodoRetorno(NodoExpresion expresion) {
 		this.expresion = expresion;
@@ -17,7 +19,7 @@ public class NodoRetorno extends NodoSentencia {
 			+ "] Error semántico: El constructor " + unidadActual.getNombre() + " tiene una sentencia return.");
 		}
 		else {
-			Metodo metodo = (Metodo) unidadActual;
+			metodo = (Metodo) unidadActual;
 			TipoRetorno tipoMetodo = metodo.getTipo();
 			if (expresion == null) {
 				if(!tipoMetodo.getNombre().equals("void"))
@@ -31,4 +33,22 @@ public class NodoRetorno extends NodoSentencia {
 			}
 		}
 	}
+
+	@Override
+	protected void generar() {
+		if (metodo.getTipo().getNombre() != null)
+			expresion.generar();
+		if (metodo.getFormaMetodo().equals("static"))
+            GeneradorCodigo.getInstance().write("\tSTORE " + (3 + metodo.getCantidadParametros()) + "\t; Valor de retorno del metodo " + metodo.getNombre());
+        else
+            GeneradorCodigo.getInstance().write("\tSTORE " + (4 + metodo.getCantidadParametros()) + "\t; Valor de retorno del metodo " + metodo.getNombre());
+		if (metodo.getCantidadVariables() - metodo.getCantidadParametros() > 0)
+            GeneradorCodigo.getInstance().write("\tFMEM " + (metodo.getCantidadVariables() - metodo.getCantidadParametros()) + "\t; Libero espacio de variable locales (metodo " + metodo.getNombre() + ")");
+        GeneradorCodigo.getInstance().write("\tSTOREFP");
+        if (metodo.getFormaMetodo().equals("static"))
+            GeneradorCodigo.getInstance().write("\tRET " + metodo.getCantidadParametros() + "\t; Retorno y libero espacio de los parametros (metodo " + metodo.getNombre() + ")");
+        else
+            GeneradorCodigo.getInstance().write("\tRET " + (metodo.getCantidadParametros() + 1) + "\t; Retorno y libero espacio del this y los parametros (metodo " + metodo.getNombre() + ")");
+	}
+
 }

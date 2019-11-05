@@ -51,7 +51,6 @@ public class Constructor extends Unidad {
         else
             bloque.generar();
         
-
         GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
         GeneradorCodigo.getInstance().write("\tRET " + (getCantidadParametros() + 1) + "\t; Retorno y libero espacio de los parametros del metodo y del THIS " + getNombre());
 

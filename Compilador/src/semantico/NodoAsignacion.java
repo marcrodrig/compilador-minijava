@@ -58,6 +58,9 @@ public class NodoAsignacion extends NodoSentencia {
 				throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
 				+ "] Error semántico: No se puede asignar un valor a un método.");
 			}
+			/*
+			 * ver que pasa con nodo ctor y eso, los demas
+			 */
 			if (ladoIzquierdo instanceof NodoPrimario) {
 				NodoPrimario nodoP = (NodoPrimario) ladoIzquierdo;
 				Encadenado ultimoEncadenado = nodoP.getEncadenado();
@@ -85,6 +88,12 @@ public class NodoAsignacion extends NodoSentencia {
 
 	@Override
 	protected void generar() {
-		// TODO Auto-generated method stub
+		if (vars == null) {
+			ladoDerecho.generar();
+			ladoIzquierdo.generar();
+		}
+		/*
+		 * ver caso contrario
+		 */
 	}
 }

@@ -30,7 +30,7 @@ public class Metodo extends Unidad {
 	public TipoRetorno getTipo() {
 		return tipo;
 	}
-
+	
 	private void chequeoMetodosSobrecargados(List<Unidad> listaMetodos) throws ExcepcionSemantico {
 		for (Unidad unidad : listaMetodos) {
 			Metodo metodo = (Metodo) unidad;
@@ -100,9 +100,6 @@ public class Metodo extends Unidad {
 		GeneradorCodigo.getInstance().write("\tLOADSP\t; Inicializo FP");
 		GeneradorCodigo.getInstance().write("\tSTOREFP");
 		GeneradorCodigo.getInstance().newLine();
-		/**
-		 * CHEQUEAR
-		 */
 		NodoBloque bloque = getBloque();
         bloque.generar();
         GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
@@ -110,7 +107,7 @@ public class Metodo extends Unidad {
         	GeneradorCodigo.getInstance().write("\tRET " + getCantidadParametros() + "\t; Retorno y libero espacio de los parametros del metodo " + getNombre());
         } else
         GeneradorCodigo.getInstance().write("\tRET " + (getCantidadParametros() + 1) + "\t; Retorno y libero espacio de los parametros del metodo y del THIS " + getNombre());
-		
+		//newLine?
 	}
 
 }

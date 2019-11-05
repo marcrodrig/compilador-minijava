@@ -6,6 +6,7 @@ import main.Principal;
 
 public class NodoThis extends NodoPrimario {
 	private Token token;
+	private boolean esLadoIzqAsig;
 	
 	public NodoThis(Token token) {
 		this.token = token;
@@ -28,6 +29,10 @@ public class NodoThis extends NodoPrimario {
 			return getEncadenado().chequear(tipoClase);
 	}
 
+	public void setEsLadoIzqAsig() {
+		esLadoIzqAsig = true;
+	}
+	
 	@Override
 	protected void generar() {
 		 GeneradorCodigo.getInstance().write("\tLOAD 3\t; Cargo THIS");

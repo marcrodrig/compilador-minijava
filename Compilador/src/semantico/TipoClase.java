@@ -15,7 +15,8 @@ public class TipoClase extends Tipo {
 	@Override
 	public boolean esCompatible(TipoRetorno tipo) {
      //   if (!this.getNombre().equals("null")) {
-            if (tipo == null) //{
+         //estaba este   if (tipo == null) //{
+		if(tipo.getNombre().equals("void"))
                 return true;
         //    }
             Clase clase = Principal.ts.getClase(getNombre());

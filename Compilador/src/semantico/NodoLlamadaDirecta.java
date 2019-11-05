@@ -1,12 +1,15 @@
 package semantico;
 
 import java.util.List;
+
+import gc.GeneradorCodigo;
 import lexico.Token;
 import main.Principal;
 
 public class NodoLlamadaDirecta extends NodoPrimario {
 	private Token token;
 	private List<NodoExpresion> argumentosActuales;
+	private Metodo metodo;
 	
 	public NodoLlamadaDirecta(Token token, List<NodoExpresion> argumentosActuales) {
 		this.token = token;
@@ -25,7 +28,7 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 	public TipoRetorno chequear() throws ExcepcionSemantico {
 		Clase claseActual = Principal.ts.getClaseActual();
 		List<Unidad> metodos = claseActual.getTodosMetodosPorNombre(token.getLexema());
-		Metodo metodo = null;
+		metodo = null;
 		if (metodos != null) {
 		for (Unidad u : metodos) {
 			Metodo met = (Metodo) u;
@@ -61,5 +64,46 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 			return metodo.getTipo();
 		else
 			return getEncadenado().chequear(metodo.getTipo());
+	}
+/*
+ * Si emet es no estático:
+ * 		Gen LOAD 3 ) //cargo futuro this
+		Si emet no retorna void :
+			Gen RMEM 1 ) //Reservo lugar para el retorno
+			Gen SWAP
+		Para cada nexp en paramsAct
+			nexp.generar() //Genero código de param actual
+			Gen	SWAP
+		Gen DUP ) //Duplico this para no perderlo
+		Gen LOADREF 0 ) //Cargo la VT
+		Gen LOADREF emet.offset ()()) //Cargo la dir de emet
+		Gen	CALL
+  Si emet es estático :
+	…	Completar!!!
+  Si cadena es no nulo
+		cadena.generar
+ */
+	@Override
+	protected void generar() {
+		if (metodo.getFormaMetodo().equals("dynamic")) {
+			GeneradorCodigo.getInstance().write("\tLOAD 3\t; Apilo THIS");
+			if(metodo.getTipo() != null) {
+				GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo lugar para el retorno");
+				GeneradorCodigo.getInstance().write("\tSWAP");
+			}
+			for (NodoExpresion exp : argumentosActuales) {
+				exp.generar();
+				GeneradorCodigo.getInstance().write("\tSWAP"); }
+			GeneradorCodigo.getInstance().write("\tDUP");
+			GeneradorCodigo.getInstance().write("\tLOADREF 0");
+			GeneradorCodigo.getInstance().write("\tLOADREF " + metodo.getOffset() + "\t; Cargo la dirección del método");
+			GeneradorCodigo.getInstance().write("\tCALL");
+		} else {
+			/*
+			 * COMPLETAR
+			 */
+		}
+		if (getEncadenado() != null)
+			getEncadenado().generar();
 	}
 }
