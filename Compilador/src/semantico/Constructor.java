@@ -46,6 +46,7 @@ public class Constructor extends Unidad {
 		GeneradorCodigo.getInstance().newLine();
     
         NodoBloque bloque = getBloque();
+        Principal.ts.setBloqueActual(bloque);
         if (bloque == null)
         	GeneradorCodigo.getInstance().write("\tNOP");
         else

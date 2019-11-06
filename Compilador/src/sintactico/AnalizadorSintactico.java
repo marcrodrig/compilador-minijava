@@ -162,6 +162,13 @@ public class AnalizadorSintactico {
 			NodoSentencia sentencia = decAsig(varsInstancia,null);
 			match(";");
 			if (!(sentencia instanceof NodoDecVarsLocales)) {
+				NodoAsignacion asig = (NodoAsignacion) sentencia;
+				for (Variable varIns : asig.getVars()) {
+					if (Principal.ts.getClaseActual().getAtributos().get(varIns.getNombre()) == null)
+						Principal.ts.insertarAtributo(varIns);
+					else
+						throw new ExcepcionSemantico("[" + varIns.getNroLinea() + ":" + varIns.getNroColumna() + "] Error semántico: Nombre de atributo \"" + varIns.getNombre() + "\" repetido.");
+				}
 				Principal.ts.getClaseActual().insertarAsignacionInlineAtributo(sentencia);
 			} else {
 				for (Variable varIns : varsInstancia) {

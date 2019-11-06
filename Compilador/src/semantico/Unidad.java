@@ -15,7 +15,7 @@ public abstract class Unidad {
 	private HashMap<String, Variable> varsParams;
 	private Clase declaradaEn;
 	private NodoBloque bloque;
-	private int offset, offsetVar;
+	private int offset, offsetVarLocal, offsetVarIns;
 	private String label;
 	
 	public Unidad(Token token, LinkedHashMap<String, Parametro> parametros) {
@@ -75,8 +75,8 @@ public abstract class Unidad {
 	public abstract void chequeoDeclaraciones(List<Unidad> unidades) throws ExcepcionSemantico;
 
 	public void insertarVarMetodo(Variable varMet) {
-		varMet.setOffset(getOffsetVar());
-        setOffsetVar(getOffsetVar() - 1);
+		varMet.setOffset(getOffsetVarLocal());
+        setOffsetVarLocal(getOffsetVarLocal() - 1);
 		varsParams.put(varMet.getNombre(),(VariableMetodo) varMet);
 	}
 	
@@ -117,12 +117,20 @@ public abstract class Unidad {
         this.offset = offset;
     }
 	
-	public int getOffsetVar() {
-		return offsetVar;
+	public int getOffsetVarLocal() {
+		return offsetVarLocal;
 	}
 	
-	public void setOffsetVar(int offset) {
-		offsetVar = offset;
+	public void setOffsetVarLocal(int offset) {
+		offsetVarLocal = offset;
+	}
+	
+	public int getOffsetVarIns() {
+		return offsetVarIns;
+	}
+	
+	public void setOffsetVarIns(int offset) {
+		offsetVarIns = offset;
 	}
 	
 	protected abstract void generar();

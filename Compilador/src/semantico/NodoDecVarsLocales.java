@@ -33,7 +33,7 @@ public class NodoDecVarsLocales extends NodoSentencia {
 
 	@Override
 	protected void generar() {
-		GeneradorCodigo.getInstance().write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
+		//GeneradorCodigo.getInstance().write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
 	}
 	
 }

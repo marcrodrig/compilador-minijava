@@ -27,6 +27,10 @@ public class NodoBloque extends NodoSentencia {
 	public NodoBloque getPadre() {
 		return padre;
 	}
+	
+	public int getCantidadVarsLocales() {
+		return varsLocales.size();
+	}
 
 	@Override
 	protected void chequear() throws ExcepcionSemantico {

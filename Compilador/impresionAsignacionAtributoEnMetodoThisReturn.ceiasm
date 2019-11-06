@@ -152,7 +152,7 @@ System_System_12:
 .DATA
 VT_A:
 DW getNum_A_13
-DW setear_A_14
+DW met_A_14
 .CODE
 main_A_0:
 	LOADFP	; Guardo enlace dinámico
@@ -161,7 +161,7 @@ main_A_0:
 
 	RMEM 1	; Reservo espacio para vars locales
 	RMEM 1	; Creación CIR
-	PUSH 1
+	PUSH 2	; Reservo lugar para variables de instancia y VT
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignación de la VT al CIR creado
@@ -197,6 +197,7 @@ getNum_A_13:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	PUSH 27	; entero
 	LOAD 3	; Apilo THIS
 	RMEM 1	; Reservo lugar para el retorno
 	SWAP
@@ -204,6 +205,8 @@ getNum_A_13:
 	LOADREF 0
 	LOADREF 1	; Cargo la dirección del método
 	CALL
+	SWAP
+	STOREREF 1	; Guardo el valor del atributo x
 	LOAD 3
 	LOADREF 1
 	STORE 4	; Valor de retorno del metodo getNum
@@ -212,18 +215,18 @@ getNum_A_13:
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getNum
-setear_A_14:
+met_A_14:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	PUSH 27	; entero
-	LOAD 3
-	SWAP
-	STOREREF 1
+	LOAD 3	; Cargo THIS
+	STORE 4	; Valor de retorno del metodo met
+	STOREFP
+	RET 1	; Retorno y libero espacio del this y los parametros (metodo met)
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS setear
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS met
 A_A_15:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP

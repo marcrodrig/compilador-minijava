@@ -1,0 +1,17 @@
+class A {
+	//private int x = 9;
+	private int y;
+	static void main() {
+		int num;
+		num = new A().getX();
+		System.printS("A continuación debería mostrar un 9: ");
+		System.printIln(num);
+	}
+	dynamic int getX() {
+		setear();
+		return y;
+	}
+	dynamic void setear() {
+		y = 9;
+	}
+}

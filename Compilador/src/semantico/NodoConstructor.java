@@ -50,27 +50,29 @@ public class NodoConstructor extends NodoPrimario {
 	
 	@Override
 	protected void generar() {
+		Clase claseActual = ctor.declaradaEn();
 		// Creación CIR
 		GeneradorCodigo.getInstance().write("\tRMEM 1\t; Creación CIR");
-		GeneradorCodigo.getInstance().write("\tPUSH " + (ctor.getCantidadVariables() + 1));
+		GeneradorCodigo.getInstance().write("\tPUSH " + (claseActual.cantidadAtributos() + 1) + "\t; Reservo lugar para variables de instancia y VT");
 		GeneradorCodigo.getInstance().write("\tPUSH simple_malloc");
 		GeneradorCodigo.getInstance().write("\tCALL");
 		// Asignación de la VT al CIR creado
 		GeneradorCodigo.getInstance().write("\tDUP\t; Asignación de la VT al CIR creado");
 		GeneradorCodigo.getInstance().write("\tPUSH VT_" + ctor.getNombre());
-		GeneradorCodigo.getInstance().write("\tSTOREREF 0");
+		GeneradorCodigo.getInstance().write("\tSTOREREF 0\t;Guardo referecia a VT");
 		GeneradorCodigo.getInstance().write("\tDUP");
 		// Proceso argumentos actuales
 		for (NodoExpresion exp : argumentosActuales) {
 			exp.generar();
 			GeneradorCodigo.getInstance().write("\tSWAP"); }
-		// Llamada
-		GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
-		GeneradorCodigo.getInstance().write("\tCALL");
 		// Proceso encadenado
 		if(getEncadenado() != null) {
 			getEncadenado().generar();
-		}			
+		} else {
+		// Llamada
+			GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
+			GeneradorCodigo.getInstance().write("\tCALL");
+		}
 	}
 	 
 }

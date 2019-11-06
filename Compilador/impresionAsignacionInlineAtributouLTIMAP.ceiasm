@@ -151,7 +151,7 @@ System_System_12:
 # Definición de la clase A
 .DATA
 VT_A:
-DW getNum_A_13
+DW getX_A_13
 DW setear_A_14
 .CODE
 main_A_0:
@@ -161,63 +161,58 @@ main_A_0:
 
 	RMEM 1	; Reservo espacio para vars locales
 	RMEM 1	; Creación CIR
-	PUSH 1
+	PUSH 2	; Reservo lugar para variables de instancia y VT
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignación de la VT al CIR creado
 	PUSH VT_A
-	STOREREF 0
+	STOREREF 0	;Guardo referecia a VT
 	DUP
-	PUSH A_A_15	; Apilo etiqueta del constructor
-	CALL
-	STORE 0
-	RMEM 1	; Reservo espacio para vars locales
-	LOAD 0
 	RMEM 1	; Reservo lugar para el retorno
 	SWAP
 	DUP
 	LOADREF 0
 	LOADREF 0	; Cargo la dirección del método
 	CALL
-	STORE -1
+	PUSH A_A_15	; Apilo etiqueta del constructor
+	CALL
+	STORE 0
 .DATA
-string16: DW "A continuaciÃ³n deberÃ­a mostrar un 27: ",0
+string16: DW "A continuaciÃ³n deberÃ­a mostrar un 9: ",0
 .CODE
 	PUSH string16	; Apilo etiqueta del String
 	PUSH printS_System_6	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	LOAD -1
+	LOAD 0
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	FMEM 2 # Libero espacio de variables locales al bloque
+	FMEM 1 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
-getNum_A_13:
+getX_A_13:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
 	LOAD 3	; Apilo THIS
-	RMEM 1	; Reservo lugar para el retorno
-	SWAP
 	DUP
 	LOADREF 0
 	LOADREF 1	; Cargo la dirección del método
 	CALL
 	LOAD 3
 	LOADREF 1
-	STORE 4	; Valor de retorno del metodo getNum
+	STORE 4	; Valor de retorno del metodo getX
 	STOREFP
-	RET 1	; Retorno y libero espacio del this y los parametros (metodo getNum)
+	RET 1	; Retorno y libero espacio del this y los parametros (metodo getX)
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getNum
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getX
 setear_A_14:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	PUSH 27	; entero
+	PUSH 9	; entero
 	LOAD 3
 	SWAP
 	STOREREF 1

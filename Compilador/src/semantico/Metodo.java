@@ -101,6 +101,17 @@ public class Metodo extends Unidad {
 		GeneradorCodigo.getInstance().write("\tSTOREFP");
 		GeneradorCodigo.getInstance().newLine();
 		NodoBloque bloque = getBloque();
+		Principal.ts.setBloqueActual(bloque);
+		if (bloque.getCantidadVarsLocales() > 1)
+			GeneradorCodigo.getInstance().write("\tRMEM " + bloque.getCantidadVarsLocales() + "\t; Reservo espacio para vars locales");
+		if (isMetodoMain()) {
+			Clase claseMetodoMain = declaradaEn();
+			if (claseMetodoMain.getCantidadInlineAtrs() > 0) {
+				GeneradorCodigo.getInstance().write("\t;Generación atributos inline");
+				GeneradorCodigo.getInstance().write("\tPUSH " + claseMetodoMain.getMetodoAtr().getLabel());
+				GeneradorCodigo.getInstance().write("\tCALL");
+			}
+		}
         bloque.generar();
         GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
         if (formaMetodo.equals("static")) {

@@ -89,9 +89,14 @@ class GeneradorCodigoTest {
 	}
 	
 	@Test
-	void testJ() {
-		String[] args = { "src/test/resources/gci/juju.txt" };
+	void testImpresionAsignacionAtributoEnMetodoThisReturn() {
+		String[] args = { "src/test/resources/gci/impresionAsignacionAtributoEnMetodoThisReturn.txt" };
 		Principal.main(args);
 	}
 	
+	@Test
+	void testImpresionAsignacionInlineAtributo() {
+		String[] args = { "src/test/resources/gci/impresionAsignacionInlineAtributo.txt" };
+		Principal.main(args);
+	}
 }

@@ -2,6 +2,7 @@ package semantico;
 
 import java.util.List;
 
+import gc.GeneradorCodigo;
 import main.Principal;
 
 public class NodoAsignacion extends NodoSentencia {
@@ -33,12 +34,12 @@ public class NodoAsignacion extends NodoSentencia {
 					unidadActual.insertarVarMetodo(var);
 				else
 					throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
-				} else {
+				} /*else {
 						if (Principal.ts.getClaseActual().getAtributos().get(var.getNombre()) == null)
 							Principal.ts.insertarAtributo(var);
 						else
 							throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de atributo \"" + var.getNombre() + "\" repetido.");
-				}
+				}*/
 			}
 			TipoRetorno tipoLadoDerecho = ladoDerecho.chequear();
 			Variable primerVar = vars.get(0);
@@ -91,9 +92,30 @@ public class NodoAsignacion extends NodoSentencia {
 		if (vars == null) {
 			ladoDerecho.generar();
 			ladoIzquierdo.generar();
+		} else {
+			Unidad unidadActual = Principal.ts.getUnidadActual();
+			if (vars.get(0) instanceof VarLocal) {
+				GeneradorCodigo.getInstance().write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
+				for (Variable v : vars) {
+					Variable varParam = unidadActual.getVarParamPorNombre(v.getNombre());
+					ladoDerecho.generar();
+					Principal.ts.getBloqueActual().agregarVariableLocal(varParam);
+					GeneradorCodigo.getInstance().write("\tSTORE " + varParam.getOffset());
+				}
+			} else {
+				Clase claseActual = Principal.ts.getClaseActual();
+				for (Variable v : vars) {
+					VariableInstancia varIns = claseActual.getAtributoPorNombre(v.getNombre());
+					ladoDerecho.generar();
+					GeneradorCodigo.getInstance().write("\tLOAD 3");
+					GeneradorCodigo.getInstance().write("\tSWAP");
+					GeneradorCodigo.getInstance().write("\tSTOREREF " + varIns.getOffset());
+				}
+			}
 		}
-		/*
-		 * ver caso contrario
-		 */
+	}
+
+	public List<Variable> getVars() {
+		return vars;
 	}
 }

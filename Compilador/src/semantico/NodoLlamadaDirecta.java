@@ -87,7 +87,7 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 	protected void generar() {
 		if (metodo.getFormaMetodo().equals("dynamic")) {
 			GeneradorCodigo.getInstance().write("\tLOAD 3\t; Apilo THIS");
-			if(metodo.getTipo() != null) {
+			if(!metodo.getTipo().getNombre().equals("void")) {
 				GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo lugar para el retorno");
 				GeneradorCodigo.getInstance().write("\tSWAP");
 			}

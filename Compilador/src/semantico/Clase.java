@@ -19,6 +19,7 @@ public class Clase {
 	private Metodo metodoMain;
 	private boolean hc;
 	private List<NodoSentencia> inlineAtrs;
+	private Metodo metodoAtr;
 
 	public Clase(Token token, String superclase) {
 		this.token = token;
@@ -158,6 +159,21 @@ public class Clase {
 				Principal.ts.setRS();
 				System.out.println(e.toString());
 			}
+		setOffsetAtrs();
+		chequeoAtributosInline();
+	}
+
+	private void chequeoAtributosInline() {
+		if (getCantidadInlineAtrs() > 0) {
+			Token token = new Token("idMetVar", "atrInline", 0, 0);
+			LinkedHashMap<String, Parametro> parametros = new LinkedHashMap<String, Parametro>();
+			metodoAtr = new Metodo(token, "static", new TipoVoid(), false, parametros);
+			NodoBloque bloque = new NodoBloque();
+			for(NodoSentencia sentencia : inlineAtrs)
+				bloque.insertarSentencia(sentencia);
+			metodoAtr.setBloque(bloque);
+			Principal.ts.insertarUnidad(metodoAtr);
+		}
 	}
 
 	private void chequeoConstructores() {
@@ -312,7 +328,8 @@ public class Clase {
 			if (u.declaradaEn().getNombre().equals(Principal.ts.getClaseActual().getNombre())) {
 				Principal.ts.setUnidadActual(u);
 				try {
-					u.chequeoSentencias();
+					if (u != metodoAtr)
+						u.chequeoSentencias();
 				} catch (ExcepcionSemantico e) {
 					Principal.ts.setRS();
 					System.out.println(e.toString());
@@ -343,10 +360,28 @@ public class Clase {
 		return inlineAtrs;
 	}
 	
+	public int getCantidadInlineAtrs() {
+		return inlineAtrs.size();
+	}
+	
 	public void insertarAsignacionInlineAtributo(NodoSentencia sentencia) {
 		inlineAtrs.add(sentencia);
 	}
 
+	private int getCantidadAtrs() {
+		return atributos.size();
+	}
+	
+	private void setOffsetAtrs() {
+		Clase clasePadre = Principal.ts.getClase(superclase);
+        if (clasePadre != null) { // No es Object
+        	int cantAtrsPadre = clasePadre.getCantidadAtrs();
+        //	cantAtrsPadre++;
+        	for (VariableInstancia v : atributos.values())
+        		v.setOffset(++cantAtrsPadre);
+        }
+	}
+	
 	public void generar() {
 		GeneradorCodigo.getInstance().write(".DATA");
 		GeneradorCodigo.getInstance().write("VT_" + getNombre() + ":");
@@ -364,8 +399,15 @@ public class Clase {
 			if (u.declaradaEn().getNombre().equals(Principal.ts.getClaseActual().getNombre())) {
 				Principal.ts.setUnidadActual(u);
 				u.generar();
-	}
+			}
 		}
+		//if (getCantidadInlineAtrs() > 0) {
+			
+	//	}
 	}
-	
+
+	public Unidad getMetodoAtr() {
+		return metodoAtr;
+	}
+
 }
