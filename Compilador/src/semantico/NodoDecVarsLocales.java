@@ -25,7 +25,7 @@ public class NodoDecVarsLocales extends NodoSentencia {
 							+ "] Error semántico: El tipo clase \"" + tipoVarLocal.getNombre() + "\" no está definido.");
 			}
 			if (unidadActual.getVarsParams().get(var.getNombre()) == null)
-				unidadActual.insertarVarMetodo(var);
+				unidadActual.insertarVarLocalParamMetodo(var);
 			else
 				throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
 		}

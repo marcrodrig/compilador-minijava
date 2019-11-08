@@ -47,6 +47,7 @@ read_System_2:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	READ
 	PUSH 48
 	SUB
@@ -60,6 +61,7 @@ printB_System_3:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	STOREFP	; Restablezco el contexto
@@ -69,6 +71,7 @@ printC_System_4:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	STOREFP	; Restablezco el contexto
@@ -78,6 +81,7 @@ printI_System_5:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	STOREFP	; Restablezco el contexto
@@ -87,6 +91,7 @@ printS_System_6:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	STOREFP	; Restablezco el contexto
@@ -96,6 +101,7 @@ println_System_7:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo println
@@ -104,6 +110,7 @@ printBln_System_8:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	PRNLN
@@ -114,6 +121,7 @@ printCln_System_9:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	PRNLN
@@ -124,6 +132,7 @@ printIln_System_10:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	PRNLN
@@ -134,6 +143,7 @@ printSln_System_11:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	PRNLN
@@ -159,20 +169,19 @@ main_A_0:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 1	; Reservo espacio para vars locales
+	RMEM 2	; Reservo espacio para vars locales
 	RMEM 1	; Creación CIR
 	PUSH 2	; Reservo lugar para variables de instancia y VT
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignación de la VT al CIR creado
 	PUSH VT_A
-	STOREREF 0
+	STOREREF 0	;Guardo referecia a VT
 	DUP
 	PUSH A_A_15	; Apilo etiqueta del constructor
 	CALL
 	STORE 0
-	RMEM 1	; Reservo espacio para vars locales
-	LOAD 0
+	LOAD 0	;chequear
 	RMEM 1	; Reservo lugar para el retorno
 	SWAP
 	DUP
@@ -186,7 +195,7 @@ string16: DW "A continuaciÃ³n deberÃ­a mostrar un 27: ",0
 	PUSH string16	; Apilo etiqueta del String
 	PUSH printS_System_6	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	LOAD -1
+	LOAD -1	;chequear
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
 	FMEM 2 # Libero espacio de variables locales al bloque
@@ -197,6 +206,7 @@ getNum_A_13:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	PUSH 27	; entero
 	LOAD 3	; Apilo THIS
 	RMEM 1	; Reservo lugar para el retorno
@@ -220,6 +230,7 @@ met_A_14:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3	; Cargo THIS
 	STORE 4	; Valor de retorno del metodo met
 	STOREFP

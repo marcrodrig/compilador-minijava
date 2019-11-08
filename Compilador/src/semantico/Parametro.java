@@ -14,7 +14,7 @@ public class Parametro extends VariableMetodo {
 	}
 
 	public void setPosicion(int posicion) {
-		this.posicion = posicion;
+		this.posicion = posicion - 1;
 	}
 
 }

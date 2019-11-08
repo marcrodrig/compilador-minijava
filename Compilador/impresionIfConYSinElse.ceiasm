@@ -47,6 +47,7 @@ read_System_2:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	READ
 	PUSH 48
 	SUB
@@ -60,6 +61,7 @@ printB_System_3:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	STOREFP	; Restablezco el contexto
@@ -69,6 +71,7 @@ printC_System_4:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	STOREFP	; Restablezco el contexto
@@ -78,6 +81,7 @@ printI_System_5:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	STOREFP	; Restablezco el contexto
@@ -87,6 +91,7 @@ printS_System_6:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	STOREFP	; Restablezco el contexto
@@ -96,6 +101,7 @@ println_System_7:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo println
@@ -104,6 +110,7 @@ printBln_System_8:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	PRNLN
@@ -114,6 +121,7 @@ printCln_System_9:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	PRNLN
@@ -124,6 +132,7 @@ printIln_System_10:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	PRNLN
@@ -134,6 +143,7 @@ printSln_System_11:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	PRNLN
@@ -158,6 +168,7 @@ main_A_0:
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	PUSH 5	; entero
 	PUSH 3	; entero
 	GT	; Mayor

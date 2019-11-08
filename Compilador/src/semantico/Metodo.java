@@ -85,6 +85,11 @@ public class Metodo extends Unidad {
 	                 * VER SI AGREGAR
 	                 * vars.put(p.getNombre(), p);
 	                 */
+				//if (unidadActual.getVarsParams().get(var.getNombre()) == null)
+				// sería esto	
+			//	unidadActual.insertarVarMetodo(paramMetodo);
+			//	else
+			//		throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
 			} catch (ExcepcionSemantico e) {
 				Principal.ts.setRS();
 				System.out.println(e.toString());
@@ -102,23 +107,28 @@ public class Metodo extends Unidad {
 		GeneradorCodigo.getInstance().newLine();
 		NodoBloque bloque = getBloque();
 		Principal.ts.setBloqueActual(bloque);
-		if (bloque.getCantidadVarsLocales() > 1)
-			GeneradorCodigo.getInstance().write("\tRMEM " + bloque.getCantidadVarsLocales() + "\t; Reservo espacio para vars locales");
-		if (isMetodoMain()) {
+	//	if (bloque.getCantidadVarsLocales() > 1)
+		GeneradorCodigo.getInstance().write("\tRMEM " + bloque.getCantidadVarsLocales() + "\t; Reservo espacio para vars locales");
+		/*if (isMetodoMain()) {
 			Clase claseMetodoMain = declaradaEn();
 			if (claseMetodoMain.getCantidadInlineAtrs() > 0) {
 				GeneradorCodigo.getInstance().write("\t;Generación atributos inline");
-				GeneradorCodigo.getInstance().write("\tPUSH " + claseMetodoMain.getMetodoAtr().getLabel());
+				//GeneradorCodigo.getInstance().write("\tPUSH " + claseMetodoMain.getMetodoAtr().getLabel());
+				//GeneradorCodigo.getInstance().write("\tCALL");
+				GeneradorCodigo.getInstance().write("\tLOAD 3\t; Apilo THIS");
+				GeneradorCodigo.getInstance().write("\tDUP");
+				GeneradorCodigo.getInstance().write("\tLOADREF 0");
+				GeneradorCodigo.getInstance().write("\tLOADREF " + claseMetodoMain.getMetodoAtr().getOffset() + "\t; Cargo la dirección del método");
 				GeneradorCodigo.getInstance().write("\tCALL");
 			}
-		}
+		}*/
         bloque.generar();
         GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
         if (formaMetodo.equals("static")) {
         	GeneradorCodigo.getInstance().write("\tRET " + getCantidadParametros() + "\t; Retorno y libero espacio de los parametros del metodo " + getNombre());
         } else
         GeneradorCodigo.getInstance().write("\tRET " + (getCantidadParametros() + 1) + "\t; Retorno y libero espacio de los parametros del metodo y del THIS " + getNombre());
-		//newLine?
+
 	}
 
 }

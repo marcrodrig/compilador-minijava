@@ -358,7 +358,7 @@ public class AnalizadorSintactico {
 			param.setPosicion(posicion);
 			if (parametros.get(param.getNombre()) == null) {
 				parametros.put(param.getNombre(), param);
-				Principal.ts.getUnidadActual().insertarVarMetodo(param);
+				Principal.ts.getUnidadActual().insertarVarLocalParamMetodo(param);
 			}
 			else
 				throw new ExcepcionSemantico("[" + param.getNroLinea() + ":" + param.getNroColumna() +"] Error semántico: Nombre de parámetro \"" + param.getNombre() + "\" repetido.");
@@ -486,7 +486,7 @@ public class AnalizadorSintactico {
 			param.setPosicion(posicion);
 			if (parametros.get(param.getNombre()) == null) {
 				parametros.put(param.getNombre(), param);
-				Principal.ts.getUnidadActual().insertarVarMetodo(param);
+				Principal.ts.getUnidadActual().insertarVarLocalParamMetodo(param);
 			}
 			else
 				throw new ExcepcionSemantico("[" + param.getNroLinea() + ":" + param.getNroColumna() + "] Error semántico: Nombre de parámetro \"" + param.getNombre() + "\" repetido.");

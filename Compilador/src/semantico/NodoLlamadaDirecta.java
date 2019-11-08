@@ -98,10 +98,16 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 			GeneradorCodigo.getInstance().write("\tLOADREF 0");
 			GeneradorCodigo.getInstance().write("\tLOADREF " + metodo.getOffset() + "\t; Cargo la dirección del método");
 			GeneradorCodigo.getInstance().write("\tCALL");
-		} else {
-			/*
-			 * COMPLETAR
-			 */
+		} else { // ver bien esto
+			if(metodo.getTipo().getNombre().equals("void")) {
+				GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo lugar para el retorno");
+				GeneradorCodigo.getInstance().write("\tSWAP");
+				for (NodoExpresion exp : argumentosActuales) {
+					exp.generar();
+					GeneradorCodigo.getInstance().write("\tSWAP"); }
+				GeneradorCodigo.getInstance().write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
+				GeneradorCodigo.getInstance().write("\tCALL\t; Llamo al metodo");
+			}
 		}
 		if (getEncadenado() != null)
 			getEncadenado().generar();

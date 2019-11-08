@@ -67,7 +67,9 @@ public class NodoVar extends NodoPrimario {
 		Encadenado encadenado = getEncadenado();
 		Clase claseActual = Principal.ts.getClaseActual();
 		VariableInstancia varIns = claseActual.getAtributoPorNombre(token.getLexema());
-		if (varIns != null) {
+		Unidad unidadActual = Principal.ts.getUnidadActual();
+		Variable varParam = unidadActual.getVarLocalParamPorNombre(token.getLexema());
+		if (varIns != null && varParam == null) { //restringir?
 			GeneradorCodigo.getInstance().write("\tLOAD 3");
 			if (!esLadoIzqAsig || encadenado != null)
 				GeneradorCodigo.getInstance().write("\tLOADREF " + varIns.getOffset());
@@ -76,11 +78,9 @@ public class NodoVar extends NodoPrimario {
 				GeneradorCodigo.getInstance().write("\tSTOREREF " + varIns.getOffset());
 			}
 		} else {
-			Unidad unidadActual = Principal.ts.getUnidadActual();
-			Variable varParam = unidadActual.getVarParamPorNombre(token.getLexema());
 			if (varParam != null) {
 				if (!esLadoIzqAsig || encadenado != null)
-					GeneradorCodigo.getInstance().write("\tLOAD " + varParam.getOffset());
+					GeneradorCodigo.getInstance().write("\tLOAD " + varParam.getOffset()+"\t;chequear");
 				else {
 					GeneradorCodigo.getInstance().write("\tSTORE " + varParam.getOffset());
 				}

@@ -74,7 +74,7 @@ public abstract class Unidad {
 	
 	public abstract void chequeoDeclaraciones(List<Unidad> unidades) throws ExcepcionSemantico;
 
-	public void insertarVarMetodo(Variable varMet) {
+	public void insertarVarLocalParamMetodo(Variable varMet) {
 		varMet.setOffset(getOffsetVarLocal());
         setOffsetVarLocal(getOffsetVarLocal() - 1);
 		varsParams.put(varMet.getNombre(),(VariableMetodo) varMet);
@@ -88,7 +88,7 @@ public abstract class Unidad {
 		return varsParams;
 	}
 
-	public Variable getVarParamPorNombre(String string) {
+	public Variable getVarLocalParamPorNombre(String string) {
 		return varsParams.get(string);
 	}
 	

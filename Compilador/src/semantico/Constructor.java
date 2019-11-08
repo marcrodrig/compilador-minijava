@@ -17,11 +17,8 @@ public class Constructor extends Unidad {
 		for (Parametro paramConstructor : getParametros().values())
 			try {
 				paramConstructor.chequeoDeclaraciones();
-				paramConstructor.setOffset(2 + getCantidadParametros() - paramConstructor.getPosicion());
-              /**
-                 * VER SI AGREGAR
-                 * vars.put(p.getNombre(), p);
-                 */
+				// tenía 2 +
+				paramConstructor.setOffset(3 + getCantidadParametros() - paramConstructor.getPosicion());
 			} catch (ExcepcionSemantico e) {
 				Principal.ts.setRS();
 				System.out.println(e.toString());
@@ -44,13 +41,15 @@ public class Constructor extends Unidad {
 		GeneradorCodigo.getInstance().write("\tLOADSP\t; Inicializo FP");
 		GeneradorCodigo.getInstance().write("\tSTOREFP");
 		GeneradorCodigo.getInstance().newLine();
-    
+		
         NodoBloque bloque = getBloque();
         Principal.ts.setBloqueActual(bloque);
         if (bloque == null)
         	GeneradorCodigo.getInstance().write("\tNOP");
-        else
+        else {
+        	GeneradorCodigo.getInstance().write("\tRMEM " + bloque.getCantidadVarsLocales() + "\t; Reservo espacio para vars locales");
             bloque.generar();
+        }
         
         GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
         GeneradorCodigo.getInstance().write("\tRET " + (getCantidadParametros() + 1) + "\t; Retorno y libero espacio de los parametros del metodo y del THIS " + getNombre());

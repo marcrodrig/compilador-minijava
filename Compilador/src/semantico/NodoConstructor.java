@@ -61,18 +61,36 @@ public class NodoConstructor extends NodoPrimario {
 		GeneradorCodigo.getInstance().write("\tPUSH VT_" + ctor.getNombre());
 		GeneradorCodigo.getInstance().write("\tSTOREREF 0\t;Guardo referecia a VT");
 		GeneradorCodigo.getInstance().write("\tDUP");
+		// Asignación atributos inline
+		if (claseActual.getCantidadInlineAtrs() > 0) {
+			GeneradorCodigo.getInstance().write("\t;Generación atributos inline");
+			GeneradorCodigo.getInstance().write("\tPUSH " + claseActual.getMetodoAtr().getLabel());
+			GeneradorCodigo.getInstance().write("\tCALL");
+			/*GeneradorCodigo.getInstance().write("\tLOAD 3\t; Apilo THIS");
+			GeneradorCodigo.getInstance().write("\tDUP");
+			GeneradorCodigo.getInstance().write("\tLOADREF 0");
+			GeneradorCodigo.getInstance().write("\tLOADREF " + claseActual.getMetodoAtr().getOffset() + "\t; Cargo la dirección del método");
+			GeneradorCodigo.getInstance().write("\tCALL");*/
+		} // tambien agregar esto a constructor
 		// Proceso argumentos actuales
 		for (NodoExpresion exp : argumentosActuales) {
 			exp.generar();
 			GeneradorCodigo.getInstance().write("\tSWAP"); }
-		// Proceso encadenado
+	/*	// Proceso encadenado
 		if(getEncadenado() != null) {
 			getEncadenado().generar();
 		} else {
 		// Llamada
 			GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
 			GeneradorCodigo.getInstance().write("\tCALL");
+		}*/
+		// Llamada a constructor
+			GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
+			GeneradorCodigo.getInstance().write("\tCALL");
+		if(getEncadenado() != null) {
+			getEncadenado().generar();
 		}
+		//}
 	}
 	 
 }

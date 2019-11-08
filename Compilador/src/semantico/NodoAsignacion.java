@@ -31,7 +31,7 @@ public class NodoAsignacion extends NodoSentencia {
 				}
 				if (var instanceof VarLocal) {
 				if (unidadActual.getVarsParams().get(var.getNombre()) == null)
-					unidadActual.insertarVarMetodo(var);
+					unidadActual.insertarVarLocalParamMetodo(var);
 				else
 					throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
 				} /*else {
@@ -94,10 +94,10 @@ public class NodoAsignacion extends NodoSentencia {
 			ladoIzquierdo.generar();
 		} else {
 			Unidad unidadActual = Principal.ts.getUnidadActual();
-			if (vars.get(0) instanceof VarLocal) {
+			if (vars.get(0) instanceof VariableMetodo) {
 				GeneradorCodigo.getInstance().write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
 				for (Variable v : vars) {
-					Variable varParam = unidadActual.getVarParamPorNombre(v.getNombre());
+					Variable varParam = unidadActual.getVarLocalParamPorNombre(v.getNombre());
 					ladoDerecho.generar();
 					Principal.ts.getBloqueActual().agregarVariableLocal(varParam);
 					GeneradorCodigo.getInstance().write("\tSTORE " + varParam.getOffset());

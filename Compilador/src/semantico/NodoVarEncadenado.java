@@ -54,6 +54,7 @@ public class NodoVarEncadenado extends Encadenado {
 			/*
 			 * COMPLETAR
 			 */
+			System.out.println("falta");
 		}
 	}
 }

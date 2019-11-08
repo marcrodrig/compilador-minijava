@@ -95,8 +95,20 @@ class GeneradorCodigoTest {
 	}
 	
 	@Test
+	void testImpresionAsignacionAtributo() {
+		String[] args = { "src/test/resources/gci/impresionAsignacionAtributo.txt" };
+		Principal.main(args);
+	}
+	
+	@Test
 	void testImpresionAsignacionInlineAtributo() {
 		String[] args = { "src/test/resources/gci/impresionAsignacionInlineAtributo.txt" };
+		Principal.main(args);
+	}
+	
+	@Test
+	void testImpresionAsignacionInlineAtributoDosConstructores() {
+		String[] args = { "src/test/resources/gci/impresionAsignacionInlineAtributoDosConstructores.txt" };
 		Principal.main(args);
 	}
 }
