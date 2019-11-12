@@ -4,7 +4,7 @@ import java.util.List;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoLlamadaDirecta extends NodoPrimario {
 	private Token token;
@@ -26,7 +26,7 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
-		Clase claseActual = Principal.ts.getClaseActual();
+		Clase claseActual = CompiladorMiniJava.ts.getClaseActual();
 		List<Unidad> metodos = claseActual.getTodosMetodosPorNombre(token.getLexema());
 		metodo = null;
 		if (metodos != null) {
@@ -43,13 +43,13 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 			+ "] Error semántico: El método " + token.getLexema() + " con " + argumentosActuales.size() + " parámetros de la clase " + claseActual.getNombre() + " es estático, no se puede llamar directamente.");
 		if (metodo.getFormaMetodo().equals("dynamic")) {
-			Unidad unidadActual = Principal.ts.getUnidadActual();
+			Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
 			if (unidadActual instanceof Metodo) {
 				Metodo metodoContexto = (Metodo) unidadActual;
 				if (metodoContexto.getFormaMetodo().equals("static"))
-			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
-			+ "] Error semántico: El método " + token.getLexema() + " con " + argumentosActuales.size() + " parámetros de la clase " + claseActual.getNombre() + " es dinámico, no se puede llamar directamente en un contexto estático.");
-		}
+						throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+						+ "] Error semántico: El método " + token.getLexema() + " con " + argumentosActuales.size() + " parámetros de la clase " + claseActual.getNombre() + " es dinámico, no se puede llamar directamente en un contexto estático.");
+			}
 		}
 		int posicion = 1;
 		boolean conforma = true;
@@ -96,20 +96,21 @@ public class NodoLlamadaDirecta extends NodoPrimario {
 				GeneradorCodigo.getInstance().write("\tSWAP"); }
 			GeneradorCodigo.getInstance().write("\tDUP");
 			GeneradorCodigo.getInstance().write("\tLOADREF 0");
-			GeneradorCodigo.getInstance().write("\tLOADREF " + metodo.getOffset() + "\t; Cargo la dirección del método");
+			GeneradorCodigo.getInstance().write("\tLOADREF " + metodo.getOffset() + "\t; Cargo la dirección del método " + metodo.getNombre() + " (clase " + metodo.declaradaEn().getNombre() + ")");
 			GeneradorCodigo.getInstance().write("\tCALL");
-		} else { // ver bien esto
-			if(metodo.getTipo().getNombre().equals("void")) {
+		} else {
+			if(!metodo.getTipo().getNombre().equals("void")) {
 				GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo lugar para el retorno");
 				GeneradorCodigo.getInstance().write("\tSWAP");
-				for (NodoExpresion exp : argumentosActuales) {
-					exp.generar();
-					GeneradorCodigo.getInstance().write("\tSWAP"); }
-				GeneradorCodigo.getInstance().write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
-				GeneradorCodigo.getInstance().write("\tCALL\t; Llamo al metodo");
 			}
+			for (NodoExpresion exp : argumentosActuales) {
+				exp.generar();
+				GeneradorCodigo.getInstance().write("\tSWAP"); }
+			GeneradorCodigo.getInstance().write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
+			GeneradorCodigo.getInstance().write("\tCALL\t; Llamo al metodo");
 		}
-		if (getEncadenado() != null)
-			getEncadenado().generar();
+		Encadenado encadenado = getEncadenado();
+		if (encadenado != null)
+			encadenado.generar();
 	}
 }

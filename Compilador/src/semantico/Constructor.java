@@ -5,7 +5,7 @@ import java.util.List;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class Constructor extends Unidad {
 
@@ -17,10 +17,9 @@ public class Constructor extends Unidad {
 		for (Parametro paramConstructor : getParametros().values())
 			try {
 				paramConstructor.chequeoDeclaraciones();
-				// tenía 2 +
 				paramConstructor.setOffset(3 + getCantidadParametros() - paramConstructor.getPosicion());
 			} catch (ExcepcionSemantico e) {
-				Principal.ts.setRS();
+				CompiladorMiniJava.ts.setRSem();
 				System.out.println(e.toString());
 			}
 		for (Unidad ctor : constructores) {
@@ -36,14 +35,21 @@ public class Constructor extends Unidad {
 	@Override
 	protected void generar() {
 		GeneradorCodigo.getInstance().write(getLabel() + ":");
-
 		GeneradorCodigo.getInstance().write("\tLOADFP\t; Guardo enlace dinámico");
 		GeneradorCodigo.getInstance().write("\tLOADSP\t; Inicializo FP");
 		GeneradorCodigo.getInstance().write("\tSTOREFP");
 		GeneradorCodigo.getInstance().newLine();
-		
+		Clase claseActual = CompiladorMiniJava.ts.getClaseActual();
+		// Asignación atributos inline
+		if (claseActual.getCantidadInlineAtrs() > 0) {
+				GeneradorCodigo.getInstance().write("\t;Inicio Generación asignación atributos inline");
+				List<NodoSentencia> inlineAtrs = claseActual.getInlineAtrs();
+				for(NodoSentencia sentenciaInlineAtr : inlineAtrs)
+					sentenciaInlineAtr.generar();
+				GeneradorCodigo.getInstance().write("\t;Fin Generación asignación atributos inline");
+		}
         NodoBloque bloque = getBloque();
-        Principal.ts.setBloqueActual(bloque);
+        CompiladorMiniJava.ts.setBloqueActual(bloque);
         if (bloque == null)
         	GeneradorCodigo.getInstance().write("\tNOP");
         else {
@@ -53,7 +59,6 @@ public class Constructor extends Unidad {
         
         GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
         GeneradorCodigo.getInstance().write("\tRET " + (getCantidadParametros() + 1) + "\t; Retorno y libero espacio de los parametros del metodo y del THIS " + getNombre());
-
         GeneradorCodigo.getInstance().newLine();
 		
 	}

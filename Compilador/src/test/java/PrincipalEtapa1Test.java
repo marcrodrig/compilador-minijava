@@ -12,7 +12,7 @@ import java.io.PrintStream;
 import org.junit.Rule;
 import org.junit.Test;
 
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class PrincipalEtapa1Test {
 	
@@ -22,7 +22,7 @@ public class PrincipalEtapa1Test {
 	@Test
 	public void testSinIngresarArchivoEntrada() {
 	    String[] args = {};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	}
 	
 	@Test
@@ -35,7 +35,7 @@ public class PrincipalEtapa1Test {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 	    String[] args = {};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	    System.setOut(consola);
 		}catch (FileNotFoundException e) {
 			System.out.println("Error en la creación del archivo de salida.");
@@ -51,7 +51,7 @@ public class PrincipalEtapa1Test {
 	@Test
 	public void testConArchivoEntradaInexistente()  {
 	    String[] args = {"/NoExiste.txt"};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	}
 	
 	@Test
@@ -64,7 +64,7 @@ public class PrincipalEtapa1Test {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 		    String[] args = {"/NoExiste.txt"};
-		    Principal.main(args);
+		    CompiladorMiniJava.main(args);
 		    System.setOut(consola);
 		}catch (FileNotFoundException e) {
 			System.out.println("Error en la creación del archivo de salida.");
@@ -80,7 +80,7 @@ public class PrincipalEtapa1Test {
 	@Test
 	public void testArchivoEntradaSinExtension()  {
 	    String[] args = {"/sinextension"};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	}
 	
 	@Test
@@ -93,7 +93,7 @@ public class PrincipalEtapa1Test {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 		    String[] args = {"/sinextension"};
-		    Principal.main(args);
+		    CompiladorMiniJava.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
 				System.out.println("Error en la creación del archivo de salida.");
@@ -109,7 +109,7 @@ public class PrincipalEtapa1Test {
 	@Test
 	public void testSalidaConsola() {
 	    String[] args = {"src/test/resources/lexico/TestSuma.txt"};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	}
 	
 	@Test
@@ -122,7 +122,7 @@ public class PrincipalEtapa1Test {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 		    String[] args = {"src/test/resources/lexico/TestSuma.txt"};
-		    Principal.main(args);
+		    CompiladorMiniJava.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
 				System.out.println("Error en la creación del archivo de salida.");
@@ -146,7 +146,7 @@ public class PrincipalEtapa1Test {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 	    String[] args = {"src/test/resources/lexico/TestSuma.txt",pathSalida};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	    System.setOut(consola);
 		}catch (FileNotFoundException e) {
 			System.out.println("Error en la creación del archivo de salida.");
@@ -163,7 +163,7 @@ public class PrincipalEtapa1Test {
 	public void testArchivoSalidaSinExtension()  {
 		String archivoSalida = "C:/sinextension";
 	    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	}	
 	
 	@Test
@@ -178,7 +178,7 @@ public class PrincipalEtapa1Test {
 			System.setOut(salida);
 			String archivoSalida = "C:/sinextension";
 		    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
-		    Principal.main(args);
+		    CompiladorMiniJava.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
 				System.out.println("Error en la creación del archivo de salida.");
@@ -195,7 +195,7 @@ public class PrincipalEtapa1Test {
 	public void testSalidaArchivoInvalido()  {
 		String archivoSalida = "C:/out:salida.txt";
 	    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	}
 	
 	@Test
@@ -210,7 +210,7 @@ public class PrincipalEtapa1Test {
 			System.setOut(salida);
 			String archivoSalida = "C:/out:salida.txt";
 		    String[] args = {"src/test/resources/lexico/TestSuma.txt",archivoSalida};
-		    Principal.main(args);
+		    CompiladorMiniJava.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
 				System.out.println("Error en la creación del archivo de salida.");
@@ -234,7 +234,7 @@ public class PrincipalEtapa1Test {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 			String[] args = {"src/test/resources/lexico/TestCaracterInvalido.txt",pathSalida};
-		    Principal.main(args);
+		    CompiladorMiniJava.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
 				System.out.println("Error en la creación del archivo de salida.");
@@ -250,7 +250,7 @@ public class PrincipalEtapa1Test {
 	@Test
 	public void testClaseCompletaConsola()  {;
 		String[] args = {"src/test/resources/lexico/TestClaseCompleta.txt"};
-	    Principal.main(args);
+	    CompiladorMiniJava.main(args);
 	}
 	
 	@Test
@@ -264,7 +264,7 @@ public class PrincipalEtapa1Test {
 			salida = new PrintStream(new File(pathSalida)); // Creo el archivo de salida
 			System.setOut(salida);
 			String[] args = {"src/test/resources/lexico/TestClaseCompleta.txt"};
-		    Principal.main(args);
+		    CompiladorMiniJava.main(args);
 		    System.setOut(consola);
 			}catch (FileNotFoundException e) {
 				System.out.println("Error en la creación del archivo de salida.");
@@ -302,7 +302,7 @@ public class PrincipalEtapa1Test {
 	@Test
 	public void testRapido() {
 		String[] args = {"src/test/resources/lexico/TestRapido.txt"};
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 }

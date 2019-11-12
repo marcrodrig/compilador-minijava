@@ -1,16 +1,59 @@
 class A {
-	private int x = 9;
-	private int y;
+	private int je = 7;
+	private int d;
 	static void main() {
-		int num;
-		num = getX();
-		System.printS("A continuación debería mostrar un 9: ");
-		System.printIln(num);
-	}
-	static int getX() {
-		return x;
+		this.d = 8;
+		B b = new B();
+		System.printIln(b.x);
+		System.printIln(je);
+		return this.d;
 	}
 }
+class B {
+	public int x = 5;
+}
+
+/*class A {
+	public int x = 5;
+	private A a2 = new A();
+	static void main() {
+		A a1 = new A();
+		int y = a1.getX();
+		System.printIln(y);
+	}
+	dynamic int getX() {
+		System.printSln("p");
+		return this.a2.x;
+	}
+}*/
+
+
+/*class A {
+	private int x = 5;
+	private A a2 = new A();
+	static void main() {
+		A a1 = new A();
+		int y = a1.getX();
+		System.printIln(y);
+		//(m3()).m4();
+	}
+	dynamic int getX() {
+		System.printIln(x);
+		return a2.x;
+	}
+	static A m1() {
+		return new A();
+	}
+	dynamic void m2() {
+		System.printSln("m2");
+	}
+	static A m3() {
+		return new A();
+	}
+	dynamic void m4() {
+		System.printSln("m4");
+	}
+}*/
 
 /*class A {
 	private int x;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoConstructor extends NodoPrimario {
 	private Token token;
@@ -18,7 +18,7 @@ public class NodoConstructor extends NodoPrimario {
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
-		Clase clase = Principal.ts.getClase(token.getLexema());
+		Clase clase = CompiladorMiniJava.ts.getClase(token.getLexema());
 		if (clase == null)
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 					+ "] Error semántico: La clase \"" + token.getLexema() + "\" no está declarada.");
@@ -52,8 +52,8 @@ public class NodoConstructor extends NodoPrimario {
 	protected void generar() {
 		Clase claseActual = ctor.declaradaEn();
 		// Creación CIR
-		GeneradorCodigo.getInstance().write("\tRMEM 1\t; Creación CIR");
-		GeneradorCodigo.getInstance().write("\tPUSH " + (claseActual.cantidadAtributos() + 1) + "\t; Reservo lugar para variables de instancia y VT");
+		GeneradorCodigo.getInstance().write("\tRMEM 1\t; Creación CIR (clase " + claseActual.getNombre() + ")");
+		GeneradorCodigo.getInstance().write("\tPUSH " + (claseActual.cantidadAtributos() + 1) + "\t; Reservo lugar para variables de instancia y VT (clase " + claseActual.getNombre() + ")");
 		GeneradorCodigo.getInstance().write("\tPUSH simple_malloc");
 		GeneradorCodigo.getInstance().write("\tCALL");
 		// Asignación de la VT al CIR creado
@@ -62,35 +62,24 @@ public class NodoConstructor extends NodoPrimario {
 		GeneradorCodigo.getInstance().write("\tSTOREREF 0\t;Guardo referecia a VT");
 		GeneradorCodigo.getInstance().write("\tDUP");
 		// Asignación atributos inline
-		if (claseActual.getCantidadInlineAtrs() > 0) {
-			GeneradorCodigo.getInstance().write("\t;Generación atributos inline");
-			GeneradorCodigo.getInstance().write("\tPUSH " + claseActual.getMetodoAtr().getLabel());
-			GeneradorCodigo.getInstance().write("\tCALL");
-			/*GeneradorCodigo.getInstance().write("\tLOAD 3\t; Apilo THIS");
-			GeneradorCodigo.getInstance().write("\tDUP");
-			GeneradorCodigo.getInstance().write("\tLOADREF 0");
-			GeneradorCodigo.getInstance().write("\tLOADREF " + claseActual.getMetodoAtr().getOffset() + "\t; Cargo la dirección del método");
-			GeneradorCodigo.getInstance().write("\tCALL");*/
-		} // tambien agregar esto a constructor
+		//if (claseActual.getCantidadInlineAtrs() > 0) {
+		//	GeneradorCodigo.getInstance().write("\t;Generación atributos inline");
+		//	GeneradorCodigo.getInstance().write("\tPUSH " + claseActual.getMetodoAtr().getLabel());
+		//	GeneradorCodigo.getInstance().write("\tCALL");
+	//	}
 		// Proceso argumentos actuales
 		for (NodoExpresion exp : argumentosActuales) {
 			exp.generar();
 			GeneradorCodigo.getInstance().write("\tSWAP"); }
-	/*	// Proceso encadenado
-		if(getEncadenado() != null) {
-			getEncadenado().generar();
-		} else {
-		// Llamada
-			GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
-			GeneradorCodigo.getInstance().write("\tCALL");
-		}*/
 		// Llamada a constructor
-			GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
-			GeneradorCodigo.getInstance().write("\tCALL");
-		if(getEncadenado() != null) {
-			getEncadenado().generar();
+		GeneradorCodigo.getInstance().write("\tPUSH " + ctor.getLabel() + "\t; Apilo etiqueta del constructor");
+		GeneradorCodigo.getInstance().write("\tCALL");
+		//Proceso encadenado
+		Encadenado encadenado = getEncadenado();
+		if(encadenado != null) {
+			encadenado.generar();
 		}
-		//}
+
 	}
 	 
 }

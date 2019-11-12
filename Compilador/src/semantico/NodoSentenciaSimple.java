@@ -18,7 +18,6 @@ public class NodoSentenciaSimple extends NodoSentencia {
 	@Override
 	protected void generar() {
 		expresion.generar();
-		// ver encadenado??
 		if (!tipoExp.getNombre().equals("void"))
 			GeneradorCodigo.getInstance().write("\tPOP");
 	}

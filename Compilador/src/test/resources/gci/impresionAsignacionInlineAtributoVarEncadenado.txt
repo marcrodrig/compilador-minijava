@@ -1,0 +1,15 @@
+class A {
+	private B a2 = new B();
+	static void main() {
+		A a1 = new A();
+		int y = a1.getX();
+		System.printIln(y);
+	}
+	dynamic int getX() {
+		System.printSln("p");
+		return this.a2.x;
+	}
+}
+class B {
+	public int x = 5;
+}

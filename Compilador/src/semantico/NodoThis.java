@@ -2,7 +2,7 @@ package semantico;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoThis extends NodoPrimario {
 	private Token token;
@@ -14,9 +14,9 @@ public class NodoThis extends NodoPrimario {
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
-		Clase clase = Principal.ts.getUnidadActual().declaradaEn();
+		Clase clase = CompiladorMiniJava.ts.getUnidadActual().declaradaEn();
 		TipoRetorno tipoClase = new TipoClase(new Token("IdClase", clase.getNombre(), token.getNroLinea(), token.getNroColumna()));
-		Unidad unidad = Principal.ts.getUnidadActual();
+		Unidad unidad = CompiladorMiniJava.ts.getUnidadActual();
 		if (unidad instanceof Metodo) {
 			Metodo metodo = (Metodo) unidad;
 			if (metodo.getFormaMetodo().equals("static"))
@@ -36,5 +36,8 @@ public class NodoThis extends NodoPrimario {
 	@Override
 	protected void generar() {
 		 GeneradorCodigo.getInstance().write("\tLOAD 3\t; Cargo THIS");
+		 Encadenado encadenado = getEncadenado();
+		 if (encadenado != null)
+			 encadenado.generar();
 	}
 }

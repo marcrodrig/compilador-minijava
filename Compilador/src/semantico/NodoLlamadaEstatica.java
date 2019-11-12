@@ -4,7 +4,7 @@ import java.util.List;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoLlamadaEstatica extends NodoPrimario {
 	private Token tokenIdClase;
@@ -28,10 +28,9 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
-		Clase clase = Principal.ts.getClase(tokenIdClase.getLexema());
+		Clase clase = CompiladorMiniJava.ts.getClase(tokenIdClase.getLexema());
 		if (clase != null) {
 		List<Unidad> metodos = clase.getTodosMetodosPorNombre(tokenIdMetVar.getLexema());
-		//Metodo metodo = null;
 		if (metodos != null) {
 			for (Unidad u : metodos) {
 				Metodo met = (Metodo) u;
@@ -72,5 +71,8 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 			exp.generar();
 		GeneradorCodigo.getInstance().write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
 		GeneradorCodigo.getInstance().write("\tCALL\t; Llamo al metodo");
+		Encadenado encadenado = getEncadenado();
+		if (encadenado != null)
+			encadenado.generar();
 	}
 }

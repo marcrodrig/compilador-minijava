@@ -14,7 +14,7 @@ public class TablaSimbolos {
 	private Clase claseActual;
 	private Unidad unidadActual;
 	private Metodo main;
-	private boolean recuperacionSemantica;
+	private boolean recuperacionSintactica, recuperacionSemantica;
 	private NodoBloque bloqueActual;
 
 	private TablaSimbolos() {
@@ -64,7 +64,6 @@ public class TablaSimbolos {
 		metodo = new Metodo(token, "static", new TipoVoid(), false, parametros);
 		instanciaUnica.setUnidadActual(metodo);
 		bloque = new NodoBloquePrintB();
-	//	metodo.setOffset(1);
 		instanciaUnica.setBloque(bloque);
 		instanciaUnica.insertarUnidad(metodo);
 		parametros = new LinkedHashMap<String, Parametro>();
@@ -184,20 +183,27 @@ public class TablaSimbolos {
 		clases.put(clase.getNombre(), clase);
 	}
 
-	public void insertarAtributo(Variable varIns) {
-		claseActual.getAtributos().put(varIns.getNombre(), (VariableInstancia) varIns);
-		unidadActual.insertarVarIns(varIns);
+	public void insertarAtributo(VariableInstancia varIns) {
+		claseActual.insertarAtributo(varIns);
 	}
 
 	public void insertarUnidad(Unidad unidad) {
 		claseActual.getUnidades().computeIfAbsent(unidad.getNombre(), k -> new ArrayList<>()).add(unidad);
 	}
 
+	public boolean recuperacionSintactica() {
+		return recuperacionSintactica;
+	}
+	
 	public boolean recuperacionSemantica() {
 		return recuperacionSemantica;
 	}
 
-	public void setRS() {
+	public void setRSin() {
+		recuperacionSintactica = true;
+	}
+	
+	public void setRSem() {
 		recuperacionSemantica = true;
 	}
 
@@ -213,7 +219,7 @@ public class TablaSimbolos {
 				setClaseActual(c);
 				c.chequeoDeclaraciones();
 			} catch (ExcepcionSemantico e) {
-				getInstance().setRS();
+				getInstance().setRSem();
 				System.out.println(e.toString());
 			}
 		}

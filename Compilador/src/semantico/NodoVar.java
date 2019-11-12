@@ -1,10 +1,9 @@
 package semantico;
 
 import java.util.HashMap;
-
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoVar extends NodoPrimario {
 	private Token token;
@@ -16,19 +15,19 @@ public class NodoVar extends NodoPrimario {
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
-		Unidad unidadActual = Principal.ts.getUnidadActual();
+		Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
 		Tipo tipo = null;
-		HashMap<String, Variable> varsParamsUnidadActual = unidadActual.getVarsParams(); 
-		if (varsParamsUnidadActual.containsKey(token.getLexema()))
-			tipo = varsParamsUnidadActual.get(token.getLexema()).getTipo();
+		HashMap<String, VariableMetodo> varsLocalesParamsUnidadActual = unidadActual.getVarsLocalesParams(); 
+		if (varsLocalesParamsUnidadActual.containsKey(token.getLexema()))
+			tipo = varsLocalesParamsUnidadActual.get(token.getLexema()).getTipo();
 		else {
-			Clase claseActual = Principal.ts.getClaseActual();
+			Clase claseActual = CompiladorMiniJava.ts.getClaseActual();
 			VariableInstancia varIns = claseActual.getAtributoPorNombre(token.getLexema());
-			if (varIns != null) { // && !varIns.getVisibilidad().equals("private")) {
-				Unidad unidad = Principal.ts.getUnidadActual();
+			if (varIns != null) {
+				Unidad unidad = CompiladorMiniJava.ts.getUnidadActual();
 				if (unidad instanceof Metodo) {
 					Metodo metodo = (Metodo) unidad;
-					if (metodo.getFormaMetodo().equals("static")) //&& varIns instanceof VariableInstancia)
+					if (metodo.getFormaMetodo().equals("static"))
 						throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 						+ "] Error semántico: En método estático no se puede acceder a un atributo de instancia.");
 				}
@@ -50,26 +49,13 @@ public class NodoVar extends NodoPrimario {
 
 	@Override
 	protected void generar() {
-		/*Si evar es variable de instancia
-			Gen LOAD 3
-			Si(no es ladoIzquierdoAsig o cadena no es nulo)
-				Gen LOADREF evar.offset
-			Sino
-				Gen SWAP
-				Gen STOREREF evar.offset
-		Sino si evar es parámetro/local
-			Si(no es ladoIzquierdoAsig o cadena no es nulo
-				Gen LOAD evar.offset
-			Sino
-				Gen STORE evar.offset
-		Si cadena es no nulo
-			cadena.generar*/
 		Encadenado encadenado = getEncadenado();
-		Clase claseActual = Principal.ts.getClaseActual();
+		Clase claseActual = CompiladorMiniJava.ts.getClaseActual();
 		VariableInstancia varIns = claseActual.getAtributoPorNombre(token.getLexema());
-		Unidad unidadActual = Principal.ts.getUnidadActual();
-		Variable varParam = unidadActual.getVarLocalParamPorNombre(token.getLexema());
-		if (varIns != null && varParam == null) { //restringir?
+		Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
+		Variable varLocal = unidadActual.getBloque().getVarLocal(token.getLexema());
+		Parametro param = unidadActual.getParametroPorNombre(token.getLexema());
+		if (varIns != null) {
 			GeneradorCodigo.getInstance().write("\tLOAD 3");
 			if (!esLadoIzqAsig || encadenado != null)
 				GeneradorCodigo.getInstance().write("\tLOADREF " + varIns.getOffset());
@@ -78,16 +64,22 @@ public class NodoVar extends NodoPrimario {
 				GeneradorCodigo.getInstance().write("\tSTOREREF " + varIns.getOffset());
 			}
 		} else {
-			if (varParam != null) {
+			if (varLocal != null) {
 				if (!esLadoIzqAsig || encadenado != null)
-					GeneradorCodigo.getInstance().write("\tLOAD " + varParam.getOffset()+"\t;chequear");
-				else {
-					GeneradorCodigo.getInstance().write("\tSTORE " + varParam.getOffset());
+					GeneradorCodigo.getInstance().write("\tLOAD " + varLocal.getOffset());
+				else
+					GeneradorCodigo.getInstance().write("\tSTORE " + varLocal.getOffset());
+			} else { // es parámetro
+				if (param != null) {
+					if (!esLadoIzqAsig || encadenado != null)
+						GeneradorCodigo.getInstance().write("\tLOAD " + param.getOffset());
+					else
+						GeneradorCodigo.getInstance().write("\tSTORE " + param.getOffset());
 				}
 			}
 		}
 		if (encadenado != null)
 			encadenado.generar();
 	}
-	
+
 }

@@ -7,12 +7,12 @@ import java.util.List;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public abstract class Unidad {
 	private Token token;
 	private LinkedHashMap<String, Parametro> parametros;
-	private HashMap<String, Variable> varsParams;
+	private HashMap<String, VariableMetodo> varsParams;
 	private Clase declaradaEn;
 	private NodoBloque bloque;
 	private int offset, offsetVarLocal, offsetVarIns;
@@ -23,7 +23,7 @@ public abstract class Unidad {
 		this.parametros = parametros;
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		this.declaradaEn = ts.getClaseActual();
-		varsParams = new HashMap<String, Variable>();
+		varsParams = new HashMap<String, VariableMetodo>();
 	}
 
 	public String getNombre() {
@@ -56,8 +56,8 @@ public abstract class Unidad {
 		return parametros.size();
 	}
 	
-	public int getCantidadVariables() {
-		return Math.abs(getCantidadParametros() - varsParams.size());
+	public int getCantidadVarsParams() {
+		return varsParams.size();
 	}
 	
 	public Clase declaradaEn() {
@@ -74,17 +74,24 @@ public abstract class Unidad {
 	
 	public abstract void chequeoDeclaraciones(List<Unidad> unidades) throws ExcepcionSemantico;
 
-	public void insertarVarLocalParamMetodo(Variable varMet) {
-		varMet.setOffset(getOffsetVarLocal());
-        setOffsetVarLocal(getOffsetVarLocal() - 1);
-		varsParams.put(varMet.getNombre(),(VariableMetodo) varMet);
+	public void insertarVariableMetodo(VariableMetodo var) {
+		if (var instanceof VarLocal)
+			insertarVarLocal(var);
+		else
+			insertarParametro(var);
 	}
 	
-	public void insertarVarIns(Variable varIns) {
-		varsParams.put(varIns.getNombre(),(VariableInstancia) varIns);
+	public void insertarVarLocal(VariableMetodo varLoc) {
+		varLoc.setOffset(getOffsetVarLocal());
+        setOffsetVarLocal(getOffsetVarLocal() - 1);
+		varsParams.put(varLoc.getNombre(),(VarLocal) varLoc);
+	}
+	
+	public void insertarParametro(VariableMetodo param) {
+		varsParams.put(param.getNombre(),(Parametro) param);
 	}
 
-	public HashMap<String, Variable> getVarsParams() {
+	public HashMap<String, VariableMetodo> getVarsLocalesParams() {
 		return varsParams;
 	}
 
@@ -93,7 +100,7 @@ public abstract class Unidad {
 	}
 	
 	public void chequeoSentencias() throws ExcepcionSemantico {
-		Principal.ts.setBloqueActual(null);
+		CompiladorMiniJava.ts.setBloqueActual(null);
 		if (bloque != null)
 			bloque.chequear();
 		
@@ -134,4 +141,10 @@ public abstract class Unidad {
 	}
 	
 	protected abstract void generar();
+
+	public void eliminarVarLocal(String nombreVarLocal) {
+		varsParams.remove(nombreVarLocal);		
+	}
+
+	
 }

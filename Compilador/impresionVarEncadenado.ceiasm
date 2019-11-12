@@ -162,22 +162,24 @@ System_System_12:
 .DATA
 VT_A:
 DW getX_A_13
-DW setear_A_14
 .CODE
 main_A_0:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 1	; Reservo espacio para vars locales
+	RMEM 0	; Reservo espacio para vars locales
 	RMEM 1	; Creación CIR
-	PUSH 2	; Reservo lugar para variables de instancia y VT
+	PUSH 3	; Reservo lugar para variables de instancia y VT
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignación de la VT al CIR creado
 	PUSH VT_A
 	STOREREF 0	;Guardo referecia a VT
 	DUP
+	;Generación atributos inline
+	PUSH atrInline_A_14
+	CALL
 	PUSH A_A_15	; Apilo etiqueta del constructor
 	CALL
 	RMEM 1	; Reservo lugar para el retorno
@@ -186,15 +188,9 @@ main_A_0:
 	LOADREF 0
 	LOADREF 0	; Cargo la dirección del método
 	CALL
-.DATA
-string16: DW "A continuaciÃ³n deberÃ­a mostrar un 9: ",0
-.CODE
-	PUSH string16	; Apilo etiqueta del String
-	PUSH printS_System_6	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	FMEM 1 # Libero espacio de variables locales al bloque
+	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
 getX_A_13:
@@ -203,12 +199,7 @@ getX_A_13:
 	STOREFP
 
 	RMEM 0	; Reservo espacio para vars locales
-	LOAD 3	; Apilo THIS
-	DUP
-	LOADREF 0
-	LOADREF 1	; Cargo la dirección del método
-	CALL
-	LOAD 3
+	LOAD 3	; Cargo THIS
 	LOADREF 1
 	STORE 4	; Valor de retorno del metodo getX
 	STOREFP
@@ -216,19 +207,23 @@ getX_A_13:
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getX
-setear_A_14:
+atrInline_A_14:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
 	RMEM 0	; Reservo espacio para vars locales
-	PUSH 9	; entero
+	PUSH 2	; entero
 	LOAD 3
 	SWAP
 	STOREREF 1
+	PUSH 3	; entero
+	LOAD 3
+	SWAP
+	STOREREF 2
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS setear
+	RET 0	; Retorno y libero espacio de los parametros del metodo atrInline
 A_A_15:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP

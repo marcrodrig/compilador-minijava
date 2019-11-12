@@ -42,8 +42,6 @@ public class NodoLiteral extends NodoOperando {
 		case "stringLiteral":
 			TipoString.generar(token);
 			break;
-		/*default:
-			return null;*/
 	}
 		
 	}

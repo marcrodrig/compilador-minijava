@@ -1,0 +1,18 @@
+class A {
+	private int x;
+	dynamic void m1(int v) {
+		System.printSln("m1A");
+	}
+	dynamic void m2() {
+		System.printSln("m2A");
+	}
+}
+
+class B extends A {
+	public int y;
+	dynamic void m2() {
+		System.printSln("m2B");
+	}
+	dynamic void m3() {}
+	static void main() {}
+}

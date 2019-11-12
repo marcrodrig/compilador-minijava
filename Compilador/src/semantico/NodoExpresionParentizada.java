@@ -20,7 +20,9 @@ public class NodoExpresionParentizada extends NodoPrimario {
 	@Override
 	protected void generar() {
 		expresion.generar();
-		// ver encadenado
+		Encadenado encadenado = getEncadenado();
+		if (encadenado != null)
+			encadenado.generar();
 	}
 	
 }

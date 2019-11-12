@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class Metodo extends Unidad {
 	private String formaMetodo;
@@ -43,13 +43,13 @@ public class Metodo extends Unidad {
 
 	private void chequeoExistenciaTipoRetorno() throws ExcepcionSemantico {
 		if (tipo instanceof TipoClase)
-			if (Principal.ts.getClase(tipo.getNombre()) == null)
+			if (CompiladorMiniJava.ts.getClase(tipo.getNombre()) == null)
 				throw new ExcepcionSemantico("[" + getNroLinea() + ":" + getNroColumna()
 						+ "] Error semántico: El tipo de retorno " + tipo.getNombre() + " del método "
 						+ getNombre() + " no está definido.");
 	}
 
-	public void chequeoRedefinicionMetodo(Metodo met2) throws ExcepcionSemantico {
+	public boolean chequeoRedefinicionMetodo(Metodo met2) throws ExcepcionSemantico {
 		boolean redefinido = getTipo().getNombre().equals(met2.getTipo().getNombre())
 				&& getFormaMetodo().equals(met2.getFormaMetodo());
 		int posicion = 1;
@@ -66,6 +66,7 @@ public class Metodo extends Unidad {
 		if (redefinido && met2.isMetodoFinal())
 			throw new ExcepcionSemantico("[" + getNroLinea() + ":" + getNroColumna()
 					+ "] Error semántico: El método " + getNombre() + " no se puede sobreescribir.");
+		return redefinido;
 	}
 
 	public boolean isMetodoMain() {
@@ -81,17 +82,9 @@ public class Metodo extends Unidad {
 	                paramMetodo.setOffset(2 + getCantidadParametros() - paramMetodo.getPosicion());
 	            } else {
 	                paramMetodo.setOffset(3 + getCantidadParametros() - paramMetodo.getPosicion());
-	            }    /**
-	                 * VER SI AGREGAR
-	                 * vars.put(p.getNombre(), p);
-	                 */
-				//if (unidadActual.getVarsParams().get(var.getNombre()) == null)
-				// sería esto	
-			//	unidadActual.insertarVarMetodo(paramMetodo);
-			//	else
-			//		throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
+	            }
 			} catch (ExcepcionSemantico e) {
-				Principal.ts.setRS();
+				CompiladorMiniJava.ts.setRSem();
 				System.out.println(e.toString());
 			}
 		chequeoMetodosSobrecargados(listaMetodos);
@@ -100,28 +93,13 @@ public class Metodo extends Unidad {
 	@Override
 	protected void generar() {
 		GeneradorCodigo.getInstance().write(getLabel() + ":");
-
 		GeneradorCodigo.getInstance().write("\tLOADFP\t; Guardo enlace dinámico");
 		GeneradorCodigo.getInstance().write("\tLOADSP\t; Inicializo FP");
 		GeneradorCodigo.getInstance().write("\tSTOREFP");
 		GeneradorCodigo.getInstance().newLine();
 		NodoBloque bloque = getBloque();
-		Principal.ts.setBloqueActual(bloque);
-	//	if (bloque.getCantidadVarsLocales() > 1)
+		CompiladorMiniJava.ts.setBloqueActual(bloque);
 		GeneradorCodigo.getInstance().write("\tRMEM " + bloque.getCantidadVarsLocales() + "\t; Reservo espacio para vars locales");
-		/*if (isMetodoMain()) {
-			Clase claseMetodoMain = declaradaEn();
-			if (claseMetodoMain.getCantidadInlineAtrs() > 0) {
-				GeneradorCodigo.getInstance().write("\t;Generación atributos inline");
-				//GeneradorCodigo.getInstance().write("\tPUSH " + claseMetodoMain.getMetodoAtr().getLabel());
-				//GeneradorCodigo.getInstance().write("\tCALL");
-				GeneradorCodigo.getInstance().write("\tLOAD 3\t; Apilo THIS");
-				GeneradorCodigo.getInstance().write("\tDUP");
-				GeneradorCodigo.getInstance().write("\tLOADREF 0");
-				GeneradorCodigo.getInstance().write("\tLOADREF " + claseMetodoMain.getMetodoAtr().getOffset() + "\t; Cargo la dirección del método");
-				GeneradorCodigo.getInstance().write("\tCALL");
-			}
-		}*/
         bloque.generar();
         GeneradorCodigo.getInstance().write("\tSTOREFP\t; Restablezco el contexto");
         if (formaMetodo.equals("static")) {

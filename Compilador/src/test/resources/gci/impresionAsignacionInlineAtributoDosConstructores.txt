@@ -3,10 +3,10 @@ class A {
 	private int y;
 	static void main() {
 		int num1,num2;
-	//	num1 = new A().getX();
+		num1 = new A().getX();
 		num2 = new A(10).getY();
-	//	System.printS("A continuación debería mostrar un 9: ");
-	//	System.printIln(num1);
+		System.printS("A continuación debería mostrar un 9: ");
+		System.printIln(num1);
 		System.printS("A continuación debería mostrar un 27: ");
 		System.printIln(num2);
 	}
@@ -16,10 +16,7 @@ class A {
 	dynamic int getY() {
 		return y;
 	}
-	dynamic int getZ(int x) {
-		return x;
-	}
-	//A(){}
+	A(){}
 	A(int x) {
 		System.printS("A continuación debería mostrar un 10: ");
 		System.printIln(x);

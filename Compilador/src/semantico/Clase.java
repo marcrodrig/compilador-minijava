@@ -7,24 +7,21 @@ import java.util.List;
 import java.util.Map;
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class Clase {
 	private Token token;
 	private String superclase;
-	private HashMap<String, VariableInstancia> atributos;
+	private LinkedHashMap<String, VariableInstancia> atributos;
 	private LinkedHashMap<String, List<Unidad>> unidades;
-	private boolean visitadoHerenciaCircular;
-	private boolean consolidada;
+	private boolean visitadoHerenciaCircular, hc, consolidada;
 	private Metodo metodoMain;
-	private boolean hc;
 	private List<NodoSentencia> inlineAtrs;
-	private Metodo metodoAtr;
 
 	public Clase(Token token, String superclase) {
 		this.token = token;
 		this.superclase = superclase;
-		atributos = new HashMap<String, VariableInstancia>();
+		atributos = new LinkedHashMap<String, VariableInstancia>();
 		unidades = new LinkedHashMap<String, List<Unidad>>();
 		inlineAtrs = new ArrayList<NodoSentencia>();
 	}
@@ -44,9 +41,13 @@ public class Clase {
 	public String getSuperclase() {
 		return superclase;
 	}
-	
+
 	public HashMap<String, VariableInstancia> getAtributos() {
 		return atributos;
+	}
+	
+	public void insertarAtributo(VariableInstancia varIns) {
+		atributos.put(varIns.getNombre(), varIns);
 	}
 
 	public VariableInstancia getAtributoPorNombre(String nombreAtributo) {
@@ -60,14 +61,14 @@ public class Clase {
 	public Map<String, List<Unidad>> getUnidades() {
 		return unidades;
 	}
-	
+
 	public List<Unidad> getConstructores() {
 		List<Unidad> constructores = unidades.get(getNombre());
 		if (constructores == null)
 			constructores = new ArrayList<Unidad>();
 		return constructores;
 	}
-	
+
 	// Posición desde 1
 	public Unidad getConstructor(int index) {
 		return getConstructores().get(index - 1);
@@ -80,7 +81,7 @@ public class Clase {
 	}
 
 	public List<Unidad> getTodosMetodosPorNombre(String nombreMetodo) {
-		List <Unidad> lista = getTodosMetodos().get(nombreMetodo);
+		List<Unidad> lista = getTodosMetodos().get(nombreMetodo);
 		if (lista == null)
 			return new ArrayList<Unidad>();
 		else
@@ -106,12 +107,16 @@ public class Clase {
 		return consolidada;
 	}
 	
-	public boolean tieneMetodoMain() {
-		return metodoMain != null;
+	public void setConsolidada() {
+		consolidada = true;
 	}
 
 	public boolean tieneHerenciaCircular() {
 		return hc;
+	}
+	
+	public boolean tieneMetodoMain() {
+		return metodoMain != null;
 	}
 
 	public void chequeoDeclaraciones() throws ExcepcionSemantico {
@@ -123,7 +128,7 @@ public class Clase {
 	}
 
 	private void chequeoExistenciaSuperclase() throws ExcepcionSemantico {
-		if (Principal.ts.getClase(superclase) == null && !getNombre().equals("Object"))
+		if (CompiladorMiniJava.ts.getClase(superclase) == null && !getNombre().equals("Object"))
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + "] Error semántico: La superclase " + superclase
 					+ " de " + getNombre() + " no está definida.");
 	}
@@ -137,8 +142,8 @@ public class Clase {
 		String ancestro = superclase;
 		boolean continuar = !getNombre().equals("Object") && !ancestro.equals("Object");
 		while (continuar) {
-			if (Principal.ts.getClases().containsKey(ancestro) && !Principal.ts.getClase(ancestro).getVisitadoHC()) {
-				ancestro = Principal.ts.getClase(ancestro).getSuperclase();
+			if (CompiladorMiniJava.ts.getClases().containsKey(ancestro) && !CompiladorMiniJava.ts.getClase(ancestro).getVisitadoHC()) {
+				ancestro = CompiladorMiniJava.ts.getClase(ancestro).getSuperclase();
 				if (getNombre().equals(ancestro)) {
 					hc = true;
 					throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
@@ -156,28 +161,14 @@ public class Clase {
 			try {
 				varIns.chequeoDeclaraciones();
 			} catch (ExcepcionSemantico e) {
-				Principal.ts.setRS();
+				CompiladorMiniJava.ts.setRSem();
 				System.out.println(e.toString());
 			}
 		setOffsetAtrs();
-		chequeoAtributosInline();
-	}
-
-	private void chequeoAtributosInline() {
-		if (getCantidadInlineAtrs() > 0) {
-			Token token = new Token("idMetVar", "atrInline", 0, 0);
-			LinkedHashMap<String, Parametro> parametros = new LinkedHashMap<String, Parametro>();
-			metodoAtr = new Metodo(token, "static", new TipoVoid(), false, parametros);
-			NodoBloque bloque = new NodoBloque();
-			for(NodoSentencia sentencia : inlineAtrs)
-				bloque.insertarSentencia(sentencia);
-			metodoAtr.setBloque(bloque);
-			Principal.ts.insertarUnidad(metodoAtr);
-		}
 	}
 
 	private void chequeoConstructores() {
-		List <Unidad> constructores = getConstructores();
+		List<Unidad> constructores = getConstructores();
 		if (constructores.isEmpty()) {
 			agregarConstructorPredefinido();
 		} else {
@@ -185,7 +176,7 @@ public class Clase {
 				try {
 					ctor.chequeoDeclaraciones(constructores);
 				} catch (ExcepcionSemantico e) {
-					Principal.ts.setRS();
+					CompiladorMiniJava.ts.setRSem();
 					System.out.println(e.toString());
 				}
 		}
@@ -194,11 +185,9 @@ public class Clase {
 	private void agregarConstructorPredefinido() {
 		Token token = new Token("idClase", getNombre(), 0, 0);
 		Unidad ctor = new Constructor(token, new LinkedHashMap<String, Parametro>());
-		Principal.ts.setUnidadActual(ctor);
-		//NodoBloque bloque = new NodoBloque();
-		//Principal.ts.setBloque(bloque);
-		Principal.ts.setBloque(null);
-		Principal.ts.insertarUnidad(ctor);
+		CompiladorMiniJava.ts.setUnidadActual(ctor);
+		CompiladorMiniJava.ts.setBloque(null);
+		CompiladorMiniJava.ts.insertarUnidad(ctor);
 	}
 
 	private void chequeoMetodos() {
@@ -208,35 +197,46 @@ public class Clase {
 				try {
 					if (metodo.isMetodoMain()) {
 						metodoMain = metodo;
-						Principal.ts.chequeoMain(this, metodoMain);
+						CompiladorMiniJava.ts.chequeoMain(this, metodoMain);
 					} else
 						metodo.chequeoDeclaraciones(listaMetodos);
 				} catch (ExcepcionSemantico e) {
-					Principal.ts.setRS();
+					CompiladorMiniJava.ts.setRSem();
 					System.out.println(e.toString());
 				}
 			}
 		setOffsetMetodos();
 	}
-	
+
 	private void setOffsetMetodos() {
-        Clase clasePadre = Principal.ts.getClase(superclase);
-        if (clasePadre != null) { // No es Object
-        int cantMetodosPadre = clasePadre.getCantidadMetodosDynamic();
-        for (String nombreMetodo : getTodosMetodos().keySet()) {
-           // if (s.charAt(0) != '@') {
-           //     Metodo m = metodos.get(s);
-        	for (Unidad u : getTodosMetodosPorNombre(nombreMetodo)) {
-        		Metodo metodo = (Metodo) u;
-                if (!metodo.getNombre().equals(getNombre()) && !metodo.getFormaMetodo().equals("static")) {
-                    if (!clasePadre.tieneMetodo(metodo)) {
-                        metodo.setOffset(cantMetodosPadre++);
-                    }
-                }
-            }
-        }
-        }
-    }
+		Clase clasePadre = CompiladorMiniJava.ts.getClase(superclase);
+		if (clasePadre != null) { // No es Object
+			int cantMetodosPadre = clasePadre.getCantidadMetodosDynamic();
+			for (String nombreMetodo : getTodosMetodos().keySet()) {
+				for (Unidad u : getTodosMetodosPorNombre(nombreMetodo)) {
+					Metodo metodo = (Metodo) u;
+					boolean redefine = false;
+					for (Unidad u2 : clasePadre.getTodosMetodosPorNombre(nombreMetodo))
+						if (!redefine) {
+							Metodo metodo2 = (Metodo) u2;
+							try {
+								redefine = metodo.chequeoRedefinicionMetodo(metodo2);
+							} catch (ExcepcionSemantico e) {
+								e.printStackTrace();
+							}
+							if (redefine)
+								metodo.setOffset(metodo2.getOffset());
+						}
+					if (!redefine && !metodo.getNombre().equals(getNombre())
+							&& !metodo.getFormaMetodo().equals("static")) {
+						if (!clasePadre.tieneMetodo(metodo)) {
+							metodo.setOffset(cantMetodosPadre++);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	private boolean tieneMetodo(Metodo metodo) {
 		boolean tiene = false;
@@ -260,32 +260,29 @@ public class Clase {
 	}
 
 	public void consolidacion() throws ExcepcionSemantico {
-		if (Principal.ts.getClase(superclase) != null) {
-			while (!Principal.ts.getClase(superclase).estaConsolidada())
-				Principal.ts.getClase(superclase).consolidacion();
+		if (CompiladorMiniJava.ts.getClase(superclase) != null) {
+			while (!CompiladorMiniJava.ts.getClase(superclase).estaConsolidada())
+				CompiladorMiniJava.ts.getClase(superclase).consolidacion();
 			consolidacionAtributos();
 			consolidacionMetodos();
 			setConsolidada();
 		}
 	}
 
-	public void setConsolidada() {
-		consolidada = true;
-	}
-
 	private void consolidacionAtributos() {
-		HashMap<String, VariableInstancia> atributosAncestro = Principal.ts.getClase(superclase).getAtributos();
+		HashMap<String, VariableInstancia> atributosAncestro = CompiladorMiniJava.ts.getClase(superclase)
+				.getAtributos();
 		for (String nombreAtributoAncestro : atributosAncestro.keySet())
 			if (getAtributoPorNombre(nombreAtributoAncestro) == null)
 				atributos.put(nombreAtributoAncestro, atributosAncestro.get(nombreAtributoAncestro));
 	}
 
 	private void consolidacionMetodos() {
-		Map<String, List<Unidad>> metodosAncestro = Principal.ts.getClase(superclase).getTodosMetodos();
+		Map<String, List<Unidad>> metodosAncestro = CompiladorMiniJava.ts.getClase(superclase).getTodosMetodos();
 		for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
-			if (getTodosMetodosPorNombre(nombreMetodoAncestro) == null) {
-				unidades.put(nombreMetodoAncestro, Principal.ts.getClase(superclase).getTodosMetodosPorNombre(nombreMetodoAncestro));
-				// chequear si setear método main
+			if (getTodosMetodosPorNombre(nombreMetodoAncestro).isEmpty()) {
+				unidades.put(nombreMetodoAncestro,
+						CompiladorMiniJava.ts.getClase(superclase).getTodosMetodosPorNombre(nombreMetodoAncestro));
 			} else {
 				List<Unidad> metodosActual = unidades.get(nombreMetodoAncestro);
 				List<Unidad> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
@@ -298,18 +295,18 @@ public class Clase {
 							try {
 								metodo1.chequeoRedefinicionMetodo(metodo2);
 							} catch (ExcepcionSemantico e) {
-								Principal.ts.setRS();
+								CompiladorMiniJava.ts.setRSem();
 								System.out.println(e.toString());
 							}
 						} else {
 							listaMetodoAgregar.add(metodo2);
-					if (metodo2.isMetodoMain())
-						metodoMain = metodo2;
-				}
+							if (metodo2.isMetodoMain())
+								metodoMain = metodo2;
+						}
 					}
 				if (!listaMetodoAgregar.isEmpty()) {
 					for (Unidad metodo : listaMetodoAgregar)
-						Principal.ts.insertarUnidad(metodo);
+						CompiladorMiniJava.ts.insertarUnidad(metodo);
 				}
 			}
 		}
@@ -320,18 +317,17 @@ public class Clase {
 			try {
 				inlineAtr.chequear();
 			} catch (ExcepcionSemantico e) {
-				Principal.ts.setRS();
+				CompiladorMiniJava.ts.setRSem();
 				System.out.println(e.toString());
 			}
 		}
 		for (Unidad u : getTodasUnidades()) {
-			if (u.declaradaEn().getNombre().equals(Principal.ts.getClaseActual().getNombre())) {
-				Principal.ts.setUnidadActual(u);
+			if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.ts.getClaseActual().getNombre())) {
+				CompiladorMiniJava.ts.setUnidadActual(u);
 				try {
-					if (u != metodoAtr)
-						u.chequeoSentencias();
+					u.chequeoSentencias();
 				} catch (ExcepcionSemantico e) {
-					Principal.ts.setRS();
+					CompiladorMiniJava.ts.setRSem();
 					System.out.println(e.toString());
 				}
 			}
@@ -340,7 +336,7 @@ public class Clase {
 
 	private List<Unidad> getTodasUnidades() {
 		List<Unidad> todasUnidades = new ArrayList<Unidad>();
-		for(String nombreUnidad : unidades.keySet()) {
+		for (String nombreUnidad : unidades.keySet()) {
 			List<Unidad> listaUnidad = unidades.get(nombreUnidad);
 			todasUnidades.addAll(listaUnidad);
 		}
@@ -349,21 +345,21 @@ public class Clase {
 
 	public boolean esDescendiente(String nombreClase) {
 		boolean descendiente = false;
-		Clase hereda = Principal.ts.getClase(getSuperclase());
+		Clase hereda = CompiladorMiniJava.ts.getClase(getSuperclase());
 		while (!false && !hereda.getNombre().equals("Object"))
 			descendiente = hereda.getNombre().equals(nombreClase);
-			hereda = Principal.ts.getClase(hereda.getSuperclase());
+		hereda = CompiladorMiniJava.ts.getClase(hereda.getSuperclase());
 		return descendiente;
 	}
 
 	public List<NodoSentencia> getInlineAtrs() {
 		return inlineAtrs;
 	}
-	
+
 	public int getCantidadInlineAtrs() {
 		return inlineAtrs.size();
 	}
-	
+
 	public void insertarAsignacionInlineAtributo(NodoSentencia sentencia) {
 		inlineAtrs.add(sentencia);
 	}
@@ -371,17 +367,16 @@ public class Clase {
 	private int getCantidadAtrs() {
 		return atributos.size();
 	}
-	
+
 	private void setOffsetAtrs() {
-		Clase clasePadre = Principal.ts.getClase(superclase);
-        if (clasePadre != null) { // No es Object
-        	int cantAtrsPadre = clasePadre.getCantidadAtrs();
-        //	cantAtrsPadre++;
-        	for (VariableInstancia v : atributos.values())
-        		v.setOffset(++cantAtrsPadre);
-        }
+		Clase clasePadre = CompiladorMiniJava.ts.getClase(superclase);
+		if (clasePadre != null) { // No es Object
+			int cantAtrsPadre = clasePadre.getCantidadAtrs();
+			for (VariableInstancia v : atributos.values())
+				v.setOffset(++cantAtrsPadre);
+		}
 	}
-	
+
 	public void generar() {
 		GeneradorCodigo.getInstance().write(".DATA");
 		GeneradorCodigo.getInstance().write("VT_" + getNombre() + ":");
@@ -392,22 +387,16 @@ public class Clase {
 				for (Unidad u : listaMetodos) {
 					Metodo metodo = (Metodo) u;
 					if (metodo.getFormaMetodo().equals("dynamic"))
-						GeneradorCodigo.getInstance().write("DW " + metodo.getLabel());;
+						GeneradorCodigo.getInstance().write("DW " + metodo.getLabel());
+					;
 				}
 		GeneradorCodigo.getInstance().write(".CODE");
 		for (Unidad u : getTodasUnidades()) {
-			if (u.declaradaEn().getNombre().equals(Principal.ts.getClaseActual().getNombre())) {
-				Principal.ts.setUnidadActual(u);
+			if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.ts.getClaseActual().getNombre())) {
+				CompiladorMiniJava.ts.setUnidadActual(u);
 				u.generar();
 			}
 		}
-		//if (getCantidadInlineAtrs() > 0) {
-			
-	//	}
-	}
-
-	public Unidad getMetodoAtr() {
-		return metodoAtr;
 	}
 
 }

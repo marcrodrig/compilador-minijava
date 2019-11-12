@@ -14,7 +14,6 @@ public class GeneradorCodigo {
 		try {
 			generador = new BufferedWriter(new FileWriter(archivoSalida));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -40,7 +39,6 @@ public class GeneradorCodigo {
 			generador.newLine();
 			generador.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -49,7 +47,6 @@ public class GeneradorCodigo {
 		try {
 			generador.newLine();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -62,7 +59,6 @@ public class GeneradorCodigo {
 		try {
 			generador.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

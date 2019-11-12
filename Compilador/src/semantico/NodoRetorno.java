@@ -1,7 +1,7 @@
 package semantico;
 
 import gc.GeneradorCodigo;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoRetorno extends NodoSentencia {
 	private NodoExpresion expresion;
@@ -13,7 +13,7 @@ public class NodoRetorno extends NodoSentencia {
 
 	@Override
 	protected void chequear() throws ExcepcionSemantico {
-		Unidad unidadActual = Principal.ts.getUnidadActual();
+		Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
 		if (unidadActual instanceof Constructor) {
 			throw new ExcepcionSemantico("[" + unidadActual.getNroLinea() + ":" + unidadActual.getNroColumna()
 			+ "] Error semántico: El constructor " + unidadActual.getNombre() + " tiene una sentencia return.");
@@ -36,14 +36,14 @@ public class NodoRetorno extends NodoSentencia {
 
 	@Override
 	protected void generar() {
-		if (metodo.getTipo().getNombre() != null)
+		if (!metodo.getTipo().getNombre().equals("void"))
 			expresion.generar();
 		if (metodo.getFormaMetodo().equals("static"))
             GeneradorCodigo.getInstance().write("\tSTORE " + (3 + metodo.getCantidadParametros()) + "\t; Valor de retorno del metodo " + metodo.getNombre());
         else
             GeneradorCodigo.getInstance().write("\tSTORE " + (4 + metodo.getCantidadParametros()) + "\t; Valor de retorno del metodo " + metodo.getNombre());
-		if (metodo.getCantidadVariables() - metodo.getCantidadParametros() > 0)
-            GeneradorCodigo.getInstance().write("\tFMEM " + (metodo.getCantidadVariables() - metodo.getCantidadParametros()) + "\t; Libero espacio de variable locales (metodo " + metodo.getNombre() + ")");
+		if (metodo.getBloque().getCantidadVarsLocales() > 0)
+            GeneradorCodigo.getInstance().write("\tFMEM " + (metodo.getBloque().getCantidadVarsLocales()) + "\t; Libero espacio de variable locales (metodo " + metodo.getNombre() + ")");
         GeneradorCodigo.getInstance().write("\tSTOREFP");
         if (metodo.getFormaMetodo().equals("static"))
             GeneradorCodigo.getInstance().write("\tRET " + metodo.getCantidadParametros() + "\t; Retorno y libero espacio de los parametros (metodo " + metodo.getNombre() + ")");

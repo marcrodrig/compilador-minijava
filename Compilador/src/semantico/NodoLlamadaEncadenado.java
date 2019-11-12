@@ -4,18 +4,16 @@ import java.util.List;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoLlamadaEncadenado extends Encadenado {
 	private Token token;
 	private List<NodoExpresion> argumentosActuales;
 	private Metodo metodo;
-	//private boolean ladoIzq;
 	
 	public NodoLlamadaEncadenado(Token token, List<NodoExpresion> argumentosActuales) {
 		this.token = token;
 		this.argumentosActuales = argumentosActuales;
-	//	this.ladoIzq = ladoIzq;
 	}
 	
 	public List<NodoExpresion> getArgsActuales() {
@@ -33,7 +31,7 @@ public class NodoLlamadaEncadenado extends Encadenado {
 	@Override
 	public TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico {
 		if (tipo instanceof TipoClase) {
-			Clase clase = Principal.ts.getClase(tipo.getNombre());
+			Clase clase = CompiladorMiniJava.ts.getClase(tipo.getNombre());
 			List<Unidad> metodos = clase.getTodosMetodosPorNombre(token.getLexema());
 			metodo = null;
 			if (metodos != null) {
@@ -80,20 +78,22 @@ public class NodoLlamadaEncadenado extends Encadenado {
 				GeneradorCodigo.getInstance().write("\tSWAP"); }
 			GeneradorCodigo.getInstance().write("\tDUP");
 			GeneradorCodigo.getInstance().write("\tLOADREF 0");
-			GeneradorCodigo.getInstance().write("\tLOADREF " + metodo.getOffset() + "\t; Cargo la dirección del método");
+			GeneradorCodigo.getInstance().write("\tLOADREF " + metodo.getOffset() + "\t; Cargo la dirección del método " + metodo.getNombre() + " (clase " + metodo.declaradaEn().getNombre() + ")");
 			GeneradorCodigo.getInstance().write("\tCALL");
 		} else {
-			if(metodo.getTipo().getNombre().equals("void")) {
+			if(!metodo.getTipo().getNombre().equals("void")) {
 				GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo lugar para el retorno");
 				GeneradorCodigo.getInstance().write("\tSWAP");
+			}	// o else?
+				GeneradorCodigo.getInstance().write("\tPOP");
 				for (NodoExpresion exp : argumentosActuales) {
 					exp.generar();
 					GeneradorCodigo.getInstance().write("\tSWAP"); }
 				GeneradorCodigo.getInstance().write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
 				GeneradorCodigo.getInstance().write("\tCALL\t; Llamo al metodo");
-			}
 		}
-		if (getEncadenado() != null)
-			getEncadenado().generar();
+		Encadenado encadenado = getEncadenado();
+		if (encadenado != null)
+			encadenado.generar();
 	}
 }

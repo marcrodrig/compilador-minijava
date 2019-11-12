@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import gc.GeneradorCodigo;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 class GeneradorCodigoTest {
 
@@ -18,97 +18,151 @@ class GeneradorCodigoTest {
 	@AfterEach
 	void resetTS() {
 		System.out.println();
-		Principal.ts.reset();
+		CompiladorMiniJava.ts.reset();
 		GeneradorCodigo.reset();
 	}
 
 	@Test
 	void testRapido() {
 		String[] args = { "src/test/resources/gci/rapido.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	void testImpresionLiteralTrue() {
 		String[] args = { "src/test/resources/gci/impresionLiteralTrue.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionLiteralFalse() {
 		String[] args = { "src/test/resources/gci/impresionLiteralFalse.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionLiteralEntero() {
 		String[] args = { "src/test/resources/gci/impresionLiteralEntero.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionLiteralChar() {
 		String[] args = { "src/test/resources/gci/impresionLiteralChar.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testImpresionLiteralCharConBarraInvertida() {
+		String[] args = { "src/test/resources/gci/impresionLiteralCharConBarraInvertida.txt" };
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	void testImpresionLiteralString() {
 		String[] args = { "src/test/resources/gci/impresionLiteralString.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testReadImpresionEntero() {
 		String[] args = { "src/test/resources/gci/readImpresionEntero.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionTodosPrintln() {
 		String[] args = { "src/test/resources/gci/impresionTodosPrintln.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionIfConYSinElse() {
 		String[] args = { "src/test/resources/gci/impresionIfConYSinElse.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionWhile() {
 		String[] args = { "src/test/resources/gci/impresionWhile.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionConstructorLlamadaDirectaReturn() {
 		String[] args = { "src/test/resources/gci/impresionConstructorLlamadaDirectaReturn.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionAsignacionAtributoEnMetodoThisReturn() {
 		String[] args = { "src/test/resources/gci/impresionAsignacionAtributoEnMetodoThisReturn.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionAsignacionAtributo() {
 		String[] args = { "src/test/resources/gci/impresionAsignacionAtributo.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionAsignacionInlineAtributo() {
 		String[] args = { "src/test/resources/gci/impresionAsignacionInlineAtributo.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 	
 	@Test
 	void testImpresionAsignacionInlineAtributoDosConstructores() {
 		String[] args = { "src/test/resources/gci/impresionAsignacionInlineAtributoDosConstructores.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testChequeoCreacionVTsHerencia() {
+		String[] args = { "src/test/resources/gci/chequeoCreacionVTsHerencia.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testChequeoA() {
+		String[] args = { "src/test/resources/gci/chequeoA.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testChequeoB() {
+		String[] args = { "src/test/resources/gci/chequeoB.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testImpresionVarEncadenado() {
+		String[] args = { "src/test/resources/gci/impresionVarEncadenado.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testC1() {
+		String[] args = { "src/test/resources/gci/c1.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testC2() {
+		String[] args = { "src/test/resources/gci/c2.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testC3() {
+		String[] args = { "src/test/resources/gci/c3.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testC3Or() {
+		String[] args = { "src/test/resources/gci/c3Or.txt" };
+		CompiladorMiniJava.main(args);
 	}
 }

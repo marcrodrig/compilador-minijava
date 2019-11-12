@@ -1,7 +1,7 @@
 package semantico;
 
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class TipoClase extends Tipo {
 	
@@ -12,22 +12,24 @@ public class TipoClase extends Tipo {
 		this.nombreTipo = token.getLexema();
 	}
 
+	public String getNombre() {
+		return nombreTipo;
+		
+	}
+	
 	@Override
 	public boolean esCompatible(TipoRetorno tipo) {
-     //   if (!this.getNombre().equals("null")) {
-         //estaba este   if (tipo == null) //{
 		if(tipo.getNombre().equals("void"))
                 return true;
-        //    }
-            Clase clase = Principal.ts.getClase(getNombre());
+            Clase clase = CompiladorMiniJava.ts.getClase(getNombre());
             if (clase != null) {
-            	Clase claseReceptora = Principal.ts.getClase(tipo.getNombre());
+            	Clase claseReceptora = CompiladorMiniJava.ts.getClase(tipo.getNombre());
                 if (claseReceptora != null) {
                     while (!claseReceptora.getNombre().equals("Object")) {
                         if (claseReceptora.getNombre().equals(clase.getNombre())) {
                             return true;
                         }
-                        claseReceptora = Principal.ts.getClase(claseReceptora.getSuperclase());
+                        claseReceptora = CompiladorMiniJava.ts.getClase(claseReceptora.getSuperclase());
                     }
                     return false;
                 } else {
@@ -37,10 +39,5 @@ public class TipoClase extends Tipo {
                 return false;
             }
     }
-	
-	public String getNombre() {
-		return nombreTipo;
-		
-	}
 	
 }

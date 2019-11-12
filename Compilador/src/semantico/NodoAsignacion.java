@@ -3,7 +3,7 @@ package semantico;
 import java.util.List;
 
 import gc.GeneradorCodigo;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoAsignacion extends NodoSentencia {
 	private List<Variable> vars;
@@ -21,17 +21,19 @@ public class NodoAsignacion extends NodoSentencia {
 	@Override
 	protected void chequear() throws ExcepcionSemantico {
 		if (vars != null) { // asignación inline en constructor/método o atributo
-			Unidad unidadActual = Principal.ts.getUnidadActual();
+			Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
 			for (Variable var : vars) {
 				Tipo tipoVarLocal = var.getTipo();
 				if (tipoVarLocal instanceof TipoClase) {
-					if (Principal.ts.getClase(tipoVarLocal.getNombre()) == null)
+					if (CompiladorMiniJava.ts.getClase(tipoVarLocal.getNombre()) == null)
 						throw new ExcepcionSemantico("[" + tipoVarLocal.getNroLinea() + ":" + tipoVarLocal.getNroColumna()
 								+ "] Error semántico: El tipo clase \"" + tipoVarLocal.getNombre() + "\" no está definido.");
 				}
 				if (var instanceof VarLocal) {
-				if (unidadActual.getVarsParams().get(var.getNombre()) == null)
-					unidadActual.insertarVarLocalParamMetodo(var);
+				if (unidadActual.getVarsLocalesParams().get(var.getNombre()) == null) {
+					VariableMetodo v = (VariableMetodo) var;
+					unidadActual.insertarVarLocal(v);
+				}
 				else
 					throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
 				} /*else {
@@ -93,17 +95,18 @@ public class NodoAsignacion extends NodoSentencia {
 			ladoDerecho.generar();
 			ladoIzquierdo.generar();
 		} else {
-			Unidad unidadActual = Principal.ts.getUnidadActual();
+			Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
 			if (vars.get(0) instanceof VariableMetodo) {
 				GeneradorCodigo.getInstance().write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
 				for (Variable v : vars) {
+					//ver esto
 					Variable varParam = unidadActual.getVarLocalParamPorNombre(v.getNombre());
 					ladoDerecho.generar();
-					Principal.ts.getBloqueActual().agregarVariableLocal(varParam);
+					CompiladorMiniJava.ts.getBloqueActual().agregarVariableLocal(varParam);
 					GeneradorCodigo.getInstance().write("\tSTORE " + varParam.getOffset());
 				}
 			} else {
-				Clase claseActual = Principal.ts.getClaseActual();
+				Clase claseActual = CompiladorMiniJava.ts.getClaseActual();
 				for (Variable v : vars) {
 					VariableInstancia varIns = claseActual.getAtributoPorNombre(v.getNombre());
 					ladoDerecho.generar();

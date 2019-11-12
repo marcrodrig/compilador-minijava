@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import main.Principal;
+import main.CompiladorMiniJava;
 import semantico.Clase;
 import semantico.Constructor;
 import semantico.Metodo;
@@ -28,7 +28,7 @@ class AnalizadorSemanticoTest {
 	@AfterEach
 	void resetTS() {
 		System.out.println();
-		Principal.ts.reset();
+		CompiladorMiniJava.ts.reset();
 	}
 
 /*	@Test
@@ -64,67 +64,67 @@ class AnalizadorSemanticoTest {
 			fail("No debería suceder esto");
 		}
 		ts.reset();*/
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo definición método main, un main con parámetros")
 	void testExcepcionEsperadaMetodoMainConParametros() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoMainConParametros.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica dos métodos main en clases distintas sin relación de herencia")
 	void testExcepcionEsperadaDosMetodosMainRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDosMetodosMain.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica declaración clase Object")
 	void testExcepcionEsperadaDeclaracionClaseObjectRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDeclaracionClaseObject.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica declaración clase System y Object")
 	void testExcepcionEsperadaDeclaracionClaseSystemObjectRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDeclaracionClaseSystem.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica superclase sin declarar")
 	void testExcepcionEsperadaSuperclaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaSuperclaseSinDeclarar.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica herencia circular 1")
 	void testExcepcionEsperadaHerenciaCircular1RecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaHerenciaCircular1.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica herencia circular 2")
 	void testExcepcionEsperadaHerenciaCircular2RecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaHerenciaCircular2.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo clases predefinidas")
 	void testUnaClaseConMetodoMainChequeoClasesPredefinidas() {
 		String[] args = { "src/test/resources/semantico/unaClaseConMetodoMainChequeoClasesPredefinidas.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase object = Principal.ts.getClase("Object");
-		Clase system = Principal.ts.getClase("System");
-		Clase claseVacia = Principal.ts.getClase("Clase");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase object = CompiladorMiniJava.ts.getClase("Object");
+		Clase system = CompiladorMiniJava.ts.getClase("System");
+		Clase claseVacia = CompiladorMiniJava.ts.getClase("Clase");
 		assertEquals(0, object.cantidadMetodos());
 		assertEquals(1, claseVacia.cantidadMetodos());
 		assertEquals(10, system.cantidadMetodos());
@@ -237,23 +237,23 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica nombre de atributo repetido")
 	void testExcepcionEsperadaNombreAtributoRepetidoRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaNombreAtributoRepetido.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica atributo de tipo clase sin declarar")
 	void testExcepcionEsperadaAtributoTipoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaAtributoTipoClaseSinDeclarar.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo agregación constructor predefinido para clase sin constructor")
 	void testSinConstructorChequeoAgregacionConstructorPredefinido() {
 		String[] args = { "src/test/resources/semantico/sinConstructorChequeoPredefinido.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Unidad ctor = prueba.getConstructor(1);
 		Constructor constructor = (Constructor) ctor;
@@ -265,9 +265,9 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Chequeo un constructor sin argumentos formales")
 	void testUnConstructorSinArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unConstructorSinArgsFormales.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Constructor ctor = (Constructor) prueba.getConstructor(1);
 		assertEquals("Prueba", ctor.getNombre());
@@ -278,16 +278,16 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica un constructor con nombre inválido")
 	void testExcepcionEsperadaNombreConstructorDistintoDeNombreClaseRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaNombreConstructorDistintoDeNombreClase.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo un constructor con 1 argumento formal")
 	void testUnConstructorUnArgFormal() {
 		String[] args = { "src/test/resources/semantico/unConstructorUnArgFormal.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Constructor ctor = (Constructor) prueba.getConstructor(1);
 		assertEquals("Prueba", ctor.getNombre());
@@ -300,7 +300,7 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica constructor con dos parámetros con el mismo nombre")
 	void testExcepcionEsperadaConstructorDosParametrosMismoNombreRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaConstructorDosParametrosMismoNombre.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
@@ -308,16 +308,16 @@ class AnalizadorSemanticoTest {
 	void testExcepcionEsperadaConstructorDosArgFormalTipoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = {
 				"src/test/resources/semantico/excepcionEsperadaConstructorArgFormalTipoClaseSinDeclarar.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo dos constructores misma cantidad de argumentos formales pero distinto tipo")
 	void testDosConstructoresMismaCantidadArgsFormalesDistintoTipo() {
 		String[] args = { "src/test/resources/semantico/dosConstructoresMismaCantidadArgsFormalesDistintoTipo.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(2, prueba.getConstructores().size());
 		Constructor ctor1 = (Constructor) prueba.getConstructor(1);
 		Constructor ctor2 = (Constructor) prueba.getConstructor(2);
@@ -335,16 +335,16 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica dos constructores con misma signatura")
 	void testExcepcionEsperadaDosConstructoresMismaSignaturaRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDosConstructoresMismaSignatura.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo un constructor con 3 argumentos formales")
 	void testUnConstructorTresArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unConstructorTresArgsFormales.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Constructor ctor = (Constructor) prueba.getConstructor(1);
 		assertEquals("Prueba", ctor.getNombre());
@@ -364,9 +364,9 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Chequeo un método sin argumentos formales")
 	void testUnMetodoSinArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unMetodoSinArgsFormales.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(2, prueba.cantidadMetodos());
 		Metodo m1 = (Metodo) prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("static", m1.getFormaMetodo());
@@ -379,16 +379,16 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica método con el tipo de retorno sin declarar")
 	void testExcepcionEsperadaMetodoRetornoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoRetornoClaseSinDeclarar.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo un método con 1 argumento formal")
 	void testUnMetodoUnArgFormal() {
 		String[] args = { "src/test/resources/semantico/unMetodoUnArgFormal.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(2, prueba.cantidadMetodos());
 		Metodo m1 = (Metodo) prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
@@ -403,30 +403,30 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica método con argumentos de tipo clase sin declarar")
 	void testExcepcionEsperadaMetodoDosArgFormalTipoClaseSinDeclararRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoArgFormalTipoClaseSinDeclarar.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica método con dos parámetros con el mismo nombre")
 	void testExcepcionEsperadaMetodoDosParametrosMismoNombreRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaMetodoDosParametrosMismoNombre.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Recuperación semántica dos métodos con misma signatura")
 	void testExcepcionEsperadaDosMetodosMismaSignaturaRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaDosMetodosMismaSignatura.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo un método con 3 argumentos formales")
 	void testUnMetodoTresArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unMetodoTresArgsFormales.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase prueba = Principal.ts.getClase("Prueba");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
 		assertEquals(2, prueba.cantidadMetodos());
 		Metodo m1 = (Metodo) prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
@@ -445,14 +445,14 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica incorrecta redefinición de método")
 	void testExcepcionEsperadaIncorrectaRedefinicionMetodoRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaIncorrectaRedefinicionMetodo.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo correcta redefinición de método")
 	void testCorrectaRedefinicionMetodo() {
 		String[] args = { "src/test/resources/semantico/correctaRedefinicionMetodo.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		Clase a = ts.getClase("A");
 		Clase c = ts.getClase("C");
@@ -473,16 +473,16 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica redefinición de un método final")
 	void testExcepcionEsperadaConsolidacionMetodosSobreescrituraFinalRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/excepcionEsperadaConsolidacionMetodosSobreescrituraFinal.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 
 	@Test
 	@DisplayName("TEST: Chequeo sobrecarga de métodos, método sin y con modificador final")
 	void testSobrecargaMetodosConUnoFinalMismaClase() {
 		String[] args = { "src/test/resources/semantico/sobrecargaMetodosConUnoFinal.txt" };
-		Principal.main(args);
-		assertEquals(3, Principal.ts.getClases().size());
-		Clase a = Principal.ts.getClase("A");
+		CompiladorMiniJava.main(args);
+		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
+		Clase a = CompiladorMiniJava.ts.getClase("A");
 		assertEquals(3, a.cantidadMetodos());
 		Metodo m1 = (Metodo) a.getTodosMetodosPorNombre("m1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
@@ -502,16 +502,16 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Chequeo sobrecarga de métodos, método final en superclase y sobrecargado en la otra")
 	void testSobrecargaMetodosConUnoFinalDistintasClases() {
 		String[] args = { "src/test/resources/semantico/sobrecargaMetodoFinalDistintasClases.txt" };
-		Principal.main(args);
-		assertEquals(6, Principal.ts.getClases().size());
-		Clase b = Principal.ts.getClase("B");
+		CompiladorMiniJava.main(args);
+		assertEquals(6, CompiladorMiniJava.ts.getClases().size());
+		Clase b = CompiladorMiniJava.ts.getClase("B");
 		assertEquals(3, b.cantidadMetodos());
 		Metodo b_m3 = (Metodo) b.getTodosMetodosPorNombre("m3").get(0);
 		assertTrue(b_m3.isMetodoFinal());
-		Clase c = Principal.ts.getClase("C");
+		Clase c = CompiladorMiniJava.ts.getClase("C");
 		assertEquals(5, c.cantidadMetodos());
 		assertEquals(2, c.getTodosMetodosPorNombre("m3").size());
-		Clase d = Principal.ts.getClase("D");
+		Clase d = CompiladorMiniJava.ts.getClase("D");
 		assertEquals(1, d.cantidadMetodos());
 	}
 
@@ -519,11 +519,11 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Chequeo consolidación de atributos")
 	void testConsolidacionAtributos() {
 		String[] args = { "src/test/resources/semantico/consolidacionAtributos.txt" };
-		Principal.main(args);
-		assertEquals(5, Principal.ts.getClases().size());
-		Clase a = Principal.ts.getClase("A");
-		Clase b = Principal.ts.getClase("B");
-		Clase c = Principal.ts.getClase("C");
+		CompiladorMiniJava.main(args);
+		assertEquals(5, CompiladorMiniJava.ts.getClases().size());
+		Clase a = CompiladorMiniJava.ts.getClase("A");
+		Clase b = CompiladorMiniJava.ts.getClase("B");
+		Clase c = CompiladorMiniJava.ts.getClase("C");
 		assertEquals(2, a.cantidadAtributos());
 		assertEquals(4, b.cantidadAtributos());
 		assertEquals(6, c.cantidadAtributos());
@@ -563,11 +563,11 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Chequeo consolidación de métodos")
 	void testConsolidacionMetodos() {
 		String[] args = { "src/test/resources/semantico/consolidacionMetodos.txt" };
-		Principal.main(args);
-		assertEquals(5, Principal.ts.getClases().size());
-		Clase a = Principal.ts.getClase("A");
-		Clase b = Principal.ts.getClase("B");
-		Clase c = Principal.ts.getClase("C");
+		CompiladorMiniJava.main(args);
+		assertEquals(5, CompiladorMiniJava.ts.getClases().size());
+		Clase a = CompiladorMiniJava.ts.getClase("A");
+		Clase b = CompiladorMiniJava.ts.getClase("B");
+		Clase c = CompiladorMiniJava.ts.getClase("C");
 		assertEquals(2, a.cantidadMetodos());
 		assertEquals(3, b.cantidadMetodos());
 		assertEquals(5, c.cantidadMetodos());
@@ -613,6 +613,6 @@ class AnalizadorSemanticoTest {
 	@DisplayName("TEST: Recuperación semántica de todo")
 	void testRecuperacionSemantica() {
 		String[] args = { "src/test/resources/semantico/recuperacionSemantica.txt" };
-		Principal.main(args);
+		CompiladorMiniJava.main(args);
 	}
 }

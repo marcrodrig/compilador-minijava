@@ -1,0 +1,11 @@
+class A {
+	private int x = 2;
+	private int y = 3;
+	static void main() {
+		System.printIln(new A().getX());
+	}
+	dynamic int getX() {
+		return this.x;
+	}
+}
+		

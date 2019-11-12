@@ -2,7 +2,7 @@ package semantico;
 
 import gc.GeneradorCodigo;
 import lexico.Token;
-import main.Principal;
+import main.CompiladorMiniJava;
 
 public class NodoVarEncadenado extends Encadenado {
 	private Token token;
@@ -10,35 +10,27 @@ public class NodoVarEncadenado extends Encadenado {
 		
 	public NodoVarEncadenado(Token token) {
 		this.token = token;
-		
 	}
 
 	@Override
 	public TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico {
 		if (tipo instanceof TipoClase) {
-			Clase clase = Principal.ts.getClase(tipo.getNombre());
+			Clase clase = CompiladorMiniJava.ts.getClase(tipo.getNombre());
 			atributo = clase.getAtributoPorNombre(token.getLexema());
 			if (atributo == null)
 				throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 						+ "] Error semántico: No existe el atributo \"" + token.getLexema() + "\" en la clase "
 						+ tipo.getNombre() + ".");
-				if (atributo.getVisibilidad().equals("private") && !Principal.ts.getUnidadActual().declaradaEn().getNombre().equals(tipo.getNombre()) && !Principal.ts.getUnidadActual().declaradaEn().esDescendiente(clase.getNombre()))
-					throw new ExcepcionSemantico(
-							"[" + token.getNroLinea() + ":" + token.getNroColumna() + "] Error semántico: El atributo \""
+			if (atributo.getVisibilidad().equals("private") && !CompiladorMiniJava.ts.getUnidadActual().declaradaEn().getNombre().equals(tipo.getNombre()) && !CompiladorMiniJava.ts.getUnidadActual().declaradaEn().esDescendiente(clase.getNombre()))
+				throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna() + "] Error semántico: El atributo \""
 									+ token.getLexema() + "\" en la clase " + tipo.getNombre() + " es privado.");
-				else { // es public o protected
-					Unidad unidad = Principal.ts.getUnidadActual();
-					if (unidad instanceof Metodo) {
-						Metodo metodo = (Metodo) unidad;
-						if (metodo.getFormaMetodo().equals("static") && atributo instanceof VariableInstancia)
-							throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
-							+ "] Error semántico: En método estático no se puede acceder a un atributo de instancia.");
-					}
-					Tipo tipoAtributo = atributo.getTipo();
-					if (getEncadenado() == null)
+			else {
+				Tipo tipoAtributo = atributo.getTipo();
+				Encadenado encadenado = getEncadenado();
+				if (encadenado == null)
 						return tipoAtributo;
 					else
-						return getEncadenado().chequear(tipoAtributo);
+						return encadenado.chequear(tipoAtributo);
 				}
 		} else
 			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
@@ -47,14 +39,14 @@ public class NodoVarEncadenado extends Encadenado {
 
 	@Override
 	protected void generar() {
-		if (esLadoIzqAsig() && getEncadenado() == null) {
+		Encadenado encadenado = getEncadenado();
+		if (esLadoIzqAsig() && encadenado == null) {
 			GeneradorCodigo.getInstance().write("\tSWAP");
 			GeneradorCodigo.getInstance().write("\tSTOREREF " + atributo.getOffset( )+ "\t; Guardo el valor del atributo " + atributo.getNombre());
 		} else {
-			/*
-			 * COMPLETAR
-			 */
-			System.out.println("falta");
+			GeneradorCodigo.getInstance().write("\tLOADREF " + atributo.getOffset());
+			if (encadenado != null)
+				encadenado.generar();
 		}
 	}
 }
