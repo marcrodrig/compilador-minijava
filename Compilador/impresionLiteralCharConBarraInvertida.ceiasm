@@ -47,6 +47,8 @@ read_System_2:
 	STOREFP
 
 	READ
+	PUSH 48
+	SUB
 	STORE 3
 	STOREFP
 	RET 0
@@ -154,22 +156,20 @@ main_A_0:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 1	; Reservo espacio para vars locales
-	PUSH 0	; Apilo literal null
-	STORE 0
-	RMEM 1	; Reservo espacio para vars locales
-	PUSH 0	; Apilo literal null
-	STORE -1
-	LOAD 0
-	PUSH 99	; Apilo el literal caracter c
-	SWAP
-	PUSH 3	; Apilo literal entero 3
-	SWAP
-	DUP
-	LOADREF 0
-	LOADREF 0	; Cargo la dirección del método m (clase B)
-	CALL
-	FMEM 2 # Libero espacio de variables locales al bloque
+	RMEM 0	; Reservo espacio para vars locales
+	PUSH 9	; Apilo TAB
+	PUSH printC_System_4	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	PUSH 120	; Apilo el literal caracter x
+	PUSH printC_System_4	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	PUSH 10	; Apilo ENTER
+	PUSH printC_System_4	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	PUSH 121	; Apilo el literal caracter y
+	PUSH printC_System_4	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
 A_A_13:
@@ -177,34 +177,6 @@ A_A_13:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	;Inicio Generación asignación atributos inline
-	PUSH 0	; Apilo literal null
-	LOAD 3
-	SWAP
-	STOREREF 1
-	;Fin Generación asignación atributos inline
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
-
-# Definición de la clase B
-.DATA
-VT_B:
-DW m_B_14
-.CODE
-m_B_14:
-	LOADFP	; Guardo enlace dinámico
-	LOADSP	; Inicializo FP
-	STOREFP
-
-	RMEM 0	; Reservo espacio para vars locales
-	FMEM 0 # Libero espacio de variables locales al bloque
-	STOREFP	; Restablezco el contexto
-	RET 3	; Retorno y libero espacio de los parametros del metodo y del THIS m
-B_B_15:
-	LOADFP	; Guardo enlace dinámico
-	LOADSP	; Inicializo FP
-	STOREFP
-
-	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS B
 

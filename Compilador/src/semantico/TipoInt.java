@@ -15,6 +15,6 @@ public class TipoInt extends TipoPrimitivo {
 	}
 	
 	public static void generar(Token token) {
-		GeneradorCodigo.getInstance().write("\tPUSH " + token.getLexema() + "\t; entero");
+		GeneradorCodigo.getInstance().write("\tPUSH " + token.getLexema() + "\t; Apilo literal entero " + token.getLexema());
 	}
 }

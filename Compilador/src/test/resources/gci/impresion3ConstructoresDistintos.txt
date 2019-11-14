@@ -1,0 +1,32 @@
+class A {
+	private int x, y,z;
+	A(int a) {
+		x = a;
+	}
+	A(int a,int b) {
+		x = a;
+		y = b;
+	}
+	A(int a,int b,int c) {
+		x = a;
+		y = b;
+		z = c;
+	}
+	dynamic void toString() {
+		System.printIln(x);
+		System.printIln(y);
+		System.printIln(z);
+	}
+
+	static void main() {
+		A a1 = new A(1);
+		System.printSln("a1");
+		a1.toString();
+		A a2 = new A(2,3);
+		System.printSln("a2");
+		a2.toString();
+		A a3 = new A(6,7,8);
+		System.printSln("a3");
+		a3.toString();
+	}
+}

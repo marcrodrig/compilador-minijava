@@ -31,16 +31,17 @@ public class NodoIf extends NodoSentencia {
 
 	@Override
 	protected void generar() {
+		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
 		condicion.generar();
-		String labelFinIf = "finIf" + GeneradorCodigo.getInstance().nLabel();
-	    String labelElse = "else" + GeneradorCodigo.getInstance().nLabel();
-		GeneradorCodigo.getInstance().write("\tBF " + labelElse);
+		String labelFinIf = "finIf" + generadorCodigo.nLabel();
+	    String labelElse = "else" + generadorCodigo.nLabel();
+		generadorCodigo.write("\tBF " + labelElse);
 		entonces.generar();
-		GeneradorCodigo.getInstance().write("\tJUMP " + labelFinIf);
-		GeneradorCodigo.getInstance().write(labelElse + ":NOP");
+		generadorCodigo.write("\tJUMP " + labelFinIf);
+		generadorCodigo.write(labelElse + ":NOP");
 		if (sino != null)
 			sino.generar();
-		GeneradorCodigo.getInstance().write(labelFinIf + ":NOP");
+		generadorCodigo.write(labelFinIf + ":NOP");
 	}
 	
 }

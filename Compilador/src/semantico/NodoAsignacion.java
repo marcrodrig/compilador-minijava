@@ -10,7 +10,7 @@ public class NodoAsignacion extends NodoSentencia {
 	private NodoExpresion ladoIzquierdo;
 	private NodoExpresion ladoDerecho;
 	private int nroLinea;
-	
+
 	public NodoAsignacion(List<Variable> vars, NodoExpresion ladoIzquierdo, NodoExpresion ladoDerecho, int nroLinea) {
 		this.vars = vars;
 		this.ladoIzquierdo = ladoIzquierdo;
@@ -18,63 +18,62 @@ public class NodoAsignacion extends NodoSentencia {
 		this.nroLinea = nroLinea;
 	}
 
+	public List<Variable> getVars() {
+		return vars;
+	}
+
 	@Override
 	protected void chequear() throws ExcepcionSemantico {
 		if (vars != null) { // asignación inline en constructor/método o atributo
-			Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
+			Unidad unidadActual = CompiladorMiniJava.tablaSimbolos.getUnidadActual();
 			for (Variable var : vars) {
 				Tipo tipoVarLocal = var.getTipo();
-				if (tipoVarLocal instanceof TipoClase) {
-					if (CompiladorMiniJava.ts.getClase(tipoVarLocal.getNombre()) == null)
-						throw new ExcepcionSemantico("[" + tipoVarLocal.getNroLinea() + ":" + tipoVarLocal.getNroColumna()
-								+ "] Error semántico: El tipo clase \"" + tipoVarLocal.getNombre() + "\" no está definido.");
-				}
-				if (var instanceof VarLocal) {
-				if (unidadActual.getVarsLocalesParams().get(var.getNombre()) == null) {
-					VariableMetodo v = (VariableMetodo) var;
-					unidadActual.insertarVarLocal(v);
-				}
-				else
-					throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de variable local \"" + var.getNombre() + "\" repetido a un parámetro u otra variable local.");
-				} /*else {
-						if (Principal.ts.getClaseActual().getAtributos().get(var.getNombre()) == null)
-							Principal.ts.insertarAtributo(var);
-						else
-							throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna() + "] Error semántico: Nombre de atributo \"" + var.getNombre() + "\" repetido.");
-				}*/
+				if (tipoVarLocal instanceof TipoClase)
+					if (CompiladorMiniJava.tablaSimbolos.getClase(tipoVarLocal.getNombre()) == null)
+						throw new ExcepcionSemantico("[" + tipoVarLocal.getNroLinea() + ":"
+								+ tipoVarLocal.getNroColumna() + "] Error semántico: El tipo clase \""
+								+ tipoVarLocal.getNombre() + "\" no está definido.");
+				if (var instanceof VarLocal)
+					if (unidadActual.getVarsLocalesParams().get(var.getNombre()) == null) {
+						VariableMetodo v = (VariableMetodo) var;
+						unidadActual.insertarVarLocal(v);
+					} else
+						throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna()
+								+ "] Error semántico: Nombre de variable local \"" + var.getNombre()
+								+ "\" repetido a un parámetro u otra variable local.");
 			}
-			TipoRetorno tipoLadoDerecho = ladoDerecho.chequear();
+			TipoRetorno tipoLadoDerecho;
+			if (ladoDerecho == null)
+				tipoLadoDerecho = null;
+			else
+				tipoLadoDerecho = ladoDerecho.chequear();
 			Variable primerVar = vars.get(0);
 			TipoRetorno tipoAsignacionInline = primerVar.getTipo();
-			if(!tipoAsignacionInline.esCompatible(tipoLadoDerecho))
+			if (!tipoAsignacionInline.esCompatible(tipoLadoDerecho))
 				throw new ExcepcionSemantico("[" + nroLinea + "] Error semántico: Tipos incompatibles en asignación inline.");
 		} else { // método lado izquierdo
 			if (ladoIzquierdo instanceof NodoLlamadaDirecta) {
 				NodoLlamadaDirecta nodo = (NodoLlamadaDirecta) ladoIzquierdo;
-			if (nodo.getEncadenado() == null)
-				throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
-				+ "] Error semántico: No se puede asignar un valor a un método.");
+				if (nodo.getEncadenado() == null)
+					throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
+							+ "] Error semántico: No se puede asignar un valor a un método.");
 			}
 			if (ladoIzquierdo instanceof NodoLlamadaEstatica) {
 				NodoLlamadaEstatica nodo = (NodoLlamadaEstatica) ladoIzquierdo;
-			if (nodo.getEncadenado() == null)
-				throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
-				+ "] Error semántico: No se puede asignar un valor a un método.");
+				if (nodo.getEncadenado() == null)
+					throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
+							+ "] Error semántico: No se puede asignar un valor a un método.");
 			}
-			/*
-			 * ver que pasa con nodo ctor y eso, los demas
-			 */
 			if (ladoIzquierdo instanceof NodoPrimario) {
 				NodoPrimario nodoP = (NodoPrimario) ladoIzquierdo;
 				Encadenado ultimoEncadenado = nodoP.getEncadenado();
 				if (ultimoEncadenado != null)
-					while(ultimoEncadenado.getEncadenado() != null) {
+					while (ultimoEncadenado.getEncadenado() != null)
 						ultimoEncadenado = ultimoEncadenado.getEncadenado();
-					}
 				if (ultimoEncadenado instanceof NodoLlamadaEncadenado) {
 					NodoLlamadaEncadenado nodo = (NodoLlamadaEncadenado) ultimoEncadenado;
 					throw new ExcepcionSemantico("[" + nodo.getNroLinea() + ":" + nodo.getNroColumna()
-					+ "] Error semántico: No se puede asignar un valor a un método.");
+							+ "] Error semántico: No se puede asignar un valor a un método.");
 				}
 			}
 			TipoRetorno tipoLadoIzquierdo = ladoIzquierdo.chequear();
@@ -83,9 +82,9 @@ public class NodoAsignacion extends NodoSentencia {
 				tipoLadoDerecho = null;
 			else
 				tipoLadoDerecho = ladoDerecho.chequear();
-			if(!tipoLadoIzquierdo.esCompatible(tipoLadoDerecho))
+			if (!tipoLadoIzquierdo.esCompatible(tipoLadoDerecho))
 				throw new ExcepcionSemantico("[" + nroLinea
-				+ "] Error semántico: Tipos incompatibles en asignación con una llamada a izquierda.");
+						+ "] Error semántico: Tipos incompatibles en asignación con una llamada a izquierda.");
 		}
 	}
 
@@ -95,30 +94,26 @@ public class NodoAsignacion extends NodoSentencia {
 			ladoDerecho.generar();
 			ladoIzquierdo.generar();
 		} else {
-			Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
+			GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
+			Unidad unidadActual = CompiladorMiniJava.tablaSimbolos.getUnidadActual();
 			if (vars.get(0) instanceof VariableMetodo) {
-				GeneradorCodigo.getInstance().write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
+				generadorCodigo.write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
 				for (Variable v : vars) {
-					//ver esto
 					Variable varParam = unidadActual.getVarLocalParamPorNombre(v.getNombre());
 					ladoDerecho.generar();
-					CompiladorMiniJava.ts.getBloqueActual().agregarVariableLocal(varParam);
-					GeneradorCodigo.getInstance().write("\tSTORE " + varParam.getOffset());
+					CompiladorMiniJava.tablaSimbolos.getBloqueActual().agregarVariableLocal(varParam);
+					generadorCodigo.write("\tSTORE " + varParam.getOffset());
 				}
 			} else {
-				Clase claseActual = CompiladorMiniJava.ts.getClaseActual();
+				Clase claseActual = CompiladorMiniJava.tablaSimbolos.getClaseActual();
 				for (Variable v : vars) {
 					VariableInstancia varIns = claseActual.getAtributoPorNombre(v.getNombre());
 					ladoDerecho.generar();
-					GeneradorCodigo.getInstance().write("\tLOAD 3");
-					GeneradorCodigo.getInstance().write("\tSWAP");
-					GeneradorCodigo.getInstance().write("\tSTOREREF " + varIns.getOffset());
+					generadorCodigo.write("\tLOAD 3");
+					generadorCodigo.write("\tSWAP");
+					generadorCodigo.write("\tSTOREREF " + varIns.getOffset());
 				}
 			}
 		}
-	}
-
-	public List<Variable> getVars() {
-		return vars;
 	}
 }

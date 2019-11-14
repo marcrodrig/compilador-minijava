@@ -16,8 +16,8 @@ public class TipoBoolean extends TipoPrimitivo {
 
 	public static void generar(Token token) {
 		if (token.getLexema().equals("true"))
-			GeneradorCodigo.getInstance().write("\tPUSH 1\t; true");
+			GeneradorCodigo.getInstance().write("\tPUSH 1\t; Apilo literal true");
 		else
-			GeneradorCodigo.getInstance().write("\tPUSH 0\t; false");
+			GeneradorCodigo.getInstance().write("\tPUSH 0\t; Apilo literal false");
 	}
 }

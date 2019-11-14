@@ -62,6 +62,15 @@ public class Clase {
 		return unidades;
 	}
 
+	private List<Unidad> getTodasUnidades() {
+		List<Unidad> todasUnidades = new ArrayList<Unidad>();
+		for (String nombreUnidad : unidades.keySet()) {
+			List<Unidad> listaUnidad = unidades.get(nombreUnidad);
+			todasUnidades.addAll(listaUnidad);
+		}
+		return todasUnidades;
+	}
+	
 	public List<Unidad> getConstructores() {
 		List<Unidad> constructores = unidades.get(getNombre());
 		if (constructores == null)
@@ -94,6 +103,27 @@ public class Clase {
 			cantidad += listaMetodos.size();
 		return cantidad;
 	}
+	
+	private int getCantidadMetodosDynamic() {
+		int cantidad = 0;
+		for (List<Unidad> listaMetodos : getTodosMetodos().values())
+			for (Unidad u : listaMetodos) {
+				Metodo metodo = (Metodo) u;
+				if (metodo.getFormaMetodo().equals("dynamic"))
+					cantidad++;
+			}
+		return cantidad;
+	}
+	
+	private boolean tieneMetodo(Metodo metodo) {
+		boolean tiene = false;
+		for (Unidad u : getTodosMetodosPorNombre(metodo.getNombre())) {
+			Metodo met = (Metodo) u;
+			if (!tiene)
+				tiene = metodo == met;
+		}
+		return tiene;
+	}
 
 	public boolean getVisitadoHC() {
 		return visitadoHerenciaCircular;
@@ -119,97 +149,50 @@ public class Clase {
 		return metodoMain != null;
 	}
 
-	public void chequeoDeclaraciones() throws ExcepcionSemantico {
-		chequeoExistenciaSuperclase();
-		chequeoHerenciaCircular();
-		chequeoAtributos();
-		chequeoConstructores();
-		chequeoMetodos();
+	public List<NodoSentencia> getInlineAtrs() {
+		return inlineAtrs;
 	}
 
-	private void chequeoExistenciaSuperclase() throws ExcepcionSemantico {
-		if (CompiladorMiniJava.ts.getClase(superclase) == null && !getNombre().equals("Object"))
-			throw new ExcepcionSemantico("[" + token.getNroLinea() + "] Error semántico: La superclase " + superclase
-					+ " de " + getNombre() + " no está definida.");
+	public int getCantidadInlineAtrs() {
+		return inlineAtrs.size();
 	}
 
-	private void chequeoHerenciaCircular() throws ExcepcionSemantico {
-		if (getNombre().equals(superclase)) {
-			hc = true;
-			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
-					+ "] Error semántico: La clase " + getNombre() + " tiene herencia circular.");
-		}
-		String ancestro = superclase;
-		boolean continuar = !getNombre().equals("Object") && !ancestro.equals("Object");
-		while (continuar) {
-			if (CompiladorMiniJava.ts.getClases().containsKey(ancestro) && !CompiladorMiniJava.ts.getClase(ancestro).getVisitadoHC()) {
-				ancestro = CompiladorMiniJava.ts.getClase(ancestro).getSuperclase();
-				if (getNombre().equals(ancestro)) {
-					hc = true;
-					throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
-							+ "] Error semántico: La clase " + getNombre() + " tiene herencia circular.");
-				}
-				continuar = !ancestro.equals("Object");
-			} else
-				continuar = false;
-		}
-		setHC();
+	public void insertarAsignacionInlineAtributo(NodoSentencia sentencia) {
+		inlineAtrs.add(sentencia);
 	}
 
-	private void chequeoAtributos() {
-		for (VariableInstancia varIns : atributos.values())
-			try {
-				varIns.chequeoDeclaraciones();
-			} catch (ExcepcionSemantico e) {
-				CompiladorMiniJava.ts.setRSem();
-				System.out.println(e.toString());
-			}
-		setOffsetAtrs();
+	private int getCantidadAtrs() {
+		return atributos.size();
 	}
-
-	private void chequeoConstructores() {
-		List<Unidad> constructores = getConstructores();
-		if (constructores.isEmpty()) {
-			agregarConstructorPredefinido();
-		} else {
-			for (Unidad ctor : constructores)
-				try {
-					ctor.chequeoDeclaraciones(constructores);
-				} catch (ExcepcionSemantico e) {
-					CompiladorMiniJava.ts.setRSem();
-					System.out.println(e.toString());
-				}
-		}
-	}
-
+	
 	private void agregarConstructorPredefinido() {
 		Token token = new Token("idClase", getNombre(), 0, 0);
 		Unidad ctor = new Constructor(token, new LinkedHashMap<String, Parametro>());
-		CompiladorMiniJava.ts.setUnidadActual(ctor);
-		CompiladorMiniJava.ts.setBloque(null);
-		CompiladorMiniJava.ts.insertarUnidad(ctor);
+		CompiladorMiniJava.tablaSimbolos.setUnidadActual(ctor);
+		CompiladorMiniJava.tablaSimbolos.setBloque(null);
+		CompiladorMiniJava.tablaSimbolos.insertarUnidad(ctor);
 	}
 
-	private void chequeoMetodos() {
-		for (List<Unidad> listaMetodos : getTodosMetodos().values())
-			for (Unidad unidad : listaMetodos) {
-				Metodo metodo = (Metodo) unidad;
-				try {
-					if (metodo.isMetodoMain()) {
-						metodoMain = metodo;
-						CompiladorMiniJava.ts.chequeoMain(this, metodoMain);
-					} else
-						metodo.chequeoDeclaraciones(listaMetodos);
-				} catch (ExcepcionSemantico e) {
-					CompiladorMiniJava.ts.setRSem();
-					System.out.println(e.toString());
-				}
-			}
-		setOffsetMetodos();
+	public boolean esDescendiente(String nombreClase) {
+		boolean descendiente = false;
+		Clase hereda = CompiladorMiniJava.tablaSimbolos.getClase(getSuperclase());
+		while (!false && !hereda.getNombre().equals("Object"))
+			descendiente = hereda.getNombre().equals(nombreClase);
+		hereda = CompiladorMiniJava.tablaSimbolos.getClase(hereda.getSuperclase());
+		return descendiente;
 	}
-
+	
+	private void setOffsetAtrs() {
+		Clase clasePadre = CompiladorMiniJava.tablaSimbolos.getClase(superclase);
+		if (clasePadre != null) { // No es Object
+			int cantAtrsPadre = clasePadre.getCantidadAtrs();
+			for (VariableInstancia v : atributos.values())
+				v.setOffset(++cantAtrsPadre);
+		}
+	}
+	
 	private void setOffsetMetodos() {
-		Clase clasePadre = CompiladorMiniJava.ts.getClase(superclase);
+		Clase clasePadre = CompiladorMiniJava.tablaSimbolos.getClase(superclase);
 		if (clasePadre != null) { // No es Object
 			int cantMetodosPadre = clasePadre.getCantidadMetodosDynamic();
 			for (String nombreMetodo : getTodosMetodos().keySet()) {
@@ -237,32 +220,92 @@ public class Clase {
 			}
 		}
 	}
-
-	private boolean tieneMetodo(Metodo metodo) {
-		boolean tiene = false;
-		for (Unidad u : getTodosMetodosPorNombre(metodo.getNombre())) {
-			Metodo met = (Metodo) u;
-			if (!tiene)
-				tiene = metodo == met;
-		}
-		return tiene;
+	
+	public void chequeoDeclaraciones() throws ExcepcionSemantico {
+		chequeoExistenciaSuperclase();
+		chequeoHerenciaCircular();
+		chequeoAtributos();
+		chequeoConstructores();
+		chequeoMetodos();
 	}
 
-	private int getCantidadMetodosDynamic() {
-		int cantidad = 0;
-		for (List<Unidad> listaMetodos : getTodosMetodos().values())
-			for (Unidad u : listaMetodos) {
-				Metodo metodo = (Metodo) u;
-				if (metodo.getFormaMetodo().equals("dynamic"))
-					cantidad++;
+	private void chequeoExistenciaSuperclase() throws ExcepcionSemantico {
+		if (CompiladorMiniJava.tablaSimbolos.getClase(superclase) == null && !getNombre().equals("Object"))
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + "] Error semántico: La superclase " + superclase
+					+ " de " + getNombre() + " no está definida.");
+	}
+
+	private void chequeoHerenciaCircular() throws ExcepcionSemantico {
+		if (getNombre().equals(superclase)) {
+			hc = true;
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+					+ "] Error semántico: La clase " + getNombre() + " tiene herencia circular.");
+		}
+		String ancestro = superclase;
+		boolean continuar = !getNombre().equals("Object") && !ancestro.equals("Object");
+		while (continuar) {
+			if (CompiladorMiniJava.tablaSimbolos.getClases().containsKey(ancestro) && !CompiladorMiniJava.tablaSimbolos.getClase(ancestro).getVisitadoHC()) {
+				ancestro = CompiladorMiniJava.tablaSimbolos.getClase(ancestro).getSuperclase();
+				if (getNombre().equals(ancestro)) {
+					hc = true;
+					throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
+							+ "] Error semántico: La clase " + getNombre() + " tiene herencia circular.");
+				}
+				continuar = !ancestro.equals("Object");
+			} else
+				continuar = false;
+		}
+		setHC();
+	}
+
+	private void chequeoAtributos() {
+		for (VariableInstancia varIns : atributos.values())
+			try {
+				varIns.chequeoDeclaraciones();
+			} catch (ExcepcionSemantico e) {
+				CompiladorMiniJava.tablaSimbolos.setRSem();
+				System.out.println(e.toString());
 			}
-		return cantidad;
+		setOffsetAtrs();
+	}
+
+	private void chequeoConstructores() {
+		List<Unidad> constructores = getConstructores();
+		if (constructores.isEmpty()) {
+			agregarConstructorPredefinido();
+		} else {
+			for (Unidad ctor : constructores)
+				try {
+					ctor.chequeoDeclaraciones(constructores);
+				} catch (ExcepcionSemantico e) {
+					CompiladorMiniJava.tablaSimbolos.setRSem();
+					System.out.println(e.toString());
+				}
+		}
+	}
+
+	private void chequeoMetodos() {
+		for (List<Unidad> listaMetodos : getTodosMetodos().values())
+			for (Unidad unidad : listaMetodos) {
+				Metodo metodo = (Metodo) unidad;
+				try {
+					if (metodo.isMetodoMain()) {
+						metodoMain = metodo;
+						CompiladorMiniJava.tablaSimbolos.chequeoMain(this, metodoMain);
+					} else
+						metodo.chequeoDeclaraciones(listaMetodos);
+				} catch (ExcepcionSemantico e) {
+					CompiladorMiniJava.tablaSimbolos.setRSem();
+					System.out.println(e.toString());
+				}
+			}
+		setOffsetMetodos();
 	}
 
 	public void consolidacion() throws ExcepcionSemantico {
-		if (CompiladorMiniJava.ts.getClase(superclase) != null) {
-			while (!CompiladorMiniJava.ts.getClase(superclase).estaConsolidada())
-				CompiladorMiniJava.ts.getClase(superclase).consolidacion();
+		if (CompiladorMiniJava.tablaSimbolos.getClase(superclase) != null) {
+			while (!CompiladorMiniJava.tablaSimbolos.getClase(superclase).estaConsolidada())
+				CompiladorMiniJava.tablaSimbolos.getClase(superclase).consolidacion();
 			consolidacionAtributos();
 			consolidacionMetodos();
 			setConsolidada();
@@ -270,7 +313,7 @@ public class Clase {
 	}
 
 	private void consolidacionAtributos() {
-		HashMap<String, VariableInstancia> atributosAncestro = CompiladorMiniJava.ts.getClase(superclase)
+		HashMap<String, VariableInstancia> atributosAncestro = CompiladorMiniJava.tablaSimbolos.getClase(superclase)
 				.getAtributos();
 		for (String nombreAtributoAncestro : atributosAncestro.keySet())
 			if (getAtributoPorNombre(nombreAtributoAncestro) == null)
@@ -278,11 +321,11 @@ public class Clase {
 	}
 
 	private void consolidacionMetodos() {
-		Map<String, List<Unidad>> metodosAncestro = CompiladorMiniJava.ts.getClase(superclase).getTodosMetodos();
+		Map<String, List<Unidad>> metodosAncestro = CompiladorMiniJava.tablaSimbolos.getClase(superclase).getTodosMetodos();
 		for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
 			if (getTodosMetodosPorNombre(nombreMetodoAncestro).isEmpty()) {
 				unidades.put(nombreMetodoAncestro,
-						CompiladorMiniJava.ts.getClase(superclase).getTodosMetodosPorNombre(nombreMetodoAncestro));
+						CompiladorMiniJava.tablaSimbolos.getClase(superclase).getTodosMetodosPorNombre(nombreMetodoAncestro));
 			} else {
 				List<Unidad> metodosActual = unidades.get(nombreMetodoAncestro);
 				List<Unidad> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
@@ -295,7 +338,7 @@ public class Clase {
 							try {
 								metodo1.chequeoRedefinicionMetodo(metodo2);
 							} catch (ExcepcionSemantico e) {
-								CompiladorMiniJava.ts.setRSem();
+								CompiladorMiniJava.tablaSimbolos.setRSem();
 								System.out.println(e.toString());
 							}
 						} else {
@@ -306,7 +349,7 @@ public class Clase {
 					}
 				if (!listaMetodoAgregar.isEmpty()) {
 					for (Unidad metodo : listaMetodoAgregar)
-						CompiladorMiniJava.ts.insertarUnidad(metodo);
+						CompiladorMiniJava.tablaSimbolos.insertarUnidad(metodo);
 				}
 			}
 		}
@@ -317,83 +360,40 @@ public class Clase {
 			try {
 				inlineAtr.chequear();
 			} catch (ExcepcionSemantico e) {
-				CompiladorMiniJava.ts.setRSem();
+				CompiladorMiniJava.tablaSimbolos.setRSem();
 				System.out.println(e.toString());
 			}
 		}
 		for (Unidad u : getTodasUnidades()) {
-			if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.ts.getClaseActual().getNombre())) {
-				CompiladorMiniJava.ts.setUnidadActual(u);
+			if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.tablaSimbolos.getClaseActual().getNombre())) {
+				CompiladorMiniJava.tablaSimbolos.setUnidadActual(u);
 				try {
 					u.chequeoSentencias();
 				} catch (ExcepcionSemantico e) {
-					CompiladorMiniJava.ts.setRSem();
+					CompiladorMiniJava.tablaSimbolos.setRSem();
 					System.out.println(e.toString());
 				}
 			}
 		}
 	}
 
-	private List<Unidad> getTodasUnidades() {
-		List<Unidad> todasUnidades = new ArrayList<Unidad>();
-		for (String nombreUnidad : unidades.keySet()) {
-			List<Unidad> listaUnidad = unidades.get(nombreUnidad);
-			todasUnidades.addAll(listaUnidad);
-		}
-		return todasUnidades;
-	}
-
-	public boolean esDescendiente(String nombreClase) {
-		boolean descendiente = false;
-		Clase hereda = CompiladorMiniJava.ts.getClase(getSuperclase());
-		while (!false && !hereda.getNombre().equals("Object"))
-			descendiente = hereda.getNombre().equals(nombreClase);
-		hereda = CompiladorMiniJava.ts.getClase(hereda.getSuperclase());
-		return descendiente;
-	}
-
-	public List<NodoSentencia> getInlineAtrs() {
-		return inlineAtrs;
-	}
-
-	public int getCantidadInlineAtrs() {
-		return inlineAtrs.size();
-	}
-
-	public void insertarAsignacionInlineAtributo(NodoSentencia sentencia) {
-		inlineAtrs.add(sentencia);
-	}
-
-	private int getCantidadAtrs() {
-		return atributos.size();
-	}
-
-	private void setOffsetAtrs() {
-		Clase clasePadre = CompiladorMiniJava.ts.getClase(superclase);
-		if (clasePadre != null) { // No es Object
-			int cantAtrsPadre = clasePadre.getCantidadAtrs();
-			for (VariableInstancia v : atributos.values())
-				v.setOffset(++cantAtrsPadre);
-		}
-	}
-
 	public void generar() {
-		GeneradorCodigo.getInstance().write(".DATA");
-		GeneradorCodigo.getInstance().write("VT_" + getNombre() + ":");
+		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
+		generadorCodigo.write(".DATA");
+		generadorCodigo.write("VT_" + getNombre() + ":");
 		if (getCantidadMetodosDynamic() == 0)
-			GeneradorCodigo.getInstance().write("DW 0");
+			generadorCodigo.write("DW 0");
 		else
 			for (List<Unidad> listaMetodos : getTodosMetodos().values())
 				for (Unidad u : listaMetodos) {
 					Metodo metodo = (Metodo) u;
 					if (metodo.getFormaMetodo().equals("dynamic"))
-						GeneradorCodigo.getInstance().write("DW " + metodo.getLabel());
-					;
+						generadorCodigo.write("DW " + metodo.getLabel());
 				}
-		GeneradorCodigo.getInstance().write(".CODE");
+		generadorCodigo.write(".CODE");
 		for (Unidad u : getTodasUnidades()) {
-			if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.ts.getClaseActual().getNombre())) {
-				CompiladorMiniJava.ts.setUnidadActual(u);
+			if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.tablaSimbolos.getClaseActual().getNombre())) {
+				CompiladorMiniJava.tablaSimbolos.setUnidadActual(u);
 				u.generar();
 			}
 		}

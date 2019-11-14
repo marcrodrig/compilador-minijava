@@ -12,7 +12,7 @@ import main.CompiladorMiniJava;
 public abstract class Unidad {
 	private Token token;
 	private LinkedHashMap<String, Parametro> parametros;
-	private HashMap<String, VariableMetodo> varsParams;
+	private HashMap<String, VariableMetodo> varsLocalesParams;
 	private Clase declaradaEn;
 	private NodoBloque bloque;
 	private int offset, offsetVarLocal, offsetVarIns;
@@ -21,9 +21,9 @@ public abstract class Unidad {
 	public Unidad(Token token, LinkedHashMap<String, Parametro> parametros) {
 		this.token = token;
 		this.parametros = parametros;
+		varsLocalesParams = new HashMap<String, VariableMetodo>();
 		TablaSimbolos ts = TablaSimbolos.getInstance();
 		this.declaradaEn = ts.getClaseActual();
-		varsParams = new HashMap<String, VariableMetodo>();
 	}
 
 	public String getNombre() {
@@ -42,7 +42,7 @@ public abstract class Unidad {
 		return parametros;
 	}
 
-	// posicion va desde 1
+	// posición va desde 1
 	public Parametro getParametroPorPosicion(int posicion) {
 		ArrayList<Parametro> listaParametros = new ArrayList<Parametro>(parametros.values());
 		return listaParametros.get(posicion - 1);
@@ -56,8 +56,37 @@ public abstract class Unidad {
 		return parametros.size();
 	}
 	
+	public HashMap<String, VariableMetodo> getVarsLocalesParams() {
+		return varsLocalesParams;
+	}
+
+	public Variable getVarLocalParamPorNombre(String string) {
+		return varsLocalesParams.get(string);
+	}
+	
 	public int getCantidadVarsParams() {
-		return varsParams.size();
+		return varsLocalesParams.size();
+	}
+	
+	public void insertarVariableMetodo(VariableMetodo var) {
+		if (var instanceof VarLocal)
+			insertarVarLocal(var);
+		else
+			insertarParametro(var);
+	}
+	
+	public void insertarVarLocal(VariableMetodo varLoc) {
+		varLoc.setOffset(getOffsetVarLocal());
+        setOffsetVarLocal(getOffsetVarLocal() - 1);
+		varsLocalesParams.put(varLoc.getNombre(),(VarLocal) varLoc);
+	}
+	
+	public void insertarParametro(VariableMetodo param) {
+		varsLocalesParams.put(param.getNombre(),(Parametro) param);
+	}
+	
+	public void eliminarVarLocal(String nombreVarLocal) {
+		varsLocalesParams.remove(nombreVarLocal);		
 	}
 	
 	public Clase declaradaEn() {
@@ -70,50 +99,6 @@ public abstract class Unidad {
 	
 	public void setBloque(NodoBloque bloque) {
 		this.bloque = bloque;
-	}
-	
-	public abstract void chequeoDeclaraciones(List<Unidad> unidades) throws ExcepcionSemantico;
-
-	public void insertarVariableMetodo(VariableMetodo var) {
-		if (var instanceof VarLocal)
-			insertarVarLocal(var);
-		else
-			insertarParametro(var);
-	}
-	
-	public void insertarVarLocal(VariableMetodo varLoc) {
-		varLoc.setOffset(getOffsetVarLocal());
-        setOffsetVarLocal(getOffsetVarLocal() - 1);
-		varsParams.put(varLoc.getNombre(),(VarLocal) varLoc);
-	}
-	
-	public void insertarParametro(VariableMetodo param) {
-		varsParams.put(param.getNombre(),(Parametro) param);
-	}
-
-	public HashMap<String, VariableMetodo> getVarsLocalesParams() {
-		return varsParams;
-	}
-
-	public Variable getVarLocalParamPorNombre(String string) {
-		return varsParams.get(string);
-	}
-	
-	public void chequeoSentencias() throws ExcepcionSemantico {
-		CompiladorMiniJava.ts.setBloqueActual(null);
-		if (bloque != null)
-			bloque.chequear();
-		
-	}
-	
-	public String getLabel() {
-		if (label == null)
-			label = "" + getNombre() + "_" + declaradaEn.getNombre() + "_" + GeneradorCodigo.getInstance().nLabel();
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
 	}
 	
 	public int getOffset() {
@@ -140,11 +125,24 @@ public abstract class Unidad {
 		offsetVarIns = offset;
 	}
 	
-	protected abstract void generar();
-
-	public void eliminarVarLocal(String nombreVarLocal) {
-		varsParams.remove(nombreVarLocal);		
+	public String getLabel() {
+		if (label == null)
+			label = "" + getNombre() + "_" + declaradaEn.getNombre() + "_" + GeneradorCodigo.getInstance().nLabel();
+		return label;
 	}
 
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	public void chequeoSentencias() throws ExcepcionSemantico {
+		CompiladorMiniJava.tablaSimbolos.setBloqueActual(null);
+		if (bloque != null)
+			bloque.chequear();
+	}
+
+	public abstract void chequeoDeclaraciones(List<Unidad> unidades) throws ExcepcionSemantico;
+	
+	protected abstract void generar();
 	
 }

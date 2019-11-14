@@ -28,16 +28,15 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
-		Clase clase = CompiladorMiniJava.ts.getClase(tokenIdClase.getLexema());
+		Clase clase = CompiladorMiniJava.tablaSimbolos.getClase(tokenIdClase.getLexema());
 		if (clase != null) {
 		List<Unidad> metodos = clase.getTodosMetodosPorNombre(tokenIdMetVar.getLexema());
-		if (metodos != null) {
+		if (metodos != null)
 			for (Unidad u : metodos) {
 				Metodo met = (Metodo) u;
 				if(met.getCantidadParametros() == argsActuales.size())
 					metodo = met;
 			}
-		}
 		if (metodo == null)  // no hay visibilidad en metodos, ver
 			throw new ExcepcionSemantico("[" + tokenIdMetVar.getNroLinea() + ":" + tokenIdMetVar.getNroColumna()
 			+ "] Error semántico: El método " + tokenIdMetVar.getLexema() + " con " + argsActuales.size() + " parámetros de la clase " + clase.getNombre() + " no es un método válido.");
@@ -47,7 +46,7 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 		int posicion = 1;
 		boolean conforma = true;
 		while (conforma && posicion <= metodo.getCantidadParametros()) {
-			conforma = metodo.getParametroPorPosicion(1).getTipo().esCompatible(argsActuales.get(posicion-1).chequear());
+			conforma = metodo.getParametroPorPosicion(posicion).getTipo().esCompatible(argsActuales.get(posicion-1).chequear());
 			posicion++;
 		}
 		if (!conforma)
@@ -65,12 +64,13 @@ public class NodoLlamadaEstatica extends NodoPrimario {
 
 	@Override
 	protected void generar() {
+		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
 		if(!metodo.getTipo().getNombre().equals("void"))
-			GeneradorCodigo.getInstance().write("\tRMEM 1\t; Reservo memoria para el retorno del metodo");
+			generadorCodigo.write("\tRMEM 1\t; Reservo memoria para el retorno del metodo");
 		for (NodoExpresion exp : argsActuales)
 			exp.generar();
-		GeneradorCodigo.getInstance().write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
-		GeneradorCodigo.getInstance().write("\tCALL\t; Llamo al metodo");
+		generadorCodigo.write("\tPUSH " + metodo.getLabel() +"\t; Apilo la etiqueta del metodo");
+		generadorCodigo.write("\tCALL\t; Llamo al metodo");
 		Encadenado encadenado = getEncadenado();
 		if (encadenado != null)
 			encadenado.generar();

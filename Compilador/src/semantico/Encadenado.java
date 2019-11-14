@@ -3,10 +3,6 @@ package semantico;
 public abstract class Encadenado {
 	private Encadenado cadena;
 	private boolean esLadoIzqAsig;
-	
-	public Encadenado() {
-		
-	}
 
 	public Encadenado getEncadenado() {
 		return cadena;
@@ -16,8 +12,6 @@ public abstract class Encadenado {
 		this.cadena = cadena;
 	}
 
-	public abstract TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico;
-	
 	public boolean esLadoIzqAsig() {
 		return esLadoIzqAsig;
 	}
@@ -25,6 +19,8 @@ public abstract class Encadenado {
 	public void setEsLadoIzqAsig() {
 		esLadoIzqAsig = true;
 	}
+	
+	public abstract TipoRetorno chequear(TipoRetorno tipo) throws ExcepcionSemantico;
 	
 	protected abstract void generar();
 }

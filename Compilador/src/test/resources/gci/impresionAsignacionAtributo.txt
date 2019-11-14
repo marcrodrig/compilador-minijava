@@ -1,5 +1,4 @@
 class A {
-	//private int x = 9;
 	private int y;
 	static void main() {
 		int num;

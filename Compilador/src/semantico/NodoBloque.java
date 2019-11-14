@@ -10,62 +10,67 @@ public class NodoBloque extends NodoSentencia {
 	private NodoBloque padre;
 	private List<NodoSentencia> sentencias;
 	private HashMap<String, Variable> varsLocales;
-	
+
 	public NodoBloque() {
 		sentencias = new ArrayList<NodoSentencia>();
 		varsLocales = new HashMap<String, Variable>();
+	}
+
+	public NodoBloque getPadre() {
+		return padre;
+	}
+	
+	public void setPadre(NodoBloque padre) {
+		this.padre = padre;
 	}
 	
 	public void insertarSentencia(NodoSentencia sentencia) {
 		sentencias.add(sentencia);
 	}
 
-	public void setPadre(NodoBloque padre) {
-		this.padre = padre;
+	public Variable getVarLocal(String nombreVarLocal) {
+		Variable vLoc = varsLocales.get(nombreVarLocal);
+		NodoBloque bloquePadre = padre;
+		if(bloquePadre != null && vLoc == null)
+			while(bloquePadre != null) {
+				if(vLoc == null)
+					vLoc = bloquePadre.getVarLocal(nombreVarLocal);
+				bloquePadre = bloquePadre.getPadre();
+			}
+		return vLoc;
 	}
-	
-	public NodoBloque getPadre() {
-		return padre;
+
+	public void agregarVariableLocal(Variable v) {
+		varsLocales.put(v.getNombre(), v);
 	}
-	
+
 	public int getCantidadVarsLocales() {
 		return varsLocales.size();
 	}
 
 	@Override
 	protected void chequear() throws ExcepcionSemantico {
-		//soy el bloque actual
-		CompiladorMiniJava.ts.setBloqueActual(this);
-		for(NodoSentencia sentencia : sentencias) {
+		CompiladorMiniJava.tablaSimbolos.setBloqueActual(this);
+		for (NodoSentencia sentencia : sentencias) {
 			try {
 				sentencia.chequear();
 			} catch (ExcepcionSemantico e) {
-				CompiladorMiniJava.ts.setRSem();
+				CompiladorMiniJava.tablaSimbolos.setRSem();
 				System.out.println(e.toString());
 			}
 		}
-		Unidad unidadActual = CompiladorMiniJava.ts.getUnidadActual();
-        for (Variable v : varsLocales.values())
+		Unidad unidadActual = CompiladorMiniJava.tablaSimbolos.getUnidadActual();
+		for (Variable v : varsLocales.values())
 			unidadActual.eliminarVarLocal(v.getNombre());
 	}
 
 	public void generar() {
-		for(NodoSentencia sentencia : sentencias)
+		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
+		CompiladorMiniJava.tablaSimbolos.setBloqueActual(this);
+		generadorCodigo.write("\tRMEM " + getCantidadVarsLocales() + "\t; Reservo espacio para vars locales");
+		for (NodoSentencia sentencia : sentencias)
 			sentencia.generar();
-        GeneradorCodigo.getInstance().write("\tFMEM " + varsLocales.size() + " # Libero espacio de variables locales al bloque");
-        
-        /*
-         * //CAMBIAR OFF VARS LOCALES
-		ASintactico.getTs().getMain().setOffVar(ASintactico.getTs().getMain().getOffVar()-varLocales.size());
-         */
-	}
-
-	public void agregarVariableLocal(Variable v) {
-		varsLocales.put(v.getNombre(), v);
-	}
-	
-	public Variable getVarLocal(String nombreVarLocal) {
-		return varsLocales.get(nombreVarLocal);
+		generadorCodigo.write("\tFMEM " + varsLocales.size() + " # Libero espacio de variables locales al bloque");
 	}
 
 }

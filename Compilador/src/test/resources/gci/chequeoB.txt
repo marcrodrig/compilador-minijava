@@ -1,0 +1,17 @@
+class A {
+	private int e, r, t;
+	private int x = 2;
+	private int a = 3;
+	static void main() {
+		A obj = new A();
+		obj.setear();
+	}
+	dynamic void setear() {
+		int t, u, v;
+		t = 6;
+		u = 7;
+		v = 8;
+		v = 11*x+v+a;
+		System.printIln(v);
+	}
+} 

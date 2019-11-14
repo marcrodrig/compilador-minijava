@@ -18,7 +18,7 @@ class GeneradorCodigoTest {
 	@AfterEach
 	void resetTS() {
 		System.out.println();
-		CompiladorMiniJava.ts.reset();
+		CompiladorMiniJava.tablaSimbolos.reset();
 		GeneradorCodigo.reset();
 	}
 
@@ -65,8 +65,14 @@ class GeneradorCodigoTest {
 	}
 	
 	@Test
-	void testReadImpresionEntero() {
-		String[] args = { "src/test/resources/gci/readImpresionEntero.txt" };
+	void testReadImpresionASCIIcaracter() {
+		String[] args = { "src/test/resources/gci/readImpresionASCIIcaracter.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testImpresionAsignacionInlineAtributoVarEncadenado() {
+		String[] args = { "src/test/resources/gci/impresionAsignacionInlineAtributoVarEncadenado.txt" };
 		CompiladorMiniJava.main(args);
 	}
 	
@@ -143,26 +149,9 @@ class GeneradorCodigoTest {
 	}
 	
 	@Test
-	void testC1() {
-		String[] args = { "src/test/resources/gci/c1.txt" };
+	void testImpresion3ConstructoresDistintos() {
+		String[] args = { "src/test/resources/gci/impresion3ConstructoresDistintos.txt" };
 		CompiladorMiniJava.main(args);
 	}
-	
-	@Test
-	void testC2() {
-		String[] args = { "src/test/resources/gci/c2.txt" };
-		CompiladorMiniJava.main(args);
-	}
-	
-	@Test
-	void testC3() {
-		String[] args = { "src/test/resources/gci/c3.txt" };
-		CompiladorMiniJava.main(args);
-	}
-	
-	@Test
-	void testC3Or() {
-		String[] args = { "src/test/resources/gci/c3Or.txt" };
-		CompiladorMiniJava.main(args);
-	}
+
 }

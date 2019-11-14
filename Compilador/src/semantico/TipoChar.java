@@ -24,9 +24,9 @@ public class TipoChar extends TipoPrimitivo {
 				if (c == 'n')
 					GeneradorCodigo.getInstance().write("\tPUSH 10\t; Apilo ENTER");
 				else
-					GeneradorCodigo.getInstance().write("\tPUSH " + (int) c + "\t; Apilo el caracter " + c);
+					GeneradorCodigo.getInstance().write("\tPUSH " + (int) c + "\t; Apilo el literal caracter " + c);
 			
 		} else
-			GeneradorCodigo.getInstance().write("\tPUSH " + (int) token.getLexema().charAt(1) + "\t; Apilo el caracter " + token.getLexema().charAt(1));
+			GeneradorCodigo.getInstance().write("\tPUSH " + (int) token.getLexema().charAt(1) + "\t; Apilo el literal caracter " + token.getLexema().charAt(1));
 	}
 }

@@ -28,7 +28,7 @@ class AnalizadorSemanticoTest {
 	@AfterEach
 	void resetTS() {
 		System.out.println();
-		CompiladorMiniJava.ts.reset();
+		CompiladorMiniJava.tablaSimbolos.reset();
 	}
 
 /*	@Test
@@ -121,10 +121,10 @@ class AnalizadorSemanticoTest {
 	void testUnaClaseConMetodoMainChequeoClasesPredefinidas() {
 		String[] args = { "src/test/resources/semantico/unaClaseConMetodoMainChequeoClasesPredefinidas.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase object = CompiladorMiniJava.ts.getClase("Object");
-		Clase system = CompiladorMiniJava.ts.getClase("System");
-		Clase claseVacia = CompiladorMiniJava.ts.getClase("Clase");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase object = CompiladorMiniJava.tablaSimbolos.getClase("Object");
+		Clase system = CompiladorMiniJava.tablaSimbolos.getClase("System");
+		Clase claseVacia = CompiladorMiniJava.tablaSimbolos.getClase("Clase");
 		assertEquals(0, object.cantidadMetodos());
 		assertEquals(1, claseVacia.cantidadMetodos());
 		assertEquals(10, system.cantidadMetodos());
@@ -252,8 +252,8 @@ class AnalizadorSemanticoTest {
 	void testSinConstructorChequeoAgregacionConstructorPredefinido() {
 		String[] args = { "src/test/resources/semantico/sinConstructorChequeoPredefinido.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Unidad ctor = prueba.getConstructor(1);
 		Constructor constructor = (Constructor) ctor;
@@ -266,8 +266,8 @@ class AnalizadorSemanticoTest {
 	void testUnConstructorSinArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unConstructorSinArgsFormales.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Constructor ctor = (Constructor) prueba.getConstructor(1);
 		assertEquals("Prueba", ctor.getNombre());
@@ -286,8 +286,8 @@ class AnalizadorSemanticoTest {
 	void testUnConstructorUnArgFormal() {
 		String[] args = { "src/test/resources/semantico/unConstructorUnArgFormal.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Constructor ctor = (Constructor) prueba.getConstructor(1);
 		assertEquals("Prueba", ctor.getNombre());
@@ -316,8 +316,8 @@ class AnalizadorSemanticoTest {
 	void testDosConstructoresMismaCantidadArgsFormalesDistintoTipo() {
 		String[] args = { "src/test/resources/semantico/dosConstructoresMismaCantidadArgsFormalesDistintoTipo.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(2, prueba.getConstructores().size());
 		Constructor ctor1 = (Constructor) prueba.getConstructor(1);
 		Constructor ctor2 = (Constructor) prueba.getConstructor(2);
@@ -343,8 +343,8 @@ class AnalizadorSemanticoTest {
 	void testUnConstructorTresArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unConstructorTresArgsFormales.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(1, prueba.getConstructores().size());
 		Constructor ctor = (Constructor) prueba.getConstructor(1);
 		assertEquals("Prueba", ctor.getNombre());
@@ -365,8 +365,8 @@ class AnalizadorSemanticoTest {
 	void testUnMetodoSinArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unMetodoSinArgsFormales.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(2, prueba.cantidadMetodos());
 		Metodo m1 = (Metodo) prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("static", m1.getFormaMetodo());
@@ -387,8 +387,8 @@ class AnalizadorSemanticoTest {
 	void testUnMetodoUnArgFormal() {
 		String[] args = { "src/test/resources/semantico/unMetodoUnArgFormal.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(2, prueba.cantidadMetodos());
 		Metodo m1 = (Metodo) prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
@@ -425,8 +425,8 @@ class AnalizadorSemanticoTest {
 	void testUnMetodoTresArgsFormales() {
 		String[] args = { "src/test/resources/semantico/unMetodoTresArgsFormales.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase prueba = CompiladorMiniJava.ts.getClase("Prueba");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase prueba = CompiladorMiniJava.tablaSimbolos.getClase("Prueba");
 		assertEquals(2, prueba.cantidadMetodos());
 		Metodo m1 = (Metodo) prueba.getTodosMetodosPorNombre("met1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
@@ -481,8 +481,8 @@ class AnalizadorSemanticoTest {
 	void testSobrecargaMetodosConUnoFinalMismaClase() {
 		String[] args = { "src/test/resources/semantico/sobrecargaMetodosConUnoFinal.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(3, CompiladorMiniJava.ts.getClases().size());
-		Clase a = CompiladorMiniJava.ts.getClase("A");
+		assertEquals(3, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase a = CompiladorMiniJava.tablaSimbolos.getClase("A");
 		assertEquals(3, a.cantidadMetodos());
 		Metodo m1 = (Metodo) a.getTodosMetodosPorNombre("m1").get(0);
 		assertEquals("dynamic", m1.getFormaMetodo());
@@ -503,15 +503,15 @@ class AnalizadorSemanticoTest {
 	void testSobrecargaMetodosConUnoFinalDistintasClases() {
 		String[] args = { "src/test/resources/semantico/sobrecargaMetodoFinalDistintasClases.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(6, CompiladorMiniJava.ts.getClases().size());
-		Clase b = CompiladorMiniJava.ts.getClase("B");
+		assertEquals(6, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase b = CompiladorMiniJava.tablaSimbolos.getClase("B");
 		assertEquals(3, b.cantidadMetodos());
 		Metodo b_m3 = (Metodo) b.getTodosMetodosPorNombre("m3").get(0);
 		assertTrue(b_m3.isMetodoFinal());
-		Clase c = CompiladorMiniJava.ts.getClase("C");
+		Clase c = CompiladorMiniJava.tablaSimbolos.getClase("C");
 		assertEquals(5, c.cantidadMetodos());
 		assertEquals(2, c.getTodosMetodosPorNombre("m3").size());
-		Clase d = CompiladorMiniJava.ts.getClase("D");
+		Clase d = CompiladorMiniJava.tablaSimbolos.getClase("D");
 		assertEquals(1, d.cantidadMetodos());
 	}
 
@@ -520,10 +520,10 @@ class AnalizadorSemanticoTest {
 	void testConsolidacionAtributos() {
 		String[] args = { "src/test/resources/semantico/consolidacionAtributos.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(5, CompiladorMiniJava.ts.getClases().size());
-		Clase a = CompiladorMiniJava.ts.getClase("A");
-		Clase b = CompiladorMiniJava.ts.getClase("B");
-		Clase c = CompiladorMiniJava.ts.getClase("C");
+		assertEquals(5, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase a = CompiladorMiniJava.tablaSimbolos.getClase("A");
+		Clase b = CompiladorMiniJava.tablaSimbolos.getClase("B");
+		Clase c = CompiladorMiniJava.tablaSimbolos.getClase("C");
 		assertEquals(2, a.cantidadAtributos());
 		assertEquals(4, b.cantidadAtributos());
 		assertEquals(6, c.cantidadAtributos());
@@ -564,10 +564,10 @@ class AnalizadorSemanticoTest {
 	void testConsolidacionMetodos() {
 		String[] args = { "src/test/resources/semantico/consolidacionMetodos.txt" };
 		CompiladorMiniJava.main(args);
-		assertEquals(5, CompiladorMiniJava.ts.getClases().size());
-		Clase a = CompiladorMiniJava.ts.getClase("A");
-		Clase b = CompiladorMiniJava.ts.getClase("B");
-		Clase c = CompiladorMiniJava.ts.getClase("C");
+		assertEquals(5, CompiladorMiniJava.tablaSimbolos.getClases().size());
+		Clase a = CompiladorMiniJava.tablaSimbolos.getClase("A");
+		Clase b = CompiladorMiniJava.tablaSimbolos.getClase("B");
+		Clase c = CompiladorMiniJava.tablaSimbolos.getClase("C");
 		assertEquals(2, a.cantidadMetodos());
 		assertEquals(3, b.cantidadMetodos());
 		assertEquals(5, c.cantidadMetodos());

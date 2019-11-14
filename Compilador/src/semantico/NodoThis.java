@@ -6,7 +6,6 @@ import main.CompiladorMiniJava;
 
 public class NodoThis extends NodoPrimario {
 	private Token token;
-	private boolean esLadoIzqAsig;
 	
 	public NodoThis(Token token) {
 		this.token = token;
@@ -14,23 +13,20 @@ public class NodoThis extends NodoPrimario {
 
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
-		Clase clase = CompiladorMiniJava.ts.getUnidadActual().declaradaEn();
+		Clase clase = CompiladorMiniJava.tablaSimbolos.getUnidadActual().declaradaEn();
 		TipoRetorno tipoClase = new TipoClase(new Token("IdClase", clase.getNombre(), token.getNroLinea(), token.getNroColumna()));
-		Unidad unidad = CompiladorMiniJava.ts.getUnidadActual();
+		Unidad unidad = CompiladorMiniJava.tablaSimbolos.getUnidadActual();
 		if (unidad instanceof Metodo) {
 			Metodo metodo = (Metodo) unidad;
 			if (metodo.getFormaMetodo().equals("static"))
 				throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna()
 				+ "] Error semántico: This no se puede utilizar en un método estático.");
 		}
-		if (getEncadenado() == null)
+		Encadenado encadenado = getEncadenado();
+		if (encadenado == null)
 			return tipoClase;
 		else
-			return getEncadenado().chequear(tipoClase);
-	}
-
-	public void setEsLadoIzqAsig() {
-		esLadoIzqAsig = true;
+			return encadenado.chequear(tipoClase);
 	}
 	
 	@Override

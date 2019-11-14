@@ -33,7 +33,6 @@ Object_Object_1:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Object
 
@@ -47,7 +46,6 @@ read_System_2:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	READ
 	PUSH 48
 	SUB
@@ -61,7 +59,6 @@ printB_System_3:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	STOREFP	; Restablezco el contexto
@@ -71,7 +68,6 @@ printC_System_4:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	STOREFP	; Restablezco el contexto
@@ -81,7 +77,6 @@ printI_System_5:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	STOREFP	; Restablezco el contexto
@@ -91,7 +86,6 @@ printS_System_6:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	STOREFP	; Restablezco el contexto
@@ -101,7 +95,6 @@ println_System_7:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo println
@@ -110,7 +103,6 @@ printBln_System_8:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	PRNLN
@@ -121,7 +113,6 @@ printCln_System_9:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	PRNLN
@@ -132,7 +123,6 @@ printIln_System_10:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	PRNLN
@@ -143,7 +133,6 @@ printSln_System_11:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	PRNLN
@@ -154,7 +143,6 @@ System_System_12:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
 
@@ -170,28 +158,30 @@ main_A_0:
 	STOREFP
 
 	RMEM 1	; Reservo espacio para vars locales
-	RMEM 1	; Creación CIR
-	PUSH 2	; Reservo lugar para variables de instancia y VT
+	RMEM 1	; Creación CIR (clase A)
+	PUSH 2	; Reservo lugar para variables de instancia y VT (clase A)
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignación de la VT al CIR creado
 	PUSH VT_A
 	STOREREF 0	;Guardo referecia a VT
 	DUP
-	PUSH A_A_15	; Apilo etiqueta del constructor
-	CALL
+	PUSH A_A_15	; Apilo etiqueta del constructor A_A_15
+	CALL	; Llamo al constuctor A_A_15
 	RMEM 1	; Reservo lugar para el retorno
 	SWAP
 	DUP
 	LOADREF 0
-	LOADREF 0	; Cargo la dirección del método
+	LOADREF 0	; Cargo la dirección del método getX (clase A)
 	CALL
+	STORE 0
 .DATA
 string16: DW "A continuaciÃ³n deberÃ­a mostrar un 9: ",0
 .CODE
 	PUSH string16	; Apilo etiqueta del String
 	PUSH printS_System_6	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
+	LOAD 0
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
 	FMEM 1 # Libero espacio de variables locales al bloque
@@ -206,7 +196,7 @@ getX_A_13:
 	LOAD 3	; Apilo THIS
 	DUP
 	LOADREF 0
-	LOADREF 1	; Cargo la dirección del método
+	LOADREF 1	; Cargo la dirección del método setear (clase A)
 	CALL
 	LOAD 3
 	LOADREF 1
@@ -222,7 +212,7 @@ setear_A_14:
 	STOREFP
 
 	RMEM 0	; Reservo espacio para vars locales
-	PUSH 9	; entero
+	PUSH 9	; Apilo literal entero 9
 	LOAD 3
 	SWAP
 	STOREREF 1
@@ -234,7 +224,6 @@ A_A_15:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
 

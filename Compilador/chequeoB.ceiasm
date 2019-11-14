@@ -33,7 +33,6 @@ Object_Object_1:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Object
 
@@ -47,7 +46,6 @@ read_System_2:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	READ
 	PUSH 48
 	SUB
@@ -61,7 +59,6 @@ printB_System_3:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	STOREFP	; Restablezco el contexto
@@ -71,7 +68,6 @@ printC_System_4:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	STOREFP	; Restablezco el contexto
@@ -81,7 +77,6 @@ printI_System_5:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	STOREFP	; Restablezco el contexto
@@ -91,7 +86,6 @@ printS_System_6:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	STOREFP	; Restablezco el contexto
@@ -101,7 +95,6 @@ println_System_7:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo println
@@ -110,7 +103,6 @@ printBln_System_8:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	PRNLN
@@ -121,7 +113,6 @@ printCln_System_9:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	PRNLN
@@ -132,7 +123,6 @@ printIln_System_10:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	PRNLN
@@ -143,7 +133,6 @@ printSln_System_11:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	PRNLN
@@ -154,43 +143,85 @@ System_System_12:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
 
 # Definición de la clase A
 .DATA
 VT_A:
-DW 0
+DW setear_A_13
 .CODE
 main_A_0:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	RMEM 0	; Reservo espacio para vars locales
 	RMEM 1	; Reservo espacio para vars locales
-.DATA
-string13: DW "Ingrese un nÃºmero entero: ",0
-.CODE
-	PUSH string13	; Apilo etiqueta del String
-	PUSH printS_System_6	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
-	RMEM 1	; Reservo memoria para el retorno del metodo
-	PUSH read_System_2	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
+	RMEM 1	; Creación CIR (clase A)
+	PUSH 6	; Reservo lugar para variables de instancia y VT (clase A)
+	PUSH simple_malloc
+	CALL
+	DUP	; Asignación de la VT al CIR creado
+	PUSH VT_A
+	STOREREF 0	;Guardo referecia a VT
+	DUP
+	PUSH A_A_14	; Apilo etiqueta del constructor A_A_14
+	CALL	; Llamo al constuctor A_A_14
 	STORE 0
-	LOAD 0	;chequear
-	PUSH printI_System_5	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
+	LOAD 0
+	DUP
+	LOADREF 0
+	LOADREF 0	; Cargo la dirección del método setear (clase A)
+	CALL
 	FMEM 1 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
+setear_A_13:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 3	; Reservo espacio para vars locales
+	PUSH 6	; Apilo literal entero 6
+	LOAD 3
+	SWAP
+	STOREREF 3
+	PUSH 7	; Apilo literal entero 7
+	STORE -1
+	PUSH 8	; Apilo literal entero 8
+	STORE -2
+	PUSH 11	; Apilo literal entero 11
+	LOAD 3
+	LOADREF 4
+	MUL	; Producto
+	LOAD -2
+	ADD	; Suma
+	LOAD 3
+	LOADREF 5
+	ADD	; Suma
+	STORE -2
+	LOAD -2
+	PUSH printIln_System_10	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 3 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS setear
 A_A_14:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
+	;Inicio Generación asignación atributos inline
+	PUSH 2	; Apilo literal entero 2
+	LOAD 3
+	SWAP
+	STOREREF 4
+	PUSH 3	; Apilo literal entero 3
+	LOAD 3
+	SWAP
+	STOREREF 5
+	;Fin Generación asignación atributos inline
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
 

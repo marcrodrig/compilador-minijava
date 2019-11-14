@@ -5,11 +5,10 @@ import gc.GeneradorCodigo;
 public class NodoBloqueRead extends NodoBloque {
 	
 	public void generar() {
-		GeneradorCodigo.getInstance().write("\tREAD");
-		GeneradorCodigo.getInstance().write("\tPUSH 48");
-		GeneradorCodigo.getInstance().write("\tSUB");
-		GeneradorCodigo.getInstance().write("\tSTORE 3");
-		GeneradorCodigo.getInstance().write("\tSTOREFP");
-		GeneradorCodigo.getInstance().write("\tRET 0");
+		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
+		generadorCodigo.write("\tREAD");
+		generadorCodigo.write("\tSTORE 3");
+		generadorCodigo.write("\tSTOREFP");
+		generadorCodigo.write("\tRET 0");
 	}
 }

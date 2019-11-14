@@ -1,0 +1,73 @@
+class Uno {
+
+	public int a;
+
+	static void main(){
+		Uno u,f;
+		u = new Uno();
+		u.a = 2;
+		f = new Uno();
+		f.a = u.a;
+		
+		if(f.a == u.a) {
+			(f.m1().m2());
+			(System.printSln("entro por el if"));
+
+		}
+		else {
+			(System.printSln("no tiene que entrar"));
+		}
+
+		Dos d;
+		d = new Dos();
+		int bu;
+
+		(d.m());
+		bu = d.mientras((u.a)+10);
+
+		Tres t;
+		t = new Tres();
+		(t.mientras(10));
+
+	}
+	
+	dynamic void m2(){
+		(System.printSln("esto es m2"));	
+	}
+	
+	dynamic Uno m1(){
+		(System.printIln(a));
+		Uno s;
+		s = new Uno();
+		return s;
+	}
+	
+}
+
+class Dos {
+	
+	static void m(){
+		(System.printSln(" metodo m de la clase Dos"));
+	}
+
+	dynamic int mientras(int n){
+		int i;
+		i=0;
+		(System.printSln(" metodo mientras de la clase Dos"));
+		
+		while(i < n){
+			(System.printIln(i));
+			i=i+1;
+		}	
+		return 10;
+	}
+}
+
+class Tres extends Dos {
+	
+	dynamic int mientras(int n){
+		(System.printSln(" redefinicion de mientras en la clase tres"));
+		return 5;
+	}
+
+}

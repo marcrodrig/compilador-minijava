@@ -37,6 +37,70 @@ public class TablaSimbolos {
 		instanciaUnica = null;
 	}
 
+	public HashMap<String, Clase> getClases() {
+		return clases;
+	}
+
+	public Clase getClaseActual() {
+		return claseActual;
+	}
+
+	public void setClaseActual(Clase clase) {
+		claseActual = clase;
+	}
+
+	public Unidad getUnidadActual() {
+		return unidadActual;
+	}
+
+	public void setUnidadActual(Unidad unidad) {
+		unidadActual = unidad;
+	}
+
+	public Clase getClase(String nombreClase) {
+		return clases.get(nombreClase);
+	}
+
+	public void insertarUnidad(Unidad unidad) {
+		claseActual.getUnidades().computeIfAbsent(unidad.getNombre(), k -> new ArrayList<>()).add(unidad);
+	}
+
+	public void insertarClase(Clase clase) {
+		clases.put(clase.getNombre(), clase);
+	}
+
+	public void insertarAtributo(VariableInstancia varIns) {
+		claseActual.insertarAtributo(varIns);
+	}
+
+	public boolean recuperacionSintactica() {
+		return recuperacionSintactica;
+	}
+
+	public boolean recuperacionSemantica() {
+		return recuperacionSemantica;
+	}
+
+	public void setRSin() {
+		recuperacionSintactica = true;
+	}
+
+	public void setRSem() {
+		recuperacionSemantica = true;
+	}
+
+	public NodoBloque getBloqueActual() {
+		return bloqueActual;
+	}
+
+	public void setBloqueActual(NodoBloque bloque) {
+		this.bloqueActual = bloque;
+	}
+
+	public void setBloque(NodoBloque bloque) {
+		unidadActual.setBloque(bloque);
+	}
+
 	private LinkedHashMap<String, Clase> inicializarClasesPredefinidas() {
 		Token tObject = new Token("idClase", "Object", 0, 0);
 		Clase object = new Clase(tObject, null);
@@ -155,56 +219,14 @@ public class TablaSimbolos {
 		return clases;
 	}
 
-	public HashMap<String, Clase> getClases() {
-		return clases;
-	}
-
-	public Clase getClaseActual() {
-		return claseActual;
-	}
-
-	public void setClaseActual(Clase clase) {
-		claseActual = clase;
-	}
-
-	public Unidad getUnidadActual() {
-		return unidadActual;
-	}
-
-	public void setUnidadActual(Unidad unidad) {
-		unidadActual = unidad;
-	}
-
-	public Clase getClase(String nombreClase) {
-		return clases.get(nombreClase);
-	}
-
-	public void insertarClase(Clase clase) {
-		clases.put(clase.getNombre(), clase);
-	}
-
-	public void insertarAtributo(VariableInstancia varIns) {
-		claseActual.insertarAtributo(varIns);
-	}
-
-	public void insertarUnidad(Unidad unidad) {
-		claseActual.getUnidades().computeIfAbsent(unidad.getNombre(), k -> new ArrayList<>()).add(unidad);
-	}
-
-	public boolean recuperacionSintactica() {
-		return recuperacionSintactica;
-	}
-	
-	public boolean recuperacionSemantica() {
-		return recuperacionSemantica;
-	}
-
-	public void setRSin() {
-		recuperacionSintactica = true;
-	}
-	
-	public void setRSem() {
-		recuperacionSemantica = true;
+	public void chequeoMain(Clase clase, Metodo metodoMain) throws ExcepcionSemantico {
+		if (main == null)
+			main = metodoMain;
+		else {
+			if (!getClase(clase.getSuperclase()).tieneMetodoMain())
+				throw new ExcepcionSemantico("[" + clase.getTodosMetodosPorNombre("main").get(0).getNroLinea()
+						+ "] Error semántico: Método main ya definido.");
+		}
 	}
 
 	public void controlesSemanticos() throws ExcepcionSemantico {
@@ -212,7 +234,7 @@ public class TablaSimbolos {
 		instanciaUnica.consolidacion();
 		instanciaUnica.chequeoSentencias();
 	}
-	
+
 	private void chequeoDeclaraciones() throws ExcepcionSemantico {
 		for (Clase c : clases.values()) {
 			try {
@@ -235,70 +257,47 @@ public class TablaSimbolos {
 		}
 	}
 
-	public void chequeoMain(Clase clase, Metodo metodoMain) throws ExcepcionSemantico {
-		if (main == null)
-			main = metodoMain;
-		else {
-			if (!getClase(clase.getSuperclase()).tieneMetodoMain())
-				throw new ExcepcionSemantico("[" + clase.getTodosMetodosPorNombre("main").get(0).getNroLinea()
-						+ "] Error semántico: Método main ya definido.");
-		}
-	}
-
-	public void setBloque(NodoBloque bloque) {
-		unidadActual.setBloque(bloque);
-	}
-
-	public NodoBloque getBloqueActual() {
-		return bloqueActual;		
-	}
-	
-	public void setBloqueActual(NodoBloque bloque) {
-		this.bloqueActual = bloque;		
-	}
-
 	private void chequeoSentencias() {
 		for (Clase c : clases.values()) {
 			setClaseActual(c);
 			c.chequeoSentencias();
 		}
 	}
-	
+
 	public void generar() {
-		GeneradorCodigo.getInstance().write(".CODE");
-		GeneradorCodigo.getInstance().write("PUSH simple_heap_init");
-		GeneradorCodigo.getInstance().write("CALL");
-		GeneradorCodigo.getInstance().write("PUSH " + main.getLabel());
-		GeneradorCodigo.getInstance().write("CALL");
-		GeneradorCodigo.getInstance().write("HALT");
-		GeneradorCodigo.getInstance().newLine();
-	
-		GeneradorCodigo.getInstance().write("simple_heap_init:");
-		GeneradorCodigo.getInstance().write("\tRET 0\t; Retorna inmediatamente");
-		GeneradorCodigo.getInstance().newLine();
-		
-		GeneradorCodigo.getInstance().write("simple_malloc:");
-		GeneradorCodigo.getInstance().write("\tLOADFP\t; Inicialización unidad");
-		GeneradorCodigo.getInstance().write("\tLOADSP");
-		GeneradorCodigo.getInstance().write("\tSTOREFP\t; Finaliza inicialización del RA");
-		GeneradorCodigo.getInstance().write("\tLOADHL\t; hl");
-		GeneradorCodigo.getInstance().write("\tDUP\t; hl");
-		GeneradorCodigo.getInstance().write("\tPUSH 1\t; 1");
-		GeneradorCodigo.getInstance().write("\tADD\t; hl + 1");
-		GeneradorCodigo.getInstance().write("\tSTORE 4\t; Guarda el resultado (un puntero a la primer celda de la región de memoria)");
-		GeneradorCodigo.getInstance().write("\tLOAD 3\t; Carga cantidad de celdas a alojar (parámetro que debe ser positivo)");
-		GeneradorCodigo.getInstance().write("\tADD");
-		GeneradorCodigo.getInstance().write("\tSTOREHL\t; Mueve el heap limit (hl). Expande el heap");
-		GeneradorCodigo.getInstance().write("\tSTOREFP");
-		GeneradorCodigo.getInstance().write("\tRET 1\t; Retorna eliminando el parámetro");
-		GeneradorCodigo.getInstance().newLine();
-		
+		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
+		generadorCodigo.write(".CODE");
+		generadorCodigo.write("PUSH simple_heap_init");
+		generadorCodigo.write("CALL");
+		generadorCodigo.write("PUSH " + main.getLabel());
+		generadorCodigo.write("CALL");
+		generadorCodigo.write("HALT");
+		generadorCodigo.newLine();
+
+		generadorCodigo.write("simple_heap_init:");
+		generadorCodigo.write("\tRET 0\t; Retorna inmediatamente");
+		generadorCodigo.newLine();
+
+		generadorCodigo.write("simple_malloc:");
+		generadorCodigo.write("\tLOADFP\t; Inicialización unidad");
+		generadorCodigo.write("\tLOADSP");
+		generadorCodigo.write("\tSTOREFP\t; Finaliza inicialización del RA");
+		generadorCodigo.write("\tLOADHL\t; hl");
+		generadorCodigo.write("\tDUP\t; hl");
+		generadorCodigo.write("\tPUSH 1\t; 1");
+		generadorCodigo.write("\tADD\t; hl + 1");
+		generadorCodigo.write("\tSTORE 4\t; Guarda el resultado (un puntero a la primer celda de la región de memoria)");
+		generadorCodigo.write("\tLOAD 3\t; Carga cantidad de celdas a alojar (parámetro que debe ser positivo)");
+		generadorCodigo.write("\tADD");
+		generadorCodigo.write("\tSTOREHL\t; Mueve el heap limit (hl). Expande el heap");
+		generadorCodigo.write("\tSTOREFP");
+		generadorCodigo.write("\tRET 1\t; Retorna eliminando el parámetro");
+		generadorCodigo.newLine();
 		for (Clase c : clases.values()) {
 			setClaseActual(c);
-			GeneradorCodigo.getInstance().write("# Definición de la clase " + c.getNombre());
+			generadorCodigo.write("# Definición de la clase " + c.getNombre());
 			c.generar();
 		}
-
-		GeneradorCodigo.getInstance().close();
+		generadorCodigo.close();
 	}
 }

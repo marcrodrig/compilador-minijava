@@ -33,7 +33,6 @@ Object_Object_1:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Object
 
@@ -47,7 +46,6 @@ read_System_2:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	READ
 	PUSH 48
 	SUB
@@ -61,7 +59,6 @@ printB_System_3:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	STOREFP	; Restablezco el contexto
@@ -71,7 +68,6 @@ printC_System_4:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	STOREFP	; Restablezco el contexto
@@ -81,7 +77,6 @@ printI_System_5:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	STOREFP	; Restablezco el contexto
@@ -91,7 +86,6 @@ printS_System_6:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	STOREFP	; Restablezco el contexto
@@ -101,7 +95,6 @@ println_System_7:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	PRNLN
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo println
@@ -110,7 +103,6 @@ printBln_System_8:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	BPRINT
 	PRNLN
@@ -121,7 +113,6 @@ printCln_System_9:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	CPRINT
 	PRNLN
@@ -132,7 +123,6 @@ printIln_System_10:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	IPRINT
 	PRNLN
@@ -143,7 +133,6 @@ printSln_System_11:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales
 	LOAD 3
 	SPRINT
 	PRNLN
@@ -154,7 +143,6 @@ System_System_12:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
 
@@ -170,64 +158,58 @@ main_A_0:
 	STOREFP
 
 	RMEM 2	; Reservo espacio para vars locales
-	RMEM 1	; Creaci髇 CIR
-	PUSH 3	; Reservo lugar para variables de instancia y VT
+	RMEM 1	; Creaci髇 CIR (clase A)
+	PUSH 3	; Reservo lugar para variables de instancia y VT (clase A)
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignaci髇 de la VT al CIR creado
 	PUSH VT_A
 	STOREREF 0	;Guardo referecia a VT
 	DUP
-	;Generaci髇 atributos inline
-	PUSH atrInline_A_15
-	CALL
-	PUSH A_A_16	; Apilo etiqueta del constructor
-	CALL
+	PUSH A_A_15	; Apilo etiqueta del constructor A_A_15
+	CALL	; Llamo al constuctor A_A_15
 	RMEM 1	; Reservo lugar para el retorno
 	SWAP
 	DUP
 	LOADREF 0
-	LOADREF 0	; Cargo la direcci髇 del m閠odo
+	LOADREF 0	; Cargo la direcci髇 del m閠odo getX (clase A)
 	CALL
 	STORE 0
-	RMEM 1	; Creaci髇 CIR
-	PUSH 3	; Reservo lugar para variables de instancia y VT
+	RMEM 1	; Creaci髇 CIR (clase A)
+	PUSH 3	; Reservo lugar para variables de instancia y VT (clase A)
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignaci髇 de la VT al CIR creado
 	PUSH VT_A
 	STOREREF 0	;Guardo referecia a VT
 	DUP
-	;Generaci髇 atributos inline
-	PUSH atrInline_A_15
-	CALL
-	PUSH 10	; entero
+	PUSH 10	; Apilo literal entero 10
 	SWAP
-	PUSH A_A_17	; Apilo etiqueta del constructor
-	CALL
+	PUSH A_A_16	; Apilo etiqueta del constructor A_A_16
+	CALL	; Llamo al constuctor A_A_16
 	RMEM 1	; Reservo lugar para el retorno
 	SWAP
 	DUP
 	LOADREF 0
-	LOADREF 1	; Cargo la direcci髇 del m閠odo
+	LOADREF 1	; Cargo la direcci髇 del m閠odo getY (clase A)
 	CALL
 	STORE -1
 .DATA
-string18: DW "A continuaci贸n deber铆a mostrar un 9: ",0
+string17: DW "A continuaci贸n deber铆a mostrar un 9: ",0
+.CODE
+	PUSH string17	; Apilo etiqueta del String
+	PUSH printS_System_6	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	LOAD 0
+	PUSH printIln_System_10	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+.DATA
+string18: DW "A continuaci贸n deber铆a mostrar un 27: ",0
 .CODE
 	PUSH string18	; Apilo etiqueta del String
 	PUSH printS_System_6	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	LOAD 0	;chequear
-	PUSH printIln_System_10	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
-.DATA
-string19: DW "A continuaci贸n deber铆a mostrar un 27: ",0
-.CODE
-	PUSH string19	; Apilo etiqueta del String
-	PUSH printS_System_6	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
-	LOAD -1	;chequear
+	LOAD -1
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
 	FMEM 2 # Libero espacio de variables locales al bloque
@@ -261,33 +243,45 @@ getY_A_14:
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getY
-A_A_16:
+A_A_15:
 	LOADFP	; Guardo enlace din醡ico
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	;Inicio Generaci髇 asignaci髇 atributos inline
+	PUSH 9	; Apilo literal entero 9
+	LOAD 3
+	SWAP
+	STOREREF 1
+	;Fin Generaci髇 asignaci髇 atributos inline
 	RMEM 0	; Reservo espacio para vars locales
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
 
-A_A_17:
+A_A_16:
 	LOADFP	; Guardo enlace din醡ico
 	LOADSP	; Inicializo FP
 	STOREFP
 
+	;Inicio Generaci髇 asignaci髇 atributos inline
+	PUSH 9	; Apilo literal entero 9
+	LOAD 3
+	SWAP
+	STOREREF 1
+	;Fin Generaci髇 asignaci髇 atributos inline
 	RMEM 0	; Reservo espacio para vars locales
 .DATA
-string20: DW "A continuaci贸n deber铆a mostrar un 10: ",0
+string19: DW "A continuaci贸n deber铆a mostrar un 10: ",0
 .CODE
-	PUSH string20	; Apilo etiqueta del String
+	PUSH string19	; Apilo etiqueta del String
 	PUSH printS_System_6	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	LOAD 4	;chequear
+	LOAD 4
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	PUSH 17	; entero
-	LOAD 4	;chequear
+	PUSH 17	; Apilo literal entero 17
+	LOAD 4
 	ADD	; Suma
 	LOAD 3
 	SWAP
@@ -296,16 +290,3 @@ string20: DW "A continuaci贸n deber铆a mostrar un 10: ",0
 	STOREFP	; Restablezco el contexto
 	RET 2	; Retorno y libero espacio de los parametros del metodo y del THIS A
 
-atrInline_A_15:
-	LOADFP	; Guardo enlace din醡ico
-	LOADSP	; Inicializo FP
-	STOREFP
-
-	RMEM 0	; Reservo espacio para vars locales
-	PUSH 9	; entero
-	LOAD 3
-	SWAP
-	STOREREF 1
-	FMEM 0 # Libero espacio de variables locales al bloque
-	STOREFP	; Restablezco el contexto
-	RET 0	; Retorno y libero espacio de los parametros del metodo atrInline

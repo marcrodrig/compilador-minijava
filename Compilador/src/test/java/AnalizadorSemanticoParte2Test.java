@@ -18,7 +18,7 @@ class AnalizadorSemanticoParte2Test {
 	@AfterEach
 	void resetTS() {
 		System.out.println();
-		CompiladorMiniJava.ts.reset();
+		CompiladorMiniJava.tablaSimbolos.reset();
 	}
 /*
 	@Test

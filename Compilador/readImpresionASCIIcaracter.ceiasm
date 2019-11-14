@@ -33,7 +33,6 @@ Object_Object_1:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Object
 
@@ -48,8 +47,6 @@ read_System_2:
 	STOREFP
 
 	READ
-	PUSH 48
-	SUB
 	STORE 3
 	STOREFP
 	RET 0
@@ -144,40 +141,34 @@ System_System_12:
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
 
 # Definición de la clase A
 .DATA
 VT_A:
-DW getX_A_13
-DW setear_A_14
+DW 0
 .CODE
 main_A_0:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 1	; Creación CIR
-	PUSH 2	; Reservo lugar para variables de instancia y VT
-	PUSH simple_malloc
-	CALL
-	DUP	; Asignación de la VT al CIR creado
-	PUSH VT_A
-	STOREREF 0	;Guardo referecia a VT
-	DUP
-	RMEM 1	; Reservo lugar para el retorno
-	SWAP
-	DUP
-	LOADREF 0
-	LOADREF 0	; Cargo la dirección del método
-	CALL
+	RMEM 1	; Reservo espacio para vars locales
+.DATA
+string13: DW "Ingrese un caracter: ",0
+.CODE
+	PUSH string13	; Apilo etiqueta del String
+	PUSH printS_System_6	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	RMEM 1	; Reservo memoria para el retorno del metodo
+	PUSH read_System_2	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
 	STORE 0
 .DATA
-string15: DW "A continuaciÃ³n deberÃ­a mostrar un 9: ",0
+string14: DW "El valor ASCII del caracter ingresado es: ",0
 .CODE
-	PUSH string15	; Apilo etiqueta del String
+	PUSH string14	; Apilo etiqueta del String
 	PUSH printS_System_6	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
 	LOAD 0
@@ -186,42 +177,11 @@ string15: DW "A continuaciÃ³n deberÃ­a mostrar un 9: ",0
 	FMEM 1 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
-getX_A_13:
+A_A_15:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	LOAD 3	; Apilo THIS
-	DUP
-	LOADREF 0
-	LOADREF 1	; Cargo la dirección del método
-	CALL
-	LOAD 3
-	LOADREF 1
-	STORE 4	; Valor de retorno del metodo getX
-	STOREFP
-	RET 1	; Retorno y libero espacio del this y los parametros (metodo getX)
-	FMEM 0 # Libero espacio de variables locales al bloque
-	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getX
-setear_A_14:
-	LOADFP	; Guardo enlace dinámico
-	LOADSP	; Inicializo FP
-	STOREFP
-
-	PUSH 9	; entero
-	LOAD 3
-	SWAP
-	STOREREF 1
-	FMEM 0 # Libero espacio de variables locales al bloque
-	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS setear
-A_A_16:
-	LOADFP	; Guardo enlace dinámico
-	LOADSP	; Inicializo FP
-	STOREFP
-
-	NOP
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
 

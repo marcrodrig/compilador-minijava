@@ -45,7 +45,7 @@ public class AnalizadorSintactico {
 		clase();
 		} catch (ExcepcionSemantico e) {
 			System.out.println(e.toString());
-			CompiladorMiniJava.ts.setRSem();
+			CompiladorMiniJava.tablaSimbolos.setRSem();
 		}
 		otroInicial();
 	}
@@ -56,7 +56,7 @@ public class AnalizadorSintactico {
 				clase();
 			} catch (ExcepcionSemantico e) {
 				System.out.println(e.toString());
-				CompiladorMiniJava.ts.setRSem();
+				CompiladorMiniJava.tablaSimbolos.setRSem();
 			}
 			otroInicial();
 		} else if (tokenActual.getNombre().equals("EOF")) {		// siguientes
@@ -70,12 +70,12 @@ public class AnalizadorSintactico {
 		match("idClase");
 		String superclase = herencia();
 		Clase clase = new Clase(token, superclase);
-		CompiladorMiniJava.ts.setClaseActual(clase);
+		CompiladorMiniJava.tablaSimbolos.setClaseActual(clase);
 		match("{");
 		miembros();
 		match("}");
-		if (CompiladorMiniJava.ts.getClase(clase.getNombre()) == null)
-			CompiladorMiniJava.ts.insertarClase(clase);
+		if (CompiladorMiniJava.tablaSimbolos.getClase(clase.getNombre()) == null)
+			CompiladorMiniJava.tablaSimbolos.insertarClase(clase);
 		else
 			throw new ExcepcionSemantico("[" + clase.getNroLinea() + ":" + clase.getNroColumna() + "] Error semántico: La clase " + clase.getNombre() + " ya está definida." );
 	}
@@ -123,7 +123,7 @@ public class AnalizadorSintactico {
 				atributo();
 				} catch (ExcepcionSemantico e) {
 					System.out.println(e.toString());
-					CompiladorMiniJava.ts.setRSem();
+					CompiladorMiniJava.tablaSimbolos.setRSem();
 				}
 				break;
 			case "idClase":		// primeros
@@ -131,7 +131,7 @@ public class AnalizadorSintactico {
 				ctor();
 				} catch (ExcepcionSemantico e) {
 					System.out.println(e.toString());
-					CompiladorMiniJava.ts.setRSem();
+					CompiladorMiniJava.tablaSimbolos.setRSem();
 				}
 				break;
 			case "static":		// primeros
@@ -140,7 +140,7 @@ public class AnalizadorSintactico {
 				metodo();
 				} catch (ExcepcionSemantico e) {
 					System.out.println(e.toString());
-					CompiladorMiniJava.ts.setRSem();
+					CompiladorMiniJava.tablaSimbolos.setRSem();
 				}
 				break;
 		}
@@ -165,17 +165,17 @@ public class AnalizadorSintactico {
 				NodoAsignacion asig = (NodoAsignacion) sentencia;
 				for (Variable var : asig.getVars()) {
 					VariableInstancia varIns = (VariableInstancia) var;
-					if (CompiladorMiniJava.ts.getClaseActual().getAtributoPorNombre(varIns.getNombre()) == null)
-						CompiladorMiniJava.ts.insertarAtributo(varIns);
+					if (CompiladorMiniJava.tablaSimbolos.getClaseActual().getAtributoPorNombre(varIns.getNombre()) == null)
+						CompiladorMiniJava.tablaSimbolos.insertarAtributo(varIns);
 					else
 						throw new ExcepcionSemantico("[" + varIns.getNroLinea() + ":" + varIns.getNroColumna() + "] Error semántico: Nombre de atributo \"" + varIns.getNombre() + "\" repetido.");
 				}
-				CompiladorMiniJava.ts.getClaseActual().insertarAsignacionInlineAtributo(sentencia);
+				CompiladorMiniJava.tablaSimbolos.getClaseActual().insertarAsignacionInlineAtributo(sentencia);
 			} else {
 				for (Variable var : varsInstancia) {
 					VariableInstancia varIns = (VariableInstancia) var;
-					if (CompiladorMiniJava.ts.getClaseActual().getAtributos().get(varIns.getNombre()) == null)
-						CompiladorMiniJava.ts.insertarAtributo(varIns);
+					if (CompiladorMiniJava.tablaSimbolos.getClaseActual().getAtributos().get(varIns.getNombre()) == null)
+						CompiladorMiniJava.tablaSimbolos.insertarAtributo(varIns);
 					else
 						throw new ExcepcionSemantico("[" + varIns.getNroLinea() + ":" + varIns.getNroColumna() + "] Error semántico: Nombre de atributo \"" + varIns.getNombre() + "\" repetido.");
 				}
@@ -188,7 +188,7 @@ public class AnalizadorSintactico {
 	private void modoPanicoAtributo(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
 		int nroLineaFin = ultimaLineaAnalizada;
 		int nroColumnaFin = ultimaColumnaAnalizada;
-		CompiladorMiniJava.ts.setRSin();
+		CompiladorMiniJava.tablaSimbolos.setRSin();
 		ArrayList<String> siguientesValidos = new ArrayList<String>();
 		siguientesValidos.add("public");
 		siguientesValidos.add("protected");
@@ -321,10 +321,10 @@ public class AnalizadorSintactico {
 						NodoVar nv = (NodoVar) izq;
 						nv.setEsLadoIzqAsig();
 					}
-					if (np instanceof NodoThis) {
+					/*if (np instanceof NodoThis) {
 						NodoThis nt = (NodoThis) np;
 						nt.setEsLadoIzqAsig();
-					}
+					}*/
 					Encadenado ultimoEncadenado = np.getEncadenado();
 					if (ultimoEncadenado != null) {
 						while(ultimoEncadenado.getEncadenado() != null) {
@@ -352,22 +352,22 @@ public class AnalizadorSintactico {
 		List<Parametro> listaArgsFormales = argsFormales();
 		LinkedHashMap<String, Parametro> parametros = new LinkedHashMap<String, Parametro>();
 		Metodo met = new Metodo(token, formaMetodo, tipo, metodoFinal, parametros);
-		CompiladorMiniJava.ts.setUnidadActual(met);
-		CompiladorMiniJava.ts.setBloque(null);
+		CompiladorMiniJava.tablaSimbolos.setUnidadActual(met);
+		CompiladorMiniJava.tablaSimbolos.setBloque(null);
 		NodoBloque bloque = bloque();
-		CompiladorMiniJava.ts.setBloque(bloque);
+		CompiladorMiniJava.tablaSimbolos.setBloque(bloque);
 		int posicion = 1;
 		for (Parametro param : listaArgsFormales) {
 			param.setPosicion(posicion);
 			if (parametros.get(param.getNombre()) == null) {
 				parametros.put(param.getNombre(), param);
-				CompiladorMiniJava.ts.getUnidadActual().insertarParametro(param);
+				CompiladorMiniJava.tablaSimbolos.getUnidadActual().insertarParametro(param);
 			}
 			else
 				throw new ExcepcionSemantico("[" + param.getNroLinea() + ":" + param.getNroColumna() +"] Error semántico: Nombre de parámetro \"" + param.getNombre() + "\" repetido.");
 			posicion++;
 		}
-		CompiladorMiniJava.ts.insertarUnidad(met);
+		CompiladorMiniJava.tablaSimbolos.insertarUnidad(met);
 	}
 
 	private String formaMetodo() throws ExcepcionLexico, ExcepcionSintactico {
@@ -480,34 +480,34 @@ public class AnalizadorSintactico {
 		List<Parametro> listaArgsFormales = argsFormales();
 		LinkedHashMap<String, Parametro> parametros = new LinkedHashMap<String, Parametro>();
 		Constructor ctor = new Constructor(token, parametros);
-		CompiladorMiniJava.ts.setUnidadActual(ctor);
-		CompiladorMiniJava.ts.setBloque(null);
+		CompiladorMiniJava.tablaSimbolos.setUnidadActual(ctor);
+		CompiladorMiniJava.tablaSimbolos.setBloque(null);
 		NodoBloque bloque = bloque();
-		CompiladorMiniJava.ts.setBloque(bloque);
+		CompiladorMiniJava.tablaSimbolos.setBloque(bloque);
 		int posicion = 1;
 		for (Parametro param : listaArgsFormales) {
 			param.setPosicion(posicion);
 			if (parametros.get(param.getNombre()) == null) {
 				parametros.put(param.getNombre(), param);
-				CompiladorMiniJava.ts.getUnidadActual().insertarParametro(param);
+				CompiladorMiniJava.tablaSimbolos.getUnidadActual().insertarParametro(param);
 			}
 			else
 				throw new ExcepcionSemantico("[" + param.getNroLinea() + ":" + param.getNroColumna() + "] Error semántico: Nombre de parámetro \"" + param.getNombre() + "\" repetido.");
 			posicion++;
 		}
-		if (!CompiladorMiniJava.ts.getClaseActual().getNombre().equals(token.getLexema()))
-			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna() + "] Error semántico: El nombre del constructor es inválido, debe ser " + CompiladorMiniJava.ts.getClaseActual().getNombre() + ".");
-		CompiladorMiniJava.ts.insertarUnidad(ctor);
+		if (!CompiladorMiniJava.tablaSimbolos.getClaseActual().getNombre().equals(token.getLexema()))
+			throw new ExcepcionSemantico("[" + token.getNroLinea() + ":" + token.getNroColumna() + "] Error semántico: El nombre del constructor es inválido, debe ser " + CompiladorMiniJava.tablaSimbolos.getClaseActual().getNombre() + ".");
+		CompiladorMiniJava.tablaSimbolos.insertarUnidad(ctor);
 	}
 
 	private NodoBloque bloque() throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		match("{");		// primeros
 		NodoBloque bloque = new NodoBloque();
-		bloque.setPadre(CompiladorMiniJava.ts.getBloqueActual());
-		CompiladorMiniJava.ts.setBloqueActual(bloque);
+		bloque.setPadre(CompiladorMiniJava.tablaSimbolos.getBloqueActual());
+		CompiladorMiniJava.tablaSimbolos.setBloqueActual(bloque);
 		sentencias(bloque);
 		match("}");
-		CompiladorMiniJava.ts.setBloqueActual(bloque.getPadre());
+		CompiladorMiniJava.tablaSimbolos.setBloqueActual(bloque.getPadre());
 		return bloque;
 	}
 
@@ -668,7 +668,7 @@ public class AnalizadorSintactico {
 	private void modoPanicoBloque(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode, ExcepcionSemantico {
 		int nroLineaFin = ultimaLineaAnalizada;
 		int nroColumnaFin = ultimaColumnaAnalizada;
-		CompiladorMiniJava.ts.setRSin();
+		CompiladorMiniJava.tablaSimbolos.setRSin();
 		ArrayList<String> siguientesValidos = new ArrayList<String>();
 		siguientesValidos.add("}");
 		siguientesValidos.add(";");
@@ -718,7 +718,7 @@ public class AnalizadorSintactico {
 						throw new ExcepcionSintactico("[" + tokenActual.getNroLinea() + ":" + tokenActual.getNroColumna() + "] Error sintáctico: Se espera la declaración de una sentencia o }.\nEsperado: ;, idMetVar, (, boolean, char, int, String, idClase, if, while, {, return, new, +, -, !, null, true, false, intLiteral, charLiteral, stringLiteral, this o }\nEncontrado: " + tokenActual.getNombre());
 					break;
 				default:
-					sentencias(CompiladorMiniJava.ts.getBloqueActual());
+					sentencias(CompiladorMiniJava.tablaSimbolos.getBloqueActual());
 					break;
 			}
 		}
@@ -1248,7 +1248,7 @@ public class AnalizadorSintactico {
 		switch (tokenActual.getNombre()) {
 			case "null":						// primeros
 				match("null");
-				return null;
+				break;
 			case "true":						// primeros
 				match("true");
 				break;

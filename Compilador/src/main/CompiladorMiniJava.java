@@ -15,7 +15,7 @@ import sintactico.AnalizadorSintactico;
  */
 public class CompiladorMiniJava {
 	
-	public static TablaSimbolos ts;
+	public static TablaSimbolos tablaSimbolos;
 	
 	public static void main(String[] args) {
 		if (args.length > 2 || args.length == 0) {
@@ -42,16 +42,15 @@ public class CompiladorMiniJava {
 				if (validarEntrada(extensionArchivoEntrada)) {
 					AnalizadorSintactico analizadorSintactico;
 					try {
-						ts = TablaSimbolos.getInstance();
+						tablaSimbolos = TablaSimbolos.getInstance();
 						analizadorSintactico = new AnalizadorSintactico(args[0]);
 						analizadorSintactico.start();
-						// Análisis semántico
-						ts.controlesSemanticos();
-						if (ts.recuperacionSintactica() || ts.recuperacionSemantica())
-							System.out.println("Se completó el análisis, no se genera código porque se recuperó de errores sintácticos y/o semánticos.");
+						tablaSimbolos.controlesSemanticos();
+						if (tablaSimbolos.recuperacionSintactica() || tablaSimbolos.recuperacionSemantica())
+							System.out.println("Se completó el análisis, no se genera código intermedio porque se recuperó de errores sintácticos y/o semánticos.");
 						else {
 							System.out.println("El análisis fue exitoso, todas las entidades han sido correctamente declaradas.");
-							ts.generar();
+							tablaSimbolos.generar();
 							System.out.println("Generación de código intermedio: " + archivoSalida);
 						}
 					} catch (FileNotFoundException e1) {
@@ -67,7 +66,7 @@ public class CompiladorMiniJava {
 							+ "OUT_FILE: Parámetro Opcional. Ruta de archivo de generación de código intermedio (extensión .ceaism)");
 				}
 			} else {
-				System.out.println("Error en la extensión del archivo de geneación de código intermedio.");
+				System.out.println("Error en la extensión del archivo de generación de código intermedio.");
 			}
 		}
 	}

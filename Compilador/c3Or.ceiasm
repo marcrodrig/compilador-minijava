@@ -1,0 +1,429 @@
+.CODE
+PUSH simple_heap_init
+CALL
+PUSH main_Uno_0
+CALL
+HALT
+
+simple_heap_init:
+	RET 0	; Retorna inmediatamente
+
+simple_malloc:
+	LOADFP	; Inicialización unidad
+	LOADSP
+	STOREFP	; Finaliza inicialización del RA
+	LOADHL	; hl
+	DUP	; hl
+	PUSH 1	; 1
+	ADD	; hl + 1
+	STORE 4	; Guarda el resultado (un puntero a la primer celda de la región de memoria)
+	LOAD 3	; Carga cantidad de celdas a alojar (parámetro que debe ser positivo)
+	ADD
+	STOREHL	; Mueve el heap limit (hl). Expande el heap
+	STOREFP
+	RET 1	; Retorna eliminando el parámetro
+
+# Definición de la clase Object
+.DATA
+VT_Object:
+DW 0
+.CODE
+Object_Object_1:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Object
+
+# Definición de la clase System
+.DATA
+VT_System:
+DW 0
+.CODE
+read_System_2:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	READ
+	PUSH 48
+	SUB
+	STORE 3
+	STOREFP
+	RET 0
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo read
+printB_System_3:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	BPRINT
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printB
+printC_System_4:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	CPRINT
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printC
+printI_System_5:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	IPRINT
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printI
+printS_System_6:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	SPRINT
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printS
+println_System_7:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	PRNLN
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo println
+printBln_System_8:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	BPRINT
+	PRNLN
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printBln
+printCln_System_9:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	CPRINT
+	PRNLN
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printCln
+printIln_System_10:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	IPRINT
+	PRNLN
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printIln
+printSln_System_11:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	LOAD 3
+	SPRINT
+	PRNLN
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo printSln
+System_System_12:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
+
+# Definición de la clase Uno
+.DATA
+VT_Uno:
+DW m1_Uno_13
+DW m2_Uno_14
+.CODE
+main_Uno_0:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 5	; Reservo espacio para vars locales
+	RMEM 1	; Creación CIR (clase Uno)
+	PUSH 2	; Reservo lugar para variables de instancia y VT (clase Uno)
+	PUSH simple_malloc
+	CALL
+	DUP	; Asignación de la VT al CIR creado
+	PUSH VT_Uno
+	STOREREF 0	;Guardo referecia a VT
+	DUP
+	PUSH Uno_Uno_15	; Apilo etiqueta del constructor Uno_Uno_15
+	CALL	; Llamo al constuctor Uno_Uno_15
+	STORE 0
+	PUSH 2	; Apilo entero 2
+	LOAD 0
+	SWAP
+	STOREREF 1	; Guardo el valor del atributo a
+	RMEM 1	; Creación CIR (clase Uno)
+	PUSH 2	; Reservo lugar para variables de instancia y VT (clase Uno)
+	PUSH simple_malloc
+	CALL
+	DUP	; Asignación de la VT al CIR creado
+	PUSH VT_Uno
+	STOREREF 0	;Guardo referecia a VT
+	DUP
+	PUSH Uno_Uno_15	; Apilo etiqueta del constructor Uno_Uno_15
+	CALL	; Llamo al constuctor Uno_Uno_15
+	STORE -1
+	LOAD 0
+	LOADREF 1
+	LOAD -1
+	SWAP
+	STOREREF 1	; Guardo el valor del atributo a
+	LOAD -1
+	LOADREF 1
+	LOAD 0
+	LOADREF 1
+	EQ	; Igual
+	BF else17
+	RMEM 0	; Reservo espacio para vars locales
+	LOAD -1
+	RMEM 1	; Reservo lugar para el retorno
+	SWAP
+	DUP
+	LOADREF 0
+	LOADREF 0	; Cargo la dirección del método m1 (clase Uno)
+	CALL
+	DUP
+	LOADREF 0
+	LOADREF 1	; Cargo la dirección del método m2 (clase Uno)
+	CALL
+.DATA
+string18: DW "entro por el if",0
+.CODE
+	PUSH string18	; Apilo etiqueta del String
+	PUSH printSln_System_11	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 0 # Libero espacio de variables locales al bloque
+	JUMP finIf16
+else17:NOP
+	RMEM 0	; Reservo espacio para vars locales
+.DATA
+string19: DW "no tiene que entrar",0
+.CODE
+	PUSH string19	; Apilo etiqueta del String
+	PUSH printSln_System_11	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 0 # Libero espacio de variables locales al bloque
+finIf16:NOP
+	RMEM 1	; Creación CIR (clase Dos)
+	PUSH 1	; Reservo lugar para variables de instancia y VT (clase Dos)
+	PUSH simple_malloc
+	CALL
+	DUP	; Asignación de la VT al CIR creado
+	PUSH VT_Dos
+	STOREREF 0	;Guardo referecia a VT
+	DUP
+	PUSH Dos_Dos_20	; Apilo etiqueta del constructor Dos_Dos_20
+	CALL	; Llamo al constuctor Dos_Dos_20
+	STORE -2
+	LOAD -2
+	POP
+	PUSH m_Dos_21	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	LOAD -2
+	RMEM 1	; Reservo lugar para el retorno
+	SWAP
+	LOAD 0
+	LOADREF 1
+	PUSH 10	; Apilo entero 10
+	ADD	; Suma
+	SWAP
+	DUP
+	LOADREF 0
+	LOADREF 0	; Cargo la dirección del método mientras (clase Dos)
+	CALL
+	STORE -3
+	RMEM 1	; Creación CIR (clase Tres)
+	PUSH 1	; Reservo lugar para variables de instancia y VT (clase Tres)
+	PUSH simple_malloc
+	CALL
+	DUP	; Asignación de la VT al CIR creado
+	PUSH VT_Tres
+	STOREREF 0	;Guardo referecia a VT
+	DUP
+	PUSH Tres_Tres_22	; Apilo etiqueta del constructor Tres_Tres_22
+	CALL	; Llamo al constuctor Tres_Tres_22
+	STORE -4
+	LOAD -4
+	RMEM 1	; Reservo lugar para el retorno
+	SWAP
+	PUSH 10	; Apilo entero 10
+	SWAP
+	DUP
+	LOADREF 0
+	LOADREF 0	; Cargo la dirección del método mientras (clase Tres)
+	CALL
+	POP
+	FMEM 5 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo main
+m2_Uno_14:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 0	; Reservo espacio para vars locales
+.DATA
+string23: DW "esto es m2",0
+.CODE
+	PUSH string23	; Apilo etiqueta del String
+	PUSH printSln_System_11	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 0 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS m2
+m1_Uno_13:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 1	; Reservo espacio para vars locales
+	LOAD 3
+	LOADREF 1
+	PUSH printIln_System_10	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	RMEM 1	; Creación CIR (clase Uno)
+	PUSH 2	; Reservo lugar para variables de instancia y VT (clase Uno)
+	PUSH simple_malloc
+	CALL
+	DUP	; Asignación de la VT al CIR creado
+	PUSH VT_Uno
+	STOREREF 0	;Guardo referecia a VT
+	DUP
+	PUSH Uno_Uno_15	; Apilo etiqueta del constructor Uno_Uno_15
+	CALL	; Llamo al constuctor Uno_Uno_15
+	STORE 0
+	LOAD 0
+	STORE 4	; Valor de retorno del metodo m1
+	FMEM 1	; Libero espacio de variable locales (metodo m1)
+	STOREFP
+	RET 1	; Retorno y libero espacio del this y los parametros (metodo m1)
+	FMEM 1 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS m1
+Uno_Uno_15:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Uno
+
+# Definición de la clase Dos
+.DATA
+VT_Dos:
+DW mientras_Dos_24
+.CODE
+m_Dos_21:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 0	; Reservo espacio para vars locales
+.DATA
+string25: DW " metodo m de la clase Dos",0
+.CODE
+	PUSH string25	; Apilo etiqueta del String
+	PUSH printSln_System_11	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 0 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo m
+mientras_Dos_24:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 1	; Reservo espacio para vars locales
+	PUSH 0	; Apilo entero 0
+	STORE 0
+.DATA
+string26: DW " metodo mientras de la clase Dos",0
+.CODE
+	PUSH string26	; Apilo etiqueta del String
+	PUSH printSln_System_11	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+while27:NOP
+	LOAD 0
+	LOAD 4
+	LT	; Menor
+	BF finWhile28
+	RMEM 0	; Reservo espacio para vars locales
+	LOAD 0
+	PUSH printIln_System_10	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	LOAD 0
+	PUSH 1	; Apilo entero 1
+	ADD	; Suma
+	STORE 0
+	FMEM 0 # Libero espacio de variables locales al bloque
+	JUMP while27
+finWhile28:NOP
+	PUSH 10	; Apilo entero 10
+	STORE 5	; Valor de retorno del metodo mientras
+	FMEM 1	; Libero espacio de variable locales (metodo mientras)
+	STOREFP
+	RET 2	; Retorno y libero espacio del this y los parametros (metodo mientras)
+	FMEM 1 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 2	; Retorno y libero espacio de los parametros del metodo y del THIS mientras
+Dos_Dos_20:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Dos
+
+# Definición de la clase Tres
+.DATA
+VT_Tres:
+DW mientras_Tres_29
+.CODE
+mientras_Tres_29:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 0	; Reservo espacio para vars locales
+.DATA
+string30: DW " redefinicion de mientras en la clase tres",0
+.CODE
+	PUSH string30	; Apilo etiqueta del String
+	PUSH printSln_System_11	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	PUSH 5	; Apilo entero 5
+	STORE 5	; Valor de retorno del metodo mientras
+	STOREFP
+	RET 2	; Retorno y libero espacio del this y los parametros (metodo mientras)
+	FMEM 0 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 2	; Retorno y libero espacio de los parametros del metodo y del THIS mientras
+Tres_Tres_22:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Tres
+

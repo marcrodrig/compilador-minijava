@@ -1,16 +1,44 @@
-class A {
-	private int je = 7;
-	private int d;
+/*class A {
 	static void main() {
-		this.d = 8;
 		B b = new B();
-		System.printIln(b.x);
-		System.printIln(je);
-		return this.d;
+		if(b.met() == null ) {
+			System.printSln("Bien."); }
+		else {
+			System.printSln("Mal."); }
 	}
 }
 class B {
-	public int x = 5;
+	B() {
+		System.printSln("constructor B");
+	}
+	dynamic B met() {
+		return null;
+	}
+}*/
+
+/*class A {
+	static void main() {
+		A a = new B();
+	}
+}
+class B extends A {
+B() {
+System.printSln("constructor B");
+}
+}*/
+
+class A {
+public B b= null;
+	static void main() {
+B b1;
+b1 = null;
+B b2 = null;
+//b1.m('c',true);
+b1.m('c',3);
+	}
+}
+class B {
+dynamic void m(char c, int x) {}
 }
 
 /*class A {

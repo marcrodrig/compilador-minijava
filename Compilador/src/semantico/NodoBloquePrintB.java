@@ -5,7 +5,8 @@ import gc.GeneradorCodigo;
 public class NodoBloquePrintB extends NodoBloque {
 	
 	public void generar() {
-		GeneradorCodigo.getInstance().write("\tLOAD 3");
-		GeneradorCodigo.getInstance().write("\tBPRINT");
+		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
+		generadorCodigo.write("\tLOAD 3");
+		generadorCodigo.write("\tBPRINT");
 	}
 }

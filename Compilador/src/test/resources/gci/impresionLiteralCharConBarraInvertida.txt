@@ -1,0 +1,8 @@
+class A {
+	static void main() {
+		System.printC('\t');
+		System.printC('\x');
+		System.printC('\n');
+		System.printC('\y');
+	}
+}
