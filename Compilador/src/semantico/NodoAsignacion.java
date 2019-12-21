@@ -49,8 +49,12 @@ public class NodoAsignacion extends NodoSentencia {
 				tipoLadoDerecho = ladoDerecho.chequear();
 			Variable primerVar = vars.get(0);
 			TipoRetorno tipoAsignacionInline = primerVar.getTipo();
-			if (!tipoAsignacionInline.esCompatible(tipoLadoDerecho))
-				throw new ExcepcionSemantico("[" + nroLinea + "] Error semántico: Tipos incompatibles en asignación inline.");
+			if (tipoAsignacionInline == null)
+				for (Variable var : vars)
+					var.setTipoInline(tipoLadoDerecho);
+			else 
+				if (!tipoAsignacionInline.esCompatible(tipoLadoDerecho))
+					throw new ExcepcionSemantico("[" + nroLinea + "] Error semántico: Tipos incompatibles en asignación inline.");
 		} else { // método lado izquierdo
 			if (ladoIzquierdo instanceof NodoLlamadaDirecta) {
 				NodoLlamadaDirecta nodo = (NodoLlamadaDirecta) ladoIzquierdo;

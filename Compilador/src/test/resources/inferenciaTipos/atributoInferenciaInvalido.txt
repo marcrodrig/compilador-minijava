@@ -1,0 +1,6 @@
+class Prueba {
+	public x;
+	private y,w,q;
+	static void main() {
+	}
+}

@@ -1,0 +1,52 @@
+class Prueba {
+	public x = 10;
+	private f = false;
+	private v = true;
+	private obj = new Prueba2();
+	private cad = "Hola Mundo!";
+	private n = null;
+	static void main() {
+		int num;
+		Prueba p = new Prueba();
+		num = p.getX();
+		boolean ver, fal;
+		fal = p.getF();
+		ver = p.getV();
+		System.printS("Debería mostrar un 10: ");
+		System.printIln(num);
+		System.printS("Debería mostrar false: ");
+		System.printBln(fal);
+		System.printS("Debería mostrar un true: ");
+		System.printBln(ver);
+		System.printS("Debería mostrar un 20: ");
+		System.printIln(p.getP2().getX());
+		System.printS("Debería mostrar un mensaje: ");
+		System.printSln(p.getCad());
+		//System.printSln(p.getN());
+	}
+	dynamic int getX() {
+		return x;
+	}
+	dynamic boolean getF() {
+		return f;
+	}
+	dynamic boolean getV() {
+		return v;
+	}
+	dynamic Prueba2 getP2() {
+		return obj;
+	}
+	dynamic String getCad() {
+		return cad;
+	}
+	dynamic Object getN() {
+		return n;
+	}
+}
+
+class Prueba2 {
+	private int x = 20;
+	dynamic int getX() {
+		return x;
+	}
+}

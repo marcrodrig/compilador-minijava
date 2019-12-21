@@ -151,7 +151,7 @@ public class AnalizadorSintactico {
 		int panicoColumna = tokenActual.getNroColumna();
 		String modificadorVisibilidad = visibilidad();
 		try {
-			Tipo tipo = tipo();
+			Tipo tipo = tipoInline();
 			List<Token> listaTokenVariablesInstancia = new ArrayList<Token>();
 			listaDecAtrs(listaTokenVariablesInstancia);
 			List<Variable> varsInstancia = new ArrayList<Variable>();
@@ -183,6 +183,27 @@ public class AnalizadorSintactico {
 		} catch (ExcepcionSintactico e) {
 			modoPanicoAtributo(panicoLinea, panicoColumna, e.toString());
 		}
+	}
+	
+	private Tipo tipoInline() throws ExcepcionLexico, ExcepcionSintactico {
+		Tipo tipo = null;
+		switch (tokenActual.getNombre()) {
+			case "boolean":			// primeros
+			case "char":			// primeros
+			case "int":				// primeros
+			case "String":			// primeros
+				tipo = tipoPrimitivo();
+				break;
+			case "idClase":			// primeros
+				tipo = new TipoClase(tokenActual);
+				match("idClase");
+				break;
+			case "idMetVar":		// siguientes
+				break;
+			default:
+				throw new ExcepcionSintactico("Error sintáctico: tipo inválido u nombre de variable inválida.\nEsperado: idClase, boolean, char, int, String o idMetVar\nEncontrado: " + tokenActual.getNombre());
+		}
+		return tipo;
 	}
 	
 	private void modoPanicoAtributo(int nroLineaComienzo, int nroColumnaComienzo, String mensajeError) throws ExcepcionLexico, ExcepcionSintactico, ExcepcionPanicMode {
@@ -337,9 +358,19 @@ public class AnalizadorSintactico {
 					return new NodoAsignacion(null, izq, exp, nroLinea);
 				}
 			case ";":				// siguientes
+				if (vars.get(0).getTipo() == null)
+					if (vars.size() == 1)
+						throw new ExcepcionSintactico("Error sintáctico: Se omitió el tipo para la declaración o se omitió la expresión para una asignación inline para la variable " + vars.get(0).getNombre() + ".");
+					else {
+						String v = "";
+						for(Variable va : vars)
+							v += " " + va.getNombre() + ",";
+						String cadV = v.substring(0, v.length() - 1);
+						throw new ExcepcionSintactico("Error sintáctico: Se omitió el tipo para la declaración o se omitió la expresión para una asignación inline para las variables" + cadV + ".");
+					}
 				return new NodoDecVarsLocales(vars);
-				default:
-					return null; // o excepcion, ver cual
+			default:
+				return null; // o excepcion, ver cual
 		}
 	}
 	

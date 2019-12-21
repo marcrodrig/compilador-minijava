@@ -18,7 +18,7 @@ public class TipoClase extends Tipo {
 
 	@Override
 	public boolean esCompatible(TipoRetorno tipo) {
-		if (tipo.getNombre().equals("void"))
+		if (tipo.getNombre().equals("void") || tipo.getNombre().equals("Object"))
 			return true;
 		Clase clase = CompiladorMiniJava.tablaSimbolos.getClase(getNombre());
 		if (clase != null) {

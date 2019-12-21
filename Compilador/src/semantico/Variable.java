@@ -32,6 +32,13 @@ public abstract class Variable {
 		return tipo;
 	}
 	
+	public void setTipoInline(TipoRetorno tipoLadoDerecho) {
+		if(tipoLadoDerecho instanceof TipoVoid)
+			tipo = new TipoClase(new Token("Object", "Object", 0, 0));
+		else
+			tipo = (Tipo) tipoLadoDerecho;
+	}
+	
 	public int getOffset() {
         return offset;
     }
@@ -47,4 +54,5 @@ public abstract class Variable {
 				throw new ExcepcionSemantico("[" + getTipo().getNroLinea() + ":" + getTipo().getNroColumna()
 						+ "] Error semántico: El tipo clase \"" + getTipo().getNombre() + "\" no está definido.");
 	}
+
 }
