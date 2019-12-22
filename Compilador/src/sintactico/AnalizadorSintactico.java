@@ -780,6 +780,18 @@ public class AnalizadorSintactico {
 	private NodoSentencia ladoDerechoIdMetVar(NodoExpresion exp) throws ExcepcionLexico, ExcepcionSintactico {		
 		switch (tokenActual.getNombre()) {
 			case "=":					// primeros
+				if (exp instanceof NodoVar && ((NodoVar) exp).getEncadenado() == null) {
+					NodoVar nv = (NodoVar) exp;
+					List<Token> listaTokenVariablesLocales = new ArrayList<Token>();
+					listaTokenVariablesLocales.add(nv.getToken());
+					List<Variable> varsLocales = new ArrayList<Variable>();
+					for (Token tokenVarLocal : listaTokenVariablesLocales) {
+						VarLocal varLocal = new VarLocal(tokenVarLocal,null);
+						varsLocales.add(varLocal);
+					}
+					NodoSentencia sentenciaDecAsig = decAsig(varsLocales, null);
+					return sentenciaDecAsig;
+				} else
 				return decAsig(null, exp);
 			case "&&":					// primeros
 			case "||":					// primeros
@@ -796,7 +808,21 @@ public class AnalizadorSintactico {
 			case "<=":					// primeros
 				return new NodoSentenciaSimple(desparentizada(exp));
 			case ";":					// siguientes
-				return new NodoSentenciaSimple(exp);				
+				return new NodoSentenciaSimple(exp);	
+			case ",":
+				if (exp instanceof NodoVar && ((NodoVar) exp).getEncadenado() == null) {
+					NodoVar nv = (NodoVar) exp;
+					List<Token> listaTokenVariablesLocales = new ArrayList<Token>();
+					listaTokenVariablesLocales.add(nv.getToken());
+					rListaDecVars(listaTokenVariablesLocales);
+					List<Variable> varsLocales = new ArrayList<Variable>();
+					for (Token tokenVarLocal : listaTokenVariablesLocales) {
+						VarLocal varLocal = new VarLocal(tokenVarLocal,null);
+						varsLocales.add(varLocal);
+					}
+					NodoSentencia sentenciaDecAsig = decAsig(varsLocales, null);
+					return sentenciaDecAsig;
+				}
 			default:
 				throw new ExcepcionSintactico("Error sintáctico: Sentencia simple desparentizada inválida.\nEsperado: =, &&, ||, *, /, %, +, -, ==, !=, >, >=, <, <=, o ;\nEncontrado: " + tokenActual.getNombre());
 		}

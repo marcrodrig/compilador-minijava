@@ -1,0 +1,30 @@
+class Prueba {
+	static void main() {
+		x,y = 10;
+		System.printS("Debería mostrar un 10 (de x): ");
+		System.printIln(x);
+		f = false;
+		v = true;
+		obj = new Prueba2();
+		cad = "Hola Mundo!";
+		n = null;
+		System.printS("Debería mostrar un 10 (de y): ");
+		System.printIln(y);
+		System.printS("Debería mostrar false: ");
+		System.printBln(f);
+		System.printS("Debería mostrar un true: ");
+		System.printBln(v);
+		System.printS("Debería mostrar un 20: ");
+		System.printIln(obj.getX());
+		System.printS("Debería mostrar un mensaje: ");
+		System.printSln(cad);
+		//System.printSln(p.getN());
+	}
+}
+
+class Prueba2 {
+	private int x = 20;
+	dynamic int getX() {
+		return x;
+	}
+}

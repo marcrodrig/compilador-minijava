@@ -21,16 +21,34 @@ class InferenciaTiposInline {
 		CompiladorMiniJava.tablaSimbolos.reset();
 		GeneradorCodigo.reset();
 	}
-/*
+
 	@Test
 	void testAtributoInferencia() {
 		String[] args = { "src/test/resources/inferenciaTipos/atributoInferencia.txt" };
 		CompiladorMiniJava.main(args);
 	}
-*/
+
 	@Test
 	void testAtributoInferenciaInvalido() {
 		String[] args = { "src/test/resources/inferenciaTipos/atributoInferenciaInvalido.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testVarsLocsInferencia() {
+		String[] args = { "src/test/resources/inferenciaTipos/varsLocsInferencia.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testVarsLocsConYSinInferencia() {
+		String[] args = { "src/test/resources/inferenciaTipos/varsLocsConYSinInferencia.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testRapido() {
+		String[] args = { "src/test/resources/inferenciaTipos/rapido.txt" };
 		CompiladorMiniJava.main(args);
 	}
 }

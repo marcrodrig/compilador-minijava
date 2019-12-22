@@ -67,7 +67,7 @@ public class NodoBloque extends NodoSentencia {
 	public void generar() {
 		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
 		CompiladorMiniJava.tablaSimbolos.setBloqueActual(this);
-		generadorCodigo.write("\tRMEM " + getCantidadVarsLocales() + "\t; Reservo espacio para vars locales");
+		generadorCodigo.write("\tRMEM " + getCantidadVarsLocales() + "\t; Reservo espacio para vars locales de las declaraciones explícitas");
 		for (NodoSentencia sentencia : sentencias)
 			sentencia.generar();
 		generadorCodigo.write("\tFMEM " + varsLocales.size() + " # Libero espacio de variables locales al bloque");

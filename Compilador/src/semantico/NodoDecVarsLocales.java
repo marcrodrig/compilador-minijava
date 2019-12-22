@@ -9,8 +9,11 @@ public class NodoDecVarsLocales extends NodoSentencia {
 	public NodoDecVarsLocales(List<Variable> vars) {
 		this.vars = vars;
 		for (Variable v : vars)
-			if (!(v instanceof VariableInstancia))
+			if (v instanceof VarLocal) {
+				VarLocal vl = (VarLocal) v;
+				vl.setMR();
 				CompiladorMiniJava.tablaSimbolos.getBloqueActual().agregarVariableLocal(v);
+			}
 	}
 
 	protected void chequear() throws ExcepcionSemantico {
@@ -33,7 +36,7 @@ public class NodoDecVarsLocales extends NodoSentencia {
 	}
 
 	protected void generar() {
-		// Nada, reservo el espacio total anteriormente
+		// Nada, reservo el espacio total anteriormente de las declaraciones explícitas
 	}
 
 }

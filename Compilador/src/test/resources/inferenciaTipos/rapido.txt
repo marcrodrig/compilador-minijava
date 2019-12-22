@@ -1,0 +1,8 @@
+class Prueba {
+	static void main() {
+		int num = 10;
+		String cad = "Hola";
+		System.printIln(num);
+		System.printSln(cad);
+	}
+}

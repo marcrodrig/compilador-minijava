@@ -17,6 +17,10 @@ public class NodoVar extends NodoPrimario {
 		esLadoIzqAsig = true;
 	}
 
+	public Token getToken() {
+		return token;
+	}
+	
 	@Override
 	public TipoRetorno chequear() throws ExcepcionSemantico {
 		Unidad unidadActual = CompiladorMiniJava.tablaSimbolos.getUnidadActual();

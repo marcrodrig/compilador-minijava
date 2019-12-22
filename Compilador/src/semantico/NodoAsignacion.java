@@ -37,10 +37,14 @@ public class NodoAsignacion extends NodoSentencia {
 					if (unidadActual.getVarsLocalesParams().get(var.getNombre()) == null) {
 						VariableMetodo v = (VariableMetodo) var;
 						unidadActual.insertarVarLocal(v);
-					} else
+					} else {
+						VarLocal vl = (VarLocal) var;
+						vl.setMR();
+						if (var.getTipo() != null)
 						throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna()
 								+ "] Error semántico: Nombre de variable local \"" + var.getNombre()
 								+ "\" repetido a un parámetro u otra variable local.");
+					}
 			}
 			TipoRetorno tipoLadoDerecho;
 			if (ladoDerecho == null)
@@ -48,6 +52,7 @@ public class NodoAsignacion extends NodoSentencia {
 			else
 				tipoLadoDerecho = ladoDerecho.chequear();
 			Variable primerVar = vars.get(0);
+			//Variable primerVar = unidadActual.getVarsLocalesParams().get(vars.get(0).getNombre());
 			TipoRetorno tipoAsignacionInline = primerVar.getTipo();
 			if (tipoAsignacionInline == null)
 				for (Variable var : vars)
@@ -101,9 +106,17 @@ public class NodoAsignacion extends NodoSentencia {
 			GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
 			Unidad unidadActual = CompiladorMiniJava.tablaSimbolos.getUnidadActual();
 			if (vars.get(0) instanceof VariableMetodo) {
-				generadorCodigo.write("\tRMEM " + vars.size() + "\t; Reservo espacio para vars locales");
 				for (Variable v : vars) {
-					Variable varParam = unidadActual.getVarLocalParamPorNombre(v.getNombre());
+					if (v instanceof VarLocal) {
+						VarLocal vl = (VarLocal) v;
+						if (!vl.memoriaReservada())
+							generadorCodigo.write("\tRMEM 1\t; Reservo espacio para var local " + vl.getNombre());
+					}
+					Variable varParam;// = unidadActual.getVarLocalParamPorNombre(v.getNombre());
+					NodoBloque bloqueActual = CompiladorMiniJava.tablaSimbolos.getBloqueActual();
+					varParam = bloqueActual.getVarLocal(v.getNombre());
+					if (varParam == null)
+						varParam = unidadActual.getVarLocalParamPorNombre(v.getNombre());
 					ladoDerecho.generar();
 					CompiladorMiniJava.tablaSimbolos.getBloqueActual().agregarVariableLocal(varParam);
 					generadorCodigo.write("\tSTORE " + varParam.getOffset());
