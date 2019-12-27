@@ -55,7 +55,7 @@ public class Metodo extends Unidad {
 
 	public boolean chequeoRedefinicionMetodo(Metodo met2) throws ExcepcionSemantico {
 		boolean redefinido = getTipo().getNombre().equals(met2.getTipo().getNombre())
-				&& getFormaMetodo().equals(met2.getFormaMetodo());
+				&& getFormaMetodo().equals(met2.getFormaMetodo()) && getCantidadParametros() == met2.getCantidadParametros();
 		int posicion = 1;
 		while (redefinido && posicion <= getCantidadParametros()) {
 			Parametro p1 = getParametroPorPosicion(posicion);
@@ -63,7 +63,7 @@ public class Metodo extends Unidad {
 			redefinido = p1.getTipo().getNombre().equals(p2.getTipo().getNombre());
 			posicion++;
 		}
-		if (!redefinido) {
+		if (!redefinido && getCantidadParametros() == met2.getCantidadParametros()) {
 			throw new ExcepcionSemantico("[" + getNroLinea() + ":" + getNroColumna()
 					+ "] Error semántico: Incorrecta redefinición de método " + getNombre() + ".");
 		}

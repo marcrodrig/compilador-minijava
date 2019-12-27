@@ -1,0 +1,12 @@
+class Prueba {
+	static void main() {
+		int w;
+		w = 3;
+		x = 1;
+		System.printS("Debería imprimir un 3 (w correcto): ");
+		System.printIln(w);
+		System.printS("Debería imprimir un 1 (x): ");
+		System.printIln(x);
+		w = "Hola Mundo!";
+	}
+}

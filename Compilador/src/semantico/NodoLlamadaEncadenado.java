@@ -88,7 +88,7 @@ public class NodoLlamadaEncadenado extends Encadenado {
 			generadorCodigo.write("\tPOP");
 			for (NodoExpresion exp : argumentosActuales) {
 				exp.generar();
-				generadorCodigo.write("\tSWAP");
+				// ver si poner o no: generadorCodigo.write("\tSWAP");
 			}
 			generadorCodigo.write("\tPUSH " + metodo.getLabel() + "\t; Apilo la etiqueta del metodo");
 			generadorCodigo.write("\tCALL\t; Llamo al metodo");

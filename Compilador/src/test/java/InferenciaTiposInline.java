@@ -29,6 +29,18 @@ class InferenciaTiposInline {
 	}
 
 	@Test
+	void testAtributoInferenciaLista() {
+		String[] args = { "src/test/resources/inferenciaTipos/atributoInferenciaLista.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testAtributoInferenciaConHerencia() {
+		String[] args = { "src/test/resources/inferenciaTipos/atributoInferenciaConHerencia.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
 	void testAtributoInferenciaInvalido() {
 		String[] args = { "src/test/resources/inferenciaTipos/atributoInferenciaInvalido.txt" };
 		CompiladorMiniJava.main(args);
@@ -47,8 +59,32 @@ class InferenciaTiposInline {
 	}
 	
 	@Test
+	void testVarsLocsConInferenciaDosDeclaracionesMismaVariable() {
+		String[] args = { "src/test/resources/inferenciaTipos/varsLocsConInferenciaDosDeclaracionesMismaVariable.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testVarsLocsInferenciaInvalido() {
+		String[] args = { "src/test/resources/inferenciaTipos/varsLocsInferenciaInvalido.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testVarsLocsInferenciaInvalido2() {
+		String[] args = { "src/test/resources/inferenciaTipos/varsLocsInferenciaInvalido2.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
 	void testRapido() {
 		String[] args = { "src/test/resources/inferenciaTipos/rapido.txt" };
+		CompiladorMiniJava.main(args);
+	}
+	
+	@Test
+	void testInferenciaCompleto() {
+		String[] args = { "src/test/resources/inferenciaTipos/inferenciaCompleto.txt" };
 		CompiladorMiniJava.main(args);
 	}
 }

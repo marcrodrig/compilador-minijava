@@ -782,14 +782,20 @@ public class AnalizadorSintactico {
 			case "=":					// primeros
 				if (exp instanceof NodoVar && ((NodoVar) exp).getEncadenado() == null) {
 					NodoVar nv = (NodoVar) exp;
-					List<Token> listaTokenVariablesLocales = new ArrayList<Token>();
-					listaTokenVariablesLocales.add(nv.getToken());
-					List<Variable> varsLocales = new ArrayList<Variable>();
-					for (Token tokenVarLocal : listaTokenVariablesLocales) {
-						VarLocal varLocal = new VarLocal(tokenVarLocal,null);
-						varsLocales.add(varLocal);
+					List<Token> listaTokenVariables = new ArrayList<Token>();
+					listaTokenVariables.add(nv.getToken());
+					List<Variable> vars = new ArrayList<Variable>();
+					if (CompiladorMiniJava.tablaSimbolos.getClaseActual().getAtributoPorNombre(nv.getToken().getLexema()) != null) {
+						System.out.println("ACA");
+					for (Token tokenVarIns : listaTokenVariables)
+						vars.add(CompiladorMiniJava.tablaSimbolos.getClaseActual().getAtributoPorNombre(tokenVarIns.getLexema()));
 					}
-					NodoSentencia sentenciaDecAsig = decAsig(varsLocales, null);
+					else
+						for (Token tokenVarLocal : listaTokenVariables) {
+							VarLocal varLocal = new VarLocal(tokenVarLocal,null);
+							vars.add(varLocal);
+					}
+					NodoSentencia sentenciaDecAsig = decAsig(vars, null);
 					return sentenciaDecAsig;
 				} else
 				return decAsig(null, exp);

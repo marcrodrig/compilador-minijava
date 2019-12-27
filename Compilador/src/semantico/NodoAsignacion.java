@@ -38,13 +38,23 @@ public class NodoAsignacion extends NodoSentencia {
 						VariableMetodo v = (VariableMetodo) var;
 						unidadActual.insertarVarLocal(v);
 					} else {
+						VarLocal v = (VarLocal) unidadActual.getVarsLocalesParams().get(var.getNombre());
 						VarLocal vl = (VarLocal) var;
 						vl.setMR();
-						if (var.getTipo() != null)
-						throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna()
-								+ "] Error semántico: Nombre de variable local \"" + var.getNombre()
-								+ "\" repetido a un parámetro u otra variable local.");
+						vl.setTipoInline(v.getTipo());
+						/*if (var.getTipo() != null)
+							throw new ExcepcionSemantico("[" + var.getNroLinea() + ":" + var.getNroColumna()
+									+ "] Error semántico: Nombre de variable local \"" + var.getNombre()
+									+ "\" repetido a un parámetro u otra variable local.");
+					*/}
+				else {
+					//System.out.println("JEJE");
+					Clase claseActual = CompiladorMiniJava.tablaSimbolos.getClaseActual();
+					if (claseActual.getAtributoPorNombre(var.getNombre()) == null) {
+						VariableInstancia v = (VariableInstancia) var;
+						claseActual.insertarAtributo(v);
 					}
+				}
 			}
 			TipoRetorno tipoLadoDerecho;
 			if (ladoDerecho == null)
@@ -118,7 +128,9 @@ public class NodoAsignacion extends NodoSentencia {
 					if (varParam == null)
 						varParam = unidadActual.getVarLocalParamPorNombre(v.getNombre());
 					ladoDerecho.generar();
-					CompiladorMiniJava.tablaSimbolos.getBloqueActual().agregarVariableLocal(varParam);
+					VarLocal vl = (VarLocal) varParam;
+					if (!vl.memoriaReservada())
+						CompiladorMiniJava.tablaSimbolos.getBloqueActual().agregarVariableLocal(varParam);
 					generadorCodigo.write("\tSTORE " + varParam.getOffset());
 				}
 			} else {

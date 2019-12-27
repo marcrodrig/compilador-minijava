@@ -1,0 +1,31 @@
+class Prueba {
+	public v = true;
+	private f = false;
+	static void main() {
+		int v = 10;
+		int w;
+		p = new Prueba();
+		w = 4;
+		w = 3;
+		System.printS("Debería mostrar un 3 (de w): ");
+		System.printIln(w);
+		System.printS("Debería mostrar un 10 (de v local): ");
+		System.printIln(v);
+		System.printS("Debería mostrar true: ");
+		System.printBln(p.getV());
+		System.printS("Debería mostrar false: ");
+		System.printBln(p.getF());
+		cad = "Hola M";
+		System.printS("Debería mostrar un mensaje: ");
+		System.printSln(cad);
+		cad = "Hola Mundo";
+		System.printS("Debería mostrar un mensaje: ");
+		System.printSln(cad);
+	}
+	dynamic boolean getV() {
+		return v;
+	}
+	dynamic boolean getF() {
+		return f;
+	}
+}

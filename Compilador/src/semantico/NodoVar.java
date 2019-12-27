@@ -47,8 +47,19 @@ public class NodoVar extends NodoPrimario {
 		Encadenado encadenado = getEncadenado();
 		if (encadenado == null)
 			return tipo;
-		else
+		else {
+			if (tipo instanceof TipoClase) {
+				Clase c = CompiladorMiniJava.tablaSimbolos.getClase(tipo.getNombre());
+				if (!c.sentenciasChequeadas() && !unidadActual.declaradaEn().getNombre().equals(c.getNombre())) {
+					Clase claseAux = unidadActual.declaradaEn();
+					CompiladorMiniJava.tablaSimbolos.setClaseActual(c);
+					c.chequeoSentencias();
+					CompiladorMiniJava.tablaSimbolos.setClaseActual(claseAux);
+					CompiladorMiniJava.tablaSimbolos.setUnidadActual(unidadActual);
+				}
+			}
 			return getEncadenado().chequear(tipo);
+		}
 	}
 
 	@Override
@@ -60,12 +71,13 @@ public class NodoVar extends NodoPrimario {
 		Variable varLocal = CompiladorMiniJava.tablaSimbolos.getBloqueActual().getVarLocal(token.getLexema());
 		Parametro param = unidadActual.getParametroPorNombre(token.getLexema());
 		GeneradorCodigo generadorCodigo = GeneradorCodigo.getInstance();
-		if (varLocal != null && varIns == null) {
+		if (varLocal != null) {
 				if (!esLadoIzqAsig || encadenado != null)
 					generadorCodigo.write("\tLOAD " + varLocal.getOffset());
 			else
 				generadorCodigo.write("\tSTORE " + varLocal.getOffset());
-		} if (param != null) {
+		} else
+			if (param != null) {
 				if (!esLadoIzqAsig || encadenado != null)
 					generadorCodigo.write("\tLOAD " + param.getOffset());
 				else

@@ -1,7 +1,7 @@
 .CODE
 PUSH simple_heap_init
 CALL
-PUSH main_A_0
+PUSH main_Prueba_0
 CALL
 HALT
 
@@ -144,67 +144,39 @@ System_System_12:
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
 
-# Definición de la clase A
+# Definición de la clase Prueba
 .DATA
-VT_A:
-DW getX_A_13
+VT_Prueba:
+DW 0
 .CODE
-main_A_0:
+main_Prueba_0:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
-	RMEM 1	; Creación CIR (clase A)
-	PUSH 3	; Reservo lugar para variables de instancia y VT (clase A)
-	PUSH simple_malloc
-	CALL
-	DUP	; Asignación de la VT al CIR creado
-	PUSH VT_A
-	STOREREF 0	;Guardo referecia a VT
-	DUP
-	PUSH A_A_14	; Apilo etiqueta del constructor A_A_14
-	CALL	; Llamo al constuctor A_A_14
-	RMEM 1	; Reservo lugar para el retorno
-	SWAP
-	DUP
-	LOADREF 0
-	LOADREF 0	; Cargo la dirección del método getX (clase A)
-	CALL
+	RMEM 1	; Reservo espacio para vars locales de las declaraciones explícitas
+.DATA
+string13: DW "Hola Mundo!",0
+.CODE
+	PUSH string13	; Apilo etiqueta del String
+	STORE 0
+.DATA
+string14: DW "DeberÃ­a mostrar un 3 (de w): ",0
+.CODE
+	PUSH string14	; Apilo etiqueta del String
+	PUSH printS_System_6	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	LOAD 0
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	FMEM 0 # Libero espacio de variables locales al bloque
+	FMEM 1 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
-getX_A_13:
+Prueba_Prueba_15:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
-	LOAD 3	; Cargo THIS
-	LOADREF 1
-	STORE 4	; Valor de retorno del metodo getX
-	STOREFP
-	RET 1	; Retorno y libero espacio del this y los parametros (metodo getX)
-	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getX
-A_A_14:
-	LOADFP	; Guardo enlace dinámico
-	LOADSP	; Inicializo FP
-	STOREFP
-
-	;Inicio Generación asignación atributos inline
-	PUSH 2	; Apilo literal entero 2
-	LOAD 3
-	SWAP
-	STOREREF 1
-	PUSH 3	; Apilo literal entero 3
-	LOAD 3
-	SWAP
-	STOREREF 2
-	;Fin Generación asignación atributos inline
-	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Prueba
 

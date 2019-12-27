@@ -13,7 +13,7 @@ class Prueba {
 		fal = p.getF();
 		ver = p.getV();
 		System.printS("Debería mostrar un 10: ");
-		System.printIln(num);
+		System.printIln(p.x);
 		System.printS("Debería mostrar false: ");
 		System.printBln(fal);
 		System.printS("Debería mostrar un true: ");

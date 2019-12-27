@@ -1,8 +1,10 @@
 package semantico;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import gc.GeneradorCodigo;
@@ -14,7 +16,7 @@ public class Clase {
 	private String superclase;
 	private LinkedHashMap<String, VariableInstancia> atributos;
 	private LinkedHashMap<String, List<Unidad>> unidades;
-	private boolean visitadoHerenciaCircular, hc, consolidada;
+	private boolean visitadoHerenciaCircular, hc, consolidada, sentenciasChequeadas;
 	private Metodo metodoMain;
 	private List<NodoSentencia> inlineAtrs;
 
@@ -23,9 +25,17 @@ public class Clase {
 		this.superclase = superclase;
 		atributos = new LinkedHashMap<String, VariableInstancia>();
 		unidades = new LinkedHashMap<String, List<Unidad>>();
-		inlineAtrs = new ArrayList<NodoSentencia>();
+		inlineAtrs = new LinkedList<NodoSentencia>();
 	}
 
+	public boolean sentenciasChequeadas() {
+		return sentenciasChequeadas;
+	}
+	
+	public void setSC() {
+		sentenciasChequeadas = true;
+	}
+	
 	public String getNombre() {
 		return token.getLexema();
 	}
@@ -63,7 +73,7 @@ public class Clase {
 	}
 
 	private List<Unidad> getTodasUnidades() {
-		List<Unidad> todasUnidades = new ArrayList<Unidad>();
+		List<Unidad> todasUnidades = new LinkedList<Unidad>();
 		for (String nombreUnidad : unidades.keySet()) {
 			List<Unidad> listaUnidad = unidades.get(nombreUnidad);
 			todasUnidades.addAll(listaUnidad);
@@ -83,16 +93,32 @@ public class Clase {
 		return getConstructores().get(index - 1);
 	}
 
-	public Map<String, List<Unidad>> getTodosMetodos() {
-		Map<String, List<Unidad>> metodos = new HashMap<>(unidades);
+	public LinkedHashMap<String, List<Unidad>> getTodosMetodos() {
+		LinkedHashMap<String, List<Unidad>> metodos = new LinkedHashMap<>(unidades);
 		metodos.remove(getNombre());
 		return metodos;
+	}
+	
+	public List<Metodo> listaMetodosDynamic() {
+		LinkedHashMap<String, List<Unidad>> metodos = new LinkedHashMap<>(unidades);
+		metodos.remove(getNombre());
+		List<Metodo> l = new ArrayList<Metodo>(getCantidadMetodosDynamic());
+		for (String nombre : metodos.keySet()) {
+			for (Unidad u : getTodosMetodosPorNombre(nombre)) {
+				Metodo met = (Metodo) u;
+				if (met.getFormaMetodo().equals("dynamic"))
+					l.add(met);
+			}
+		}
+		Collections.sort(l, new MetodoOffsetComparator());
+		//System.out.println("TAM " + l.size());
+		return l;
 	}
 
 	public List<Unidad> getTodosMetodosPorNombre(String nombreMetodo) {
 		List<Unidad> lista = getTodosMetodos().get(nombreMetodo);
 		if (lista == null)
-			return new ArrayList<Unidad>();
+			return new LinkedList<Unidad>();
 		else
 			return lista;
 	}
@@ -155,6 +181,20 @@ public class Clase {
 
 	public int getCantidadInlineAtrs() {
 		return inlineAtrs.size();
+	//	Clase clasePadre = CompiladorMiniJava.tablaSimbolos.getClase(superclase);
+	//	boolean continuar = true;
+	//	if (clasePadre != null) {
+	//		int cantAtrInl = clasePadre.getInlineAtrs().size();
+		//	if (cantAtrInl > 0)
+	//			cant += cantAtrInl;
+		//	else
+				/**
+				 * 
+				 */
+				//continuar = false;
+			//clasePadre = CompiladorMiniJava.tablaSimbolos.getClase(clasePadre.getSuperclase());
+	//	}
+	//	return cant;
 	}
 
 	public void insertarAsignacionInlineAtributo(NodoSentencia sentencia) {
@@ -162,7 +202,10 @@ public class Clase {
 	}
 
 	private int getCantidadAtrs() {
-		return atributos.size();
+		int cant = atributos.size();
+		if (superclase != null)
+			cant += CompiladorMiniJava.tablaSimbolos.getClase(superclase).getCantidadAtrs();
+		return cant;
 	}
 	
 	private void agregarConstructorPredefinido() {
@@ -224,6 +267,7 @@ public class Clase {
 	public void chequeoDeclaraciones() throws ExcepcionSemantico {
 		chequeoExistenciaSuperclase();
 		chequeoHerenciaCircular();
+		chequeoAtrsInline();
 		chequeoAtributos();
 		chequeoConstructores();
 		chequeoMetodos();
@@ -313,23 +357,37 @@ public class Clase {
 	}
 
 	private void consolidacionAtributos() {
-		HashMap<String, VariableInstancia> atributosAncestro = CompiladorMiniJava.tablaSimbolos.getClase(superclase)
-				.getAtributos();
+		HashMap<String, VariableInstancia> atributosAncestro = CompiladorMiniJava.tablaSimbolos.getClase(superclase).getAtributos();
 		for (String nombreAtributoAncestro : atributosAncestro.keySet())
 			if (getAtributoPorNombre(nombreAtributoAncestro) == null)
 				atributos.put(nombreAtributoAncestro, atributosAncestro.get(nombreAtributoAncestro));
 	}
 
+	private void chequeoAtrsInline() {
+		Clase clasePadre = CompiladorMiniJava.tablaSimbolos.getClase(superclase);
+		boolean continuar = true;
+		while (clasePadre != null && continuar) {
+
+			List <NodoSentencia> lns = clasePadre.getInlineAtrs();
+			if (!lns.isEmpty()) {
+				for (NodoSentencia inlineAtr : lns) {
+					insertarAsignacionInlineAtributo(inlineAtr);
+				}
+				continuar = false;
+			}
+			clasePadre = CompiladorMiniJava.tablaSimbolos.getClase(clasePadre.getSuperclase());
+		}
+	}
+	
 	private void consolidacionMetodos() {
 		Map<String, List<Unidad>> metodosAncestro = CompiladorMiniJava.tablaSimbolos.getClase(superclase).getTodosMetodos();
 		for (String nombreMetodoAncestro : metodosAncestro.keySet()) {
 			if (getTodosMetodosPorNombre(nombreMetodoAncestro).isEmpty()) {
-				unidades.put(nombreMetodoAncestro,
-						CompiladorMiniJava.tablaSimbolos.getClase(superclase).getTodosMetodosPorNombre(nombreMetodoAncestro));
+				unidades.put(nombreMetodoAncestro,CompiladorMiniJava.tablaSimbolos.getClase(superclase).getTodosMetodosPorNombre(nombreMetodoAncestro));
 			} else {
 				List<Unidad> metodosActual = unidades.get(nombreMetodoAncestro);
 				List<Unidad> metodosAncestroMismoNombre = metodosAncestro.get(nombreMetodoAncestro);
-				List<Unidad> listaMetodoAgregar = new ArrayList<Unidad>();
+				List<Unidad> listaMetodoAgregar = new LinkedList<Unidad>();
 				for (Unidad met1 : metodosActual)
 					for (Unidad met2 : metodosAncestroMismoNombre) {
 						Metodo metodo1 = (Metodo) met1;
@@ -356,24 +414,27 @@ public class Clase {
 	}
 
 	public void chequeoSentencias() {
-		for (NodoSentencia inlineAtr : inlineAtrs) {
-			try {
-				inlineAtr.chequear();
-			} catch (ExcepcionSemantico e) {
-				CompiladorMiniJava.tablaSimbolos.setRSem();
-				System.out.println(e.toString());
-			}
-		}
-		for (Unidad u : getTodasUnidades()) {
-			if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.tablaSimbolos.getClaseActual().getNombre())) {
-				CompiladorMiniJava.tablaSimbolos.setUnidadActual(u);
+		if (!sentenciasChequeadas) {
+			for (NodoSentencia inlineAtr : inlineAtrs) {
 				try {
-					u.chequeoSentencias();
+					inlineAtr.chequear();
 				} catch (ExcepcionSemantico e) {
 					CompiladorMiniJava.tablaSimbolos.setRSem();
 					System.out.println(e.toString());
 				}
 			}
+			for (Unidad u : getTodasUnidades()) {
+				if (u.declaradaEn().getNombre().equals(CompiladorMiniJava.tablaSimbolos.getClaseActual().getNombre())) {
+					CompiladorMiniJava.tablaSimbolos.setUnidadActual(u);
+					try {
+						u.chequeoSentencias();
+					} catch (ExcepcionSemantico e) {
+						CompiladorMiniJava.tablaSimbolos.setRSem();
+						System.out.println(e.toString());
+					}
+				}
+			}
+			setSC();
 		}
 	}
 
@@ -384,10 +445,10 @@ public class Clase {
 		if (getCantidadMetodosDynamic() == 0)
 			generadorCodigo.write("DW 0");
 		else
-			for (List<Unidad> listaMetodos : getTodosMetodos().values())
-				for (Unidad u : listaMetodos) {
-					Metodo metodo = (Metodo) u;
-					if (metodo.getFormaMetodo().equals("dynamic"))
+		//	for (List<Unidad> listaMetodos : getTodosMetodos().values())
+				for (Metodo metodo : listaMetodosDynamic()) {
+					//Metodo metodo = (Metodo) u;
+					//if (metodo.getFormaMetodo().equals("dynamic"))
 						generadorCodigo.write("DW " + metodo.getLabel());
 				}
 		generadorCodigo.write(".CODE");

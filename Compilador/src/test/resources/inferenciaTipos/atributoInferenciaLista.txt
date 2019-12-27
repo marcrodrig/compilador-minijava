@@ -1,0 +1,19 @@
+class Prueba {
+	public x, y = 10;
+	static void main() {
+		int numX, numY;
+		Prueba p = new Prueba();
+		numX = p.getX();
+		numY = p.getY();
+		System.printS("Debería mostrar un 10 (x): ");
+		System.printIln(numX);
+		System.printS("Debería mostrar un 10 (y): ");
+		System.printIln(numY);
+	}
+	dynamic int getX() {
+		return x;
+	}
+	dynamic int getY() {
+		return y;
+	}
+}

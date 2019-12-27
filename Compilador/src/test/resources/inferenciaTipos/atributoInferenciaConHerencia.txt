@@ -1,0 +1,24 @@
+class Init {
+	static void main() {
+		D v = new D();
+		(System.printIln(v.x));
+		(System.printIln(v.w));
+		(System.printIln(v.y));
+		(System.printIln(v.z));
+	}
+}
+
+class A {
+	public x = 1;
+}
+
+class B extends A {}
+
+class C extends B {
+	public w = 2;
+	public y = 3;
+}
+
+class D extends C {
+	public z = 4;
+}

@@ -1,7 +1,7 @@
 .CODE
 PUSH simple_heap_init
 CALL
-PUSH main_A_0
+PUSH main_Prueba_0
 CALL
 HALT
 
@@ -144,45 +144,74 @@ System_System_12:
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
 
-# Definición de la clase A
+# Definición de la clase Prueba
 .DATA
-VT_A:
-DW getX_A_13
+VT_Prueba:
+DW getX_Prueba_13
+DW getY_Prueba_14
 .CODE
-main_A_0:
+main_Prueba_0:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
-	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
-	RMEM 1	; Creación CIR (clase A)
-	PUSH 3	; Reservo lugar para variables de instancia y VT (clase A)
+	RMEM 2	; Reservo espacio para vars locales de las declaraciones explícitas
+	RMEM 1	; Reservo espacio para var local p
+	RMEM 1	; Creación CIR (clase Prueba)
+	PUSH 3	; Reservo lugar para variables de instancia y VT (clase Prueba)
 	PUSH simple_malloc
 	CALL
 	DUP	; Asignación de la VT al CIR creado
-	PUSH VT_A
+	PUSH VT_Prueba
 	STOREREF 0	;Guardo referecia a VT
 	DUP
-	PUSH A_A_14	; Apilo etiqueta del constructor A_A_14
-	CALL	; Llamo al constuctor A_A_14
+	PUSH Prueba_Prueba_15	; Apilo etiqueta del constructor Prueba_Prueba_15
+	CALL	; Llamo al constuctor Prueba_Prueba_15
+	STORE -2
+	LOAD -2
 	RMEM 1	; Reservo lugar para el retorno
 	SWAP
 	DUP
 	LOADREF 0
-	LOADREF 0	; Cargo la dirección del método getX (clase A)
+	LOADREF 0	; Cargo la dirección del método getX (clase Prueba)
 	CALL
+	STORE 0
+	LOAD -2
+	RMEM 1	; Reservo lugar para el retorno
+	SWAP
+	DUP
+	LOADREF 0
+	LOADREF 1	; Cargo la dirección del método getY (clase Prueba)
+	CALL
+	STORE -1
+.DATA
+string16: DW "DeberÃ­a mostrar un 10 (x): ",0
+.CODE
+	PUSH string16	; Apilo etiqueta del String
+	PUSH printS_System_6	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	LOAD 0
 	PUSH printIln_System_10	; Apilo la etiqueta del metodo
 	CALL	; Llamo al metodo
-	FMEM 0 # Libero espacio de variables locales al bloque
+.DATA
+string17: DW "DeberÃ­a mostrar un 10 (y): ",0
+.CODE
+	PUSH string17	; Apilo etiqueta del String
+	PUSH printS_System_6	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	LOAD -1
+	PUSH printIln_System_10	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 3 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 0	; Retorno y libero espacio de los parametros del metodo main
-getX_A_13:
+getX_Prueba_13:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
 	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
-	LOAD 3	; Cargo THIS
+	LOAD 3
 	LOADREF 1
 	STORE 4	; Valor de retorno del metodo getX
 	STOREFP
@@ -190,21 +219,35 @@ getX_A_13:
 	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getX
-A_A_14:
+getY_Prueba_14:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
+	LOAD 3
+	LOADREF 2
+	STORE 4	; Valor de retorno del metodo getY
+	STOREFP
+	RET 1	; Retorno y libero espacio del this y los parametros (metodo getY)
+	FMEM 0 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS getY
+Prueba_Prueba_15:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
 	;Inicio Generación asignación atributos inline
-	PUSH 2	; Apilo literal entero 2
+	PUSH 10	; Apilo literal entero 10
 	LOAD 3
 	SWAP
 	STOREREF 1
-	PUSH 3	; Apilo literal entero 3
+	PUSH 10	; Apilo literal entero 10
 	LOAD 3
 	SWAP
 	STOREREF 2
 	;Fin Generación asignación atributos inline
 	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Prueba
 

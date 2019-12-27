@@ -1,0 +1,10 @@
+class Prueba {
+	static void main() {
+		int w;
+		w = 4;
+		w = 3;
+		System.printS("Debería mostrar un 3 (de w): ");
+		System.printIln(w);
+
+	}
+}

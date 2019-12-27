@@ -1,7 +1,7 @@
 .CODE
 PUSH simple_heap_init
 CALL
-PUSH main_Prueba_0
+PUSH main_Init_0
 CALL
 HALT
 
@@ -144,40 +144,106 @@ System_System_12:
 	STOREFP	; Restablezco el contexto
 	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS System
 
-# Definición de la clase Prueba
+# Definición de la clase A
 .DATA
-VT_Prueba:
-DW 0
+VT_A:
+DW m2_A_13
 .CODE
-main_Prueba_0:
+m2_A_13:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
 	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
-	RMEM 1	; Reservo espacio para var local num
-	PUSH 10	; Apilo literal entero 10
-	STORE 0
-	RMEM 1	; Reservo espacio para var local cad
-.DATA
-string13: DW "Hola",0
-.CODE
-	PUSH string13	; Apilo etiqueta del String
-	STORE -1
-	LOAD 0
-	PUSH printIln_System_10	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
-	LOAD -1
-	PUSH printSln_System_11	; Apilo la etiqueta del metodo
-	CALL	; Llamo al metodo
-	FMEM 2 # Libero espacio de variables locales al bloque
+	PUSH 22	; Apilo literal entero 22
+	STORE 6	; Valor de retorno del metodo m2
+	STOREFP
+	RET 3	; Retorno y libero espacio del this y los parametros (metodo m2)
+	FMEM 0 # Libero espacio de variables locales al bloque
 	STOREFP	; Restablezco el contexto
-	RET 0	; Retorno y libero espacio de los parametros del metodo main
-Prueba_Prueba_14:
+	RET 3	; Retorno y libero espacio de los parametros del metodo y del THIS m2
+A_A_14:
 	LOADFP	; Guardo enlace dinámico
 	LOADSP	; Inicializo FP
 	STOREFP
 
 	STOREFP	; Restablezco el contexto
-	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Prueba
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS A
+
+# Definición de la clase B
+.DATA
+VT_B:
+DW m2_A_13
+DW m2_B_15
+.CODE
+m2_B_15:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
+	PUSH 23	; Apilo literal entero 23
+	STORE 7	; Valor de retorno del metodo m2
+	STOREFP
+	RET 4	; Retorno y libero espacio del this y los parametros (metodo m2)
+	FMEM 0 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 4	; Retorno y libero espacio de los parametros del metodo y del THIS m2
+B_B_16:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS B
+
+# Definición de la clase Init
+.DATA
+VT_Init:
+DW 0
+.CODE
+main_Init_0:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	RMEM 0	; Reservo espacio para vars locales de las declaraciones explícitas
+	RMEM 1	; Reservo espacio para var local w
+	RMEM 1	; Creación CIR (clase A)
+	PUSH 1	; Reservo lugar para variables de instancia y VT (clase A)
+	PUSH simple_malloc
+	CALL
+	DUP	; Asignación de la VT al CIR creado
+	PUSH VT_A
+	STOREREF 0	;Guardo referecia a VT
+	DUP
+	PUSH A_A_14	; Apilo etiqueta del constructor A_A_14
+	CALL	; Llamo al constuctor A_A_14
+	STORE 0
+	RMEM 1	; Reservo espacio para var local x
+	PUSH 55	; Apilo literal entero 55
+	STORE -1
+	LOAD 0
+	RMEM 1	; Reservo lugar para el retorno
+	SWAP
+	LOAD 0
+	SWAP
+	LOAD -1
+	SWAP
+	DUP
+	LOADREF 0
+	LOADREF 0	; Cargo la dirección del método m2 (clase A)
+	CALL
+	PUSH printIln_System_10	; Apilo la etiqueta del metodo
+	CALL	; Llamo al metodo
+	FMEM 2 # Libero espacio de variables locales al bloque
+	STOREFP	; Restablezco el contexto
+	RET 0	; Retorno y libero espacio de los parametros del metodo main
+Init_Init_17:
+	LOADFP	; Guardo enlace dinámico
+	LOADSP	; Inicializo FP
+	STOREFP
+
+	STOREFP	; Restablezco el contexto
+	RET 1	; Retorno y libero espacio de los parametros del metodo y del THIS Init
 

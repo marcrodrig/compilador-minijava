@@ -1,8 +1,39 @@
-class Prueba {
+/*class A {
+	dynamic void m1() {}
+}
+
+class B extends A {
+	public int a1;
+	dynamic void set() {
+		a1 = 5;
+	}
+	dynamic void show() {
+		(System.printIln(a1));
+	}
+}
+
+class Init {
 	static void main() {
-		int num = 10;
-		String cad = "Hola";
-		System.printIln(num);
-		System.printSln(cad);
+		B x = new B();
+		(x.set());
+		(x.show());
+	}
+}*/
+
+class A {
+	dynamic int m2(A p1, int p2) {
+		return 22;
+	}
+}
+class B extends A {
+	dynamic int m2(A p1, int p2, boolean p3) {
+		return 23;
+	}
+}
+class Init {
+	static void main() {
+		A w = new A();
+		x = 55;
+		System.printIln(w.m2(w,x));
 	}
 }

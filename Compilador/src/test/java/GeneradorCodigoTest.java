@@ -24,7 +24,7 @@ class GeneradorCodigoTest {
 
 	@Test
 	void testRapido() {
-		String[] args = { "src/test/resources/gci/rapido.txt" };
+		String[] args = { "src/test/resources/gci/c3.txt" };
 		CompiladorMiniJava.main(args);
 	}
 
